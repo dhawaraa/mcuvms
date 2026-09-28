@@ -3,7 +3,8 @@
   "framework": null,
   "functions": {
     "api/index.php": {
-      "runtime": "vercel-php@0.7.3"
+      "runtime": "vercel-php@0.7.3",
+      "includeFiles": "mcuvms-laravel/**"
     }
   },
   "routes": [
@@ -28,7 +29,6 @@
       "dest": "/api/index.php"
     }
   ],
-  "buildCommand": "cd mcuvms-laravel && composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction",
   "env": {
     "APP_NAME": "MCUVMS",
     "APP_ENV": "production",
