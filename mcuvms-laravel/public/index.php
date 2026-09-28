@@ -23,7 +23,21 @@ if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php'))
 }
 
 // Register the Composer autoloader...
-require __DIR__.'/../vendor/autoload.php';
+$autoloadPath = __DIR__.'/../vendor/autoload.php';
+if (!file_exists($autoloadPath)) {
+    $altPaths = [
+        dirname(__DIR__).'/vendor/autoload.php',
+        '/var/task/mcuvms-laravel/vendor/autoload.php',
+        '/var/task/user/mcuvms-laravel/vendor/autoload.php',
+    ];
+    foreach ($altPaths as $alt) {
+        if (file_exists($alt)) {
+            $autoloadPath = $alt;
+            break;
+        }
+    }
+}
+require $autoloadPath;
 
 // Bootstrap Laravel and handle the request...
 /** @var Application $app */
