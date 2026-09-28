@@ -4,7 +4,7 @@
 .claude/
 
 # Laravel paths
-mcuvms-laravel/vendor/
+# mcuvms-laravel/vendor/ (bundled for serverless deployment on Vercel)
 mcuvms-laravel/node_modules/
 mcuvms-laravel/.env
 mcuvms-laravel/.env.backup
