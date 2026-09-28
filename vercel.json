@@ -28,8 +28,11 @@
       "dest": "/api/index.php"
     }
   ],
+  "buildCommand": "cd mcuvms-laravel && composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction",
   "env": {
+    "APP_NAME": "MCUVMS",
     "APP_ENV": "production",
+    "APP_KEY": "base64:w0zSaIbqeTIzxs2iu7FeLH02rjc/CLnFSmyre2xMsCU=",
     "APP_DEBUG": "false",
     "APP_CONFIG_CACHE": "/tmp/config.php",
     "APP_EVENTS_CACHE": "/tmp/events.php",
