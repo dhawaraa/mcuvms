@@ -189,10 +189,10 @@ CREATE TABLE `public_registrations` (
 -- รหัสผ่าน hash สำหรับคำว่า 'password'
 INSERT INTO `users` (`username`, `password_hash`, `full_name`, `email`, `role`, `org_unit_id`, `is_active`)
 VALUES 
-('admin', '$2y$12$e0MYzX1Wz6Vq4GzR30Z7m.4mG6y6M8rGqXh5Q2Z6Qy7H2V9qB4L9C', 'ผู้ดูแลระบบสูงสุด (Super Admin)', 'admin@mcu.ac.th', 'SUPER_ADMIN', NULL, 1),
-('central', '$2y$12$e0MYzX1Wz6Vq4GzR30Z7m.4mG6y6M8rGqXh5Q2Z6Qy7H2V9qB4L9C', 'เจ้าหน้าที่สถาบันวิปัสสนาธุระ ส่วนกลาง (Central Officer)', 'central@mcu.ac.th', 'CENTRAL_OFFICER', 1, 1),
-('officer_cmi', '$2y$12$e0MYzX1Wz6Vq4GzR30Z7m.4mG6y6M8rGqXh5Q2Z6Qy7H2V9qB4L9C', 'เจ้าหน้าที่วิปัสสนา วิทยาเขตเชียงใหม่', 'cmi@mcu.ac.th', 'CAMPUS_ADMIN', 10, 1),
-('officer_kkn', '$2y$12$e0MYzX1Wz6Vq4GzR30Z7m.4mG6y6M8rGqXh5Q2Z6Qy7H2V9qB4L9C', 'เจ้าหน้าที่วิปัสสนา วิทยาเขตขอนแก่น', 'kkn@mcu.ac.th', 'CAMPUS_ADMIN', 11, 1);
+('admin', '$2y$12$XDe43h2HZhg2DwbxUyqjMe6mlHaZWN.hf.pmu1LPJ9LkpHFSt.B/S', 'ผู้ดูแลระบบสูงสุด (Super Admin)', 'admin@mcu.ac.th', 'SUPER_ADMIN', NULL, 1),
+('central', '$2y$12$XDe43h2HZhg2DwbxUyqjMe6mlHaZWN.hf.pmu1LPJ9LkpHFSt.B/S', 'เจ้าหน้าที่สถาบันวิปัสสนาธุระ ส่วนกลาง (Central Officer)', 'central@mcu.ac.th', 'CENTRAL_OFFICER', 1, 1),
+('officer_cmi', '$2y$12$XDe43h2HZhg2DwbxUyqjMe6mlHaZWN.hf.pmu1LPJ9LkpHFSt.B/S', 'เจ้าหน้าที่วิปัสสนา วิทยาเขตเชียงใหม่', 'cmi@mcu.ac.th', 'CAMPUS_ADMIN', 10, 1),
+('officer_kkn', '$2y$12$XDe43h2HZhg2DwbxUyqjMe6mlHaZWN.hf.pmu1LPJ9LkpHFSt.B/S', 'เจ้าหน้าที่วิปัสสนา วิทยาเขตขอนแก่น', 'kkn@mcu.ac.th', 'CAMPUS_ADMIN', 11, 1);
 
 -- -------------------------------------------------------------
 -- Seed Data: 52 ส่วนงานของ มจร ตามรหัสมาตรฐานจังหวัด

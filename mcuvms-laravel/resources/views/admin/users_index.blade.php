@@ -10,10 +10,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="/assets/js/lucide.min.js"></script>
 
     <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/assets/js/tailwindcss.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -237,7 +237,17 @@
                                     @endif
                                 </td>
                                 <td class="p-4 text-right space-x-1.5 whitespace-nowrap">
-                                    <!-- Edit User Button -->
+                                    <!-- 1. Toggle Active (วางไว้หน้าสุด) -->
+                                    @if ($u->id !== session('admin_user.id'))
+                                        <a href="{{ route('admin.users.toggleStatus', ['id' => $u->id]) }}" 
+                                            onclick="return confirm('ยืนยันการเปลี่ยนแปลงสถานะใช้งานของผู้ใช้ท่านนี้?')"
+                                            title="{{ $u->is_active ? 'กดเพื่อระงับการใช้งาน' : 'กดเพื่อเปิดใช้งาน' }}" 
+                                            class="p-1.5 bg-[#FAF8F2] hover:bg-[#EAE5D9] text-[#4A3B32] rounded-lg border border-[#EAE5D9] transition inline-flex items-center">
+                                            <i data-lucide="{{ $u->is_active ? 'pause-circle' : 'play-circle' }}" class="w-3.5 h-3.5 text-[#C86D51]"></i>
+                                        </a>
+                                    @endif
+
+                                    <!-- 2. Edit User Button -->
                                     <button type="button" onclick="openEditUserModal({
                                         id: {{ $u->id }},
                                         username: @js($u->username),
@@ -250,24 +260,14 @@
                                         <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                                     </button>
 
-                                    <!-- Toggle Active -->
-                                    @if ($u->id !== session('admin_user.id'))
-                                        <a href="{{ route('admin.users.toggleStatus', ['id' => $u->id]) }}" 
-                                            onclick="return confirm('ยืนยันการเปลี่ยนแปลงสถานะใช้งานของผู้ใช้ท่านนี้?')"
-                                            title="{{ $u->is_active ? 'ระงับการใช้งาน' : 'เปิดใช้งาน' }}" 
-                                            class="p-1.5 bg-[#FAF8F2] hover:bg-[#EAE5D9] text-[#4A3B32] rounded-lg border border-[#EAE5D9] transition inline-flex items-center">
-                                            <i data-lucide="{{ $u->is_active ? 'pause-circle' : 'play-circle' }}" class="w-3.5 h-3.5 text-[#C86D51]"></i>
+                                    <!-- 3. Delete User -->
+                                    @if ($u->id !== session('admin_user.id') && session('admin_user.role') === 'SUPER_ADMIN')
+                                        <a href="{{ route('admin.users.delete', ['id' => $u->id]) }}" 
+                                            onclick="return confirm('ยืนยันลบบัญชีผู้ใช้งานนี้ถาวรหรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้')" 
+                                            title="ลบบัญชีผู้ใช้" 
+                                            class="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg border border-red-200 transition inline-flex items-center">
+                                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                                         </a>
-
-                                        @if (session('admin_user.role') === 'SUPER_ADMIN')
-                                            <!-- Delete User -->
-                                            <a href="{{ route('admin.users.delete', ['id' => $u->id]) }}" 
-                                                onclick="return confirm('ยืนยันลบบัญชีผู้ใช้งานนี้ถาวรหรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้')" 
-                                                title="ลบบัญชีผู้ใช้" 
-                                                class="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg border border-red-200 transition inline-flex items-center">
-                                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                                            </a>
-                                        @endif
                                     @endif
                                 </td>
                             </tr>

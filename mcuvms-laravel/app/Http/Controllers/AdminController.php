@@ -78,15 +78,23 @@ class AdminController extends Controller
         $totalGrad = $totalGradQuery->count();
         $totalPublic = $totalPublicQuery->count();
 
-        // สถิติจำนวนผู้เข้าร่วมปฏิบัติวิปัสสนากรรมฐานแยกตามหน่วยงาน/ส่วนงาน (สำหรับแผนภูมิกราฟแท่ง)
+        // สถิติจำนวนผู้เข้าร่วมปฏิบัติวิปัสสนากรรมฐานแยกตามหน่วยงาน/ส่วนงาน (คำนวณแบบ Batch Query ป้องกัน N+1)
+        $ugTotals = UgRegistration::select('org_unit_id', DB::raw('count(*) as count'))
+            ->groupBy('org_unit_id')->pluck('count', 'org_unit_id');
+
+        $gradTotals = GradStudent::select('org_unit_id', DB::raw('count(*) as count'))
+            ->groupBy('org_unit_id')->pluck('count', 'org_unit_id');
+
+        $publicTotals = PublicRegistration::join('public_events', 'public_registrations.event_id', '=', 'public_events.id')
+            ->select('public_events.org_unit_id', DB::raw('count(*) as count'))
+            ->groupBy('public_events.org_unit_id')->pluck('count', 'public_events.org_unit_id');
+
         $campusChartData = OrganizationUnit::where('is_active', 1)
             ->get()
-            ->map(function ($org) {
-                $ug = UgRegistration::where('org_unit_id', $org->id)->count();
-                $grad = GradStudent::where('org_unit_id', $org->id)->count();
-                $public = PublicRegistration::whereHas('event', function ($q) use ($org) {
-                    $q->where('org_unit_id', $org->id);
-                })->count();
+            ->map(function ($org) use ($ugTotals, $gradTotals, $publicTotals) {
+                $ug = $ugTotals->get($org->id, 0);
+                $grad = $gradTotals->get($org->id, 0);
+                $public = $publicTotals->get($org->id, 0);
                 $total = $ug + $grad + $public;
 
                 return [
@@ -1025,6 +1033,72 @@ class AdminController extends Controller
         return back()->with('success', 'ส่งกลับแก้ไขแฟ้มสะสมวันของนิสิตเรียบร้อยแล้ว');
     }
 
+    public function gradStudentUpdate(Request $request, $id)
+    {
+        $this->checkAuth();
+        $admin = Session::get('admin_user');
+        $isCentralOrSuper = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
+
+        $student = GradStudent::findOrFail($id);
+
+        if (!$isCentralOrSuper && !empty($admin['org_unit_id']) && $student->org_unit_id != $admin['org_unit_id']) {
+            return back()->with('error', 'ท่านไม่มีสิทธิ์แก้ไขข้อมูลนิสิตของส่วนงานอื่น');
+        }
+
+        $validated = $request->validate([
+            'student_code' => 'required|string|max:50',
+            'prefix' => 'nullable|string|max:50',
+            'first_name' => 'required|string|max:100',
+            'last_name' => 'required|string|max:100',
+            'degree_level' => 'required|in:MASTER,DOCTORAL',
+            'program_name' => 'nullable|string|max:150',
+            'target_days' => 'required|integer|min:1',
+            'accumulated_days' => 'required|integer|min:0',
+            'submission_status' => 'required|in:ACCUMULATING,SUBMITTED,APPROVED,REJECTED',
+            'org_unit_id' => 'nullable|integer',
+        ]);
+
+        if ($isCentralOrSuper && !empty($validated['org_unit_id'])) {
+            $student->org_unit_id = $validated['org_unit_id'];
+        }
+
+        $student->student_code = $validated['student_code'];
+        $student->prefix = $validated['prefix'];
+        $student->first_name = $validated['first_name'];
+        $student->last_name = $validated['last_name'];
+        $student->degree_level = $validated['degree_level'];
+        $student->program_name = $validated['program_name'];
+        $student->target_days = $validated['target_days'];
+        $student->accumulated_days = $validated['accumulated_days'];
+        $student->submission_status = $validated['submission_status'];
+
+        if ($validated['submission_status'] === 'APPROVED' && empty($student->approved_at)) {
+            $student->approved_at = now();
+            $student->approved_by = $admin['id'];
+        }
+
+        $student->save();
+
+        return back()->with('success', "แก้ไขข้อมูลนิสิตบัณฑิตศึกษา ({$student->student_code}) เรียบร้อยแล้ว");
+    }
+
+    public function gradStudentDelete($id)
+    {
+        $this->checkAuth();
+        $admin = Session::get('admin_user');
+        $isCentralOrSuper = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
+
+        $student = GradStudent::findOrFail($id);
+
+        if (!$isCentralOrSuper && !empty($admin['org_unit_id']) && $student->org_unit_id != $admin['org_unit_id']) {
+            return back()->with('error', 'ท่านไม่มีสิทธิ์ลบข้อมูลนิสิตของส่วนงานอื่น');
+        }
+
+        $student->delete();
+
+        return back()->with('success', 'ลบข้อมูลนิสิตบัณฑิตศึกษาเรียบร้อยแล้ว');
+    }
+
     public function publicSar(Request $request)
     {
         $this->checkAuth();
@@ -1049,7 +1123,7 @@ class AdminController extends Controller
             DB::raw('count(*) as count')
         )->groupBy('age_group')->get();
 
-        $query = PublicRegistration::with(['event.organizationUnit'])->orderBy('created_at', 'desc');
+        $query = PublicRegistration::with(['event.organizationUnit'])->orderBy('registered_at', 'desc');
 
         // สิทธิ์การเข้าถึงตามส่วนงาน
         if (!$isCentralOrSuper && !empty($admin['org_unit_id'])) {
@@ -1194,6 +1268,53 @@ class AdminController extends Controller
             default:
                 return back()->with('error', 'การดำเนินการไม่ถูกต้อง');
         }
+    }
+
+    public function publicSarUpdate(Request $request, $id)
+    {
+        $this->checkAuth();
+        $admin = Session::get('admin_user');
+        $isCentralOrSuper = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
+
+        $reg = PublicRegistration::with('event')->findOrFail($id);
+
+        if (!$isCentralOrSuper && !empty($admin['org_unit_id']) && $reg->event->org_unit_id != $admin['org_unit_id']) {
+            return back()->with('error', 'ท่านไม่มีสิทธิ์แก้ไขข้อมูลผู้เข้าร่วมของส่วนงานอื่น');
+        }
+
+        $validated = $request->validate([
+            'prefix' => 'nullable|string|max:50',
+            'full_name' => 'required|string|max:150',
+            'age' => 'nullable|integer|min:1|max:120',
+            'gender' => 'required|in:MALE,FEMALE,OTHER',
+            'phone' => 'required|string|max:50',
+            'email' => 'nullable|email|max:100',
+            'province' => 'nullable|string|max:100',
+            'dietary_restriction' => 'nullable|string|max:200',
+            'medical_condition' => 'nullable|string|max:255',
+            'status' => 'required|in:CONFIRMED,WAITING_LIST,ATTENDED,CANCELLED',
+        ]);
+
+        $reg->update($validated);
+
+        return back()->with('success', "แก้ไขข้อมูลผู้สมัคร ({$reg->full_name}) เรียบร้อยแล้ว");
+    }
+
+    public function publicSarDelete($id)
+    {
+        $this->checkAuth();
+        $admin = Session::get('admin_user');
+        $isCentralOrSuper = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
+
+        $reg = PublicRegistration::with('event')->findOrFail($id);
+
+        if (!$isCentralOrSuper && !empty($admin['org_unit_id']) && $reg->event->org_unit_id != $admin['org_unit_id']) {
+            return back()->with('error', 'ท่านไม่มีสิทธิ์ลบข้อมูลผู้เข้าร่วมของส่วนงานอื่น');
+        }
+
+        $reg->delete();
+
+        return back()->with('success', 'ลบข้อมูลผู้สมัครเข้าร่วมเรียบร้อยแล้ว');
     }
 
     public function newsIndex(Request $request)
@@ -1528,29 +1649,47 @@ class AdminController extends Controller
         // รายการส่วนงานทั้งหมดสำหรับการเปรียบเทียบ (52 ส่วนงาน)
         $allOrgUnits = OrganizationUnit::where('is_active', 1)->orderBy('id', 'asc')->get();
 
-        // ตัวเลือกการเปรียบเทียบส่วนงาน (Comparative Analysis: Org A vs Org B)
-        $selectedOrgAId = $request->input('org_a', 10); // default: วิทยาเขตเชียงใหม่
-        $selectedOrgBId = $request->input('org_b', 11); // default: วิทยาเขตขอนแก่น
+        // ดึงสถิติรวมของทุกส่วนงานแบบ Group By ครั้งเดียว (Single Query Batching ป้องกัน N+1)
+        $ugTotals = UgRegistration::select('org_unit_id', DB::raw('count(*) as total'), DB::raw("sum(case when status = 'COMPLETED' then 1 else 0 end) as completed"), DB::raw("sum(case when status in ('CHECKED_IN', 'COMPLETED') then 1 else 0 end) as checkin"))
+            ->groupBy('org_unit_id')
+            ->get()
+            ->keyBy('org_unit_id');
 
-        $orgA = OrganizationUnit::find($selectedOrgAId);
-        $orgB = OrganizationUnit::find($selectedOrgBId);
+        $gradTotals = GradStudent::select('org_unit_id', DB::raw('count(*) as total'), DB::raw("sum(case when degree_level = 'MASTER' then 1 else 0 end) as master_cnt"), DB::raw("sum(case when degree_level = 'DOCTORAL' then 1 else 0 end) as doc_cnt"), DB::raw("sum(case when submission_status = 'APPROVED' then 1 else 0 end) as approved_cnt"), DB::raw("sum(case when submission_status in ('ACCUMULATING', 'SUBMITTED') then 1 else 0 end) as accumulating_cnt"))
+            ->groupBy('org_unit_id')
+            ->get()
+            ->keyBy('org_unit_id');
 
-        $getOrgMetrics = function ($orgId) {
+        $publicTotals = PublicRegistration::join('public_events', 'public_registrations.event_id', '=', 'public_events.id')
+            ->select('public_events.org_unit_id', DB::raw('count(*) as total'))
+            ->groupBy('public_events.org_unit_id')
+            ->get()
+            ->keyBy('org_unit_id');
+
+        $eventTotals = PublicEvent::select('org_unit_id', DB::raw('count(*) as total'))
+            ->groupBy('org_unit_id')
+            ->get()
+            ->keyBy('org_unit_id');
+
+        $getOrgMetrics = function ($orgId) use ($ugTotals, $gradTotals, $publicTotals, $eventTotals) {
             if (!$orgId) return null;
-            $ugTotal = UgRegistration::where('org_unit_id', $orgId)->count();
-            $ugCompleted = UgRegistration::where('org_unit_id', $orgId)->where('status', 'COMPLETED')->count();
-            $ugCheckin = UgRegistration::where('org_unit_id', $orgId)->whereIn('status', ['CHECKED_IN', 'COMPLETED'])->count();
-            
-            $gradTotal = GradStudent::where('org_unit_id', $orgId)->count();
-            $gradMaster = GradStudent::where('org_unit_id', $orgId)->where('degree_level', 'MASTER')->count();
-            $gradDoctoral = GradStudent::where('org_unit_id', $orgId)->where('degree_level', 'DOCTORAL')->count();
-            $gradApproved = GradStudent::where('org_unit_id', $orgId)->where('submission_status', 'APPROVED')->count();
-            $gradAccumulating = GradStudent::where('org_unit_id', $orgId)->whereIn('submission_status', ['ACCUMULATING', 'SUBMITTED'])->count();
+            $ug = $ugTotals->get($orgId);
+            $grad = $gradTotals->get($orgId);
+            $pub = $publicTotals->get($orgId);
+            $evt = $eventTotals->get($orgId);
 
-            $publicTotal = PublicRegistration::whereHas('event', function ($q) use ($orgId) {
-                $q->where('org_unit_id', $orgId);
-            })->count();
-            $eventsCount = PublicEvent::where('org_unit_id', $orgId)->count();
+            $ugTotal = $ug ? (int)$ug->total : 0;
+            $ugCompleted = $ug ? (int)$ug->completed : 0;
+            $ugCheckin = $ug ? (int)$ug->checkin : 0;
+            
+            $gradTotal = $grad ? (int)$grad->total : 0;
+            $gradMaster = $grad ? (int)$grad->master_cnt : 0;
+            $gradDoctoral = $grad ? (int)$grad->doc_cnt : 0;
+            $gradApproved = $grad ? (int)$grad->approved_cnt : 0;
+            $gradAccumulating = $grad ? (int)$grad->accumulating_cnt : 0;
+
+            $publicTotal = $pub ? (int)$pub->total : 0;
+            $eventsCount = $evt ? (int)$evt->total : 0;
 
             $ugPassRate = $ugTotal > 0 ? round(($ugCompleted / $ugTotal) * 100, 1) : 0;
             $gradPassRate = $gradTotal > 0 ? round(($gradApproved / $gradTotal) * 100, 1) : 0;
@@ -1572,12 +1711,18 @@ class AdminController extends Controller
             ];
         };
 
+        // ตัวเลือกการเปรียบเทียบส่วนงาน (Comparative Analysis: Org A vs Org B)
+        $selectedOrgAId = $request->input('org_a', 10); // default: วิทยาเขตเชียงใหม่
+        $selectedOrgBId = $request->input('org_b', 11); // default: วิทยาเขตขอนแก่น
+
+        $orgA = OrganizationUnit::find($selectedOrgAId);
+        $orgB = OrganizationUnit::find($selectedOrgBId);
+
         $metricsA = $getOrgMetrics($selectedOrgAId);
         $metricsB = $getOrgMetrics($selectedOrgBId);
 
         // อันดับสูงสุดของส่วนงานที่มีผู้เข้าร่วมปฏิบัติวิปัสสนามากที่สุด Top 10 (Ranking)
-        $topOrgs = OrganizationUnit::where('is_active', 1)
-            ->get()
+        $topOrgs = $allOrgUnits
             ->map(function ($org) use ($getOrgMetrics) {
                 $m = $getOrgMetrics($org->id);
                 $org->metrics = $m;

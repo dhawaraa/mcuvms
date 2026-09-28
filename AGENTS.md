@@ -82,18 +82,22 @@
 
 ---
 
-## 7. การจัดการแคชและการทำงานกับ Docker (Developer Workflow)
+## 7. การจัดการแคชและการทำงานกับ Podman Container (Developer Workflow)
+ระบบนี้ทำงานบน **Podman Rootless Container** 100% (SELinux Compliant)
 1. **เมื่อแก้ไขไฟล์ Blade Template:**
    - ต้องล้าง Compiled Views เสมอเพื่อให้การเปลี่ยนแปลงแสดงผลทันที:
      ```bash
-     docker exec MCUVMS php artisan view:clear
+     podman exec MCUVMS php artisan view:clear
      ```
 2. **การอัปเดตโครงสร้างฐานข้อมูล:**
-   - รัน Migration และ Seeder ผ่าน Container:
+   - รัน Migration และ Seeder ผ่าน Podman Container:
      ```bash
-     docker exec MCUVMS php artisan migrate
-     docker exec MCUVMS php artisan db:seed
+     podman exec MCUVMS php artisan migrate
+     podman exec MCUVMS php artisan db:seed
      ```
-3. **การตรวจสอบความถูกต้อง:**
+3. **การสั่งเปิด/ปิดระบบ:**
+   - สั่งเปิดระบบ: `podman-compose up -d`
+   - สั่งปิดระบบ: `podman-compose down`
+4. **การตรวจสอบความถูกต้อง:**
    - เข้าตรวจสอบหน้าบ้าน: [http://localhost:8086/](http://localhost:8086/)
    - เข้าตรวจสอบหลังบ้าน: [http://localhost:8086/login.php](http://localhost:8086/login.php) (Admin: `admin` / `password`)

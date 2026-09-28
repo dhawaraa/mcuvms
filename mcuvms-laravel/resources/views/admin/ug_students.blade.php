@@ -10,9 +10,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="/assets/js/lucide.min.js"></script>
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/assets/js/tailwindcss.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -198,10 +198,10 @@
                     <div class="flex flex-wrap items-center gap-2">
                         <select name="bulk_action" id="bulk-action-select" class="px-3 py-1.5 text-xs bg-white border border-[#D5CEBC] rounded-lg text-[#2C3E2D] font-medium focus:ring-1 focus:ring-[#5A6B47]">
                             <option value="">-- เลือกการจัดการจำนวนมาก (Bulk Action) --</option>
-                            <option value="CHECKED_IN">📍 เช็คอินรายงานตัว (Checked-in)</option>
-                            <option value="COMPLETED">✅ บันทึกผ่านเกณฑ์ 10 วัน (Passed)</option>
-                            <option value="REGISTERED">⏳ ปรับสถานะเป็น: ลงทะเบียนแล้ว</option>
-                            <option value="DELETE">🗑️ ลบข้อมูลที่เลือก (Delete)</option>
+                            <option value="CHECKED_IN">เช็คอินรายงานตัว (Checked-in)</option>
+                            <option value="COMPLETED">บันทึกผ่านเกณฑ์ 10 วัน (Passed)</option>
+                            <option value="REGISTERED">ปรับสถานะเป็น: ลงทะเบียนแล้ว</option>
+                            <option value="DELETE">ลบข้อมูลที่เลือก (Delete)</option>
                         </select>
                         <button type="button" onclick="submitBulkAction()" class="bg-[#2C3E2D] hover:bg-[#1E2B1F] text-white px-4 py-1.5 rounded-lg text-xs font-medium shadow-sm transition flex items-center gap-1.5">
                             <i data-lucide="play" class="w-3.5 h-3.5"></i> นำไปใช้ (Apply)
@@ -264,7 +264,48 @@
                                         @endif
                                     </td>
                                     <td class="p-4 text-right space-x-1.5 whitespace-nowrap">
-                                        <!-- Edit Student -->
+                                        <!-- 1. ปุ่มเปลี่ยนสถานะด่วน (วางไว้หน้าสุดตามคำสั่ง) -->
+                                        @if ($r->status === 'REGISTERED')
+                                            <a href="{{ route('admin.ug.checkin', ['id' => $r->id]) }}" class="bg-[#5A6B47] hover:bg-[#2C3E2D] text-white px-2.5 py-1.5 rounded-lg text-xs font-medium inline-flex items-center gap-1 shadow-sm transition">
+                                                <i data-lucide="qr-code" class="w-3.5 h-3.5"></i> เช็คอิน
+                                            </a>
+                                        @elseif ($r->status === 'CHECKED_IN')
+                                            <a href="{{ route('admin.ug.complete', ['id' => $r->id]) }}" class="bg-[#2C3E2D] hover:bg-[#1E2B1F] text-white px-2.5 py-1.5 rounded-lg text-xs font-medium inline-flex items-center gap-1 shadow-sm transition">
+                                                <i data-lucide="check" class="w-3.5 h-3.5"></i> ผ่าน 10 วัน
+                                            </a>
+                                        @else
+                                            <a href="{{ route('ug.certificate', ['reg_no' => $r->registration_no]) }}" target="_blank" title="ดูหนังสือรับรอง e-Certificate" class="p-1.5 bg-[#5A6B47]/15 hover:bg-[#5A6B47]/25 text-[#5A6B47] rounded-lg border border-[#5A6B47]/30 transition inline-flex items-center gap-1">
+                                                <i data-lucide="award" class="w-3.5 h-3.5"></i>
+                                                <span class="text-[10px] font-semibold">ใบรับรอง</span>
+                                            </a>
+                                        @endif
+
+                                        <!-- 2. ปุ่มดูรายละเอียด -->
+                                        <button type="button"
+                                            onclick="openViewStudentModal({
+                                                id: {{ $r->id }},
+                                                registration_no: @js($r->registration_no),
+                                                student_code: @js($r->student_code),
+                                                citizen_id: @js($r->citizen_id),
+                                                full_name: @js($r->prefix . $r->first_name . ' ' . $r->last_name),
+                                                study_year: {{ $r->study_year ?? 1 }},
+                                                phone: @js($r->phone ?? '-'),
+                                                email: @js($r->email ?? '-'),
+                                                faculty: @js($r->faculty ?? '-'),
+                                                major: @js($r->major ?? '-'),
+                                                org_name: @js($r->organizationUnit->name_th ?? 'มจร'),
+                                                batch_title: @js($r->batch->title ?? '-'),
+                                                batch_year: @js($r->batch->academic_year ?? '-'),
+                                                batch_dates: @js(($r->batch->start_date ?? '') . ' ถึง ' . ($r->batch->end_date ?? '')),
+                                                registered_at: @js($r->created_at ? $r->created_at->format('d/m/Y H:i น.') : '-'),
+                                                status: @js($r->status)
+                                            })"
+                                            title="ดูรายละเอียดข้อมูลการลงทะเบียน"
+                                            class="p-1.5 bg-[#FAF8F2] hover:bg-[#5A6B47]/15 text-[#2C3E2D] rounded-lg border border-[#EAE5D9] transition inline-flex items-center">
+                                            <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                                        </button>
+
+                                        <!-- 3. ปุ่มแก้ไขข้อมูล -->
                                         <button type="button"
                                             onclick="openEditStudentModal({
                                                 id: {{ $r->id }},
@@ -287,22 +328,7 @@
                                             <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                                         </button>
 
-                                        @if ($r->status === 'REGISTERED')
-                                            <a href="{{ route('admin.ug.checkin', ['id' => $r->id]) }}" class="bg-[#5A6B47] hover:bg-[#2C3E2D] text-white px-2.5 py-1.5 rounded-lg text-xs font-medium inline-flex items-center gap-1 shadow-sm transition">
-                                                <i data-lucide="qr-code" class="w-3.5 h-3.5"></i> เช็คอิน
-                                            </a>
-                                        @elseif ($r->status === 'CHECKED_IN')
-                                            <a href="{{ route('admin.ug.complete', ['id' => $r->id]) }}" class="bg-[#2C3E2D] hover:bg-[#1E2B1F] text-white px-2.5 py-1.5 rounded-lg text-xs font-medium inline-flex items-center gap-1 shadow-sm transition">
-                                                <i data-lucide="check" class="w-3.5 h-3.5"></i> ผ่าน 10 วัน
-                                            </a>
-                                        @else
-                                            <a href="{{ route('ug.certificate', ['reg_no' => $r->registration_no]) }}" target="_blank" title="ดูหนังสือรับรอง e-Certificate" class="p-1.5 bg-[#5A6B47]/15 hover:bg-[#5A6B47]/25 text-[#5A6B47] rounded-lg border border-[#5A6B47]/30 transition inline-flex items-center gap-1">
-                                                <i data-lucide="award" class="w-3.5 h-3.5"></i>
-                                                <span class="text-[10px] font-semibold">ใบรับรอง</span>
-                                            </a>
-                                        @endif
-
-                                        <!-- Delete Student -->
+                                        <!-- 4. ปุ่มลบ -->
                                         <a href="{{ route('admin.ug.students.delete', ['id' => $r->id]) }}" onclick="return confirm('ยืนยันลบข้อมูลการลงทะเบียนของนิสิตท่านนี้หรือไม่?')" title="ลบข้อมูลการลงทะเบียน" class="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg border border-red-200 transition inline-flex items-center">
                                             <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                                         </a>
@@ -448,7 +474,107 @@
         </div>
     </div>
 
+    <!-- Modal Form: ดูรายละเอียดข้อมูลนิสิต (View Details) -->
+    <div id="view-student-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl border border-[#EAE5D9] shadow-2xl max-w-xl w-full p-6 md:p-8 overflow-y-auto max-h-[90vh]">
+            <div class="flex justify-between items-center pb-4 border-b border-[#EAE5D9] mb-5">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-[#5A6B47]/15 text-[#5A6B47] flex items-center justify-center">
+                        <i data-lucide="user" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-heading font-bold text-[#2C3E2D]">รายละเอียดการลงทะเบียนนิสิต</h3>
+                        <p class="text-xs text-[#7B8D65]" id="view_reg_no_display">รหัสการสมัคร</p>
+                    </div>
+                </div>
+                <button type="button" onclick="document.getElementById('view-student-modal').classList.add('hidden')" class="p-1.5 text-[#8C8275] hover:text-[#2C3E2D] rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4 text-xs">
+                <!-- Status & Identification -->
+                <div class="p-3.5 rounded-2xl bg-[#FAF8F2] border border-[#EAE5D9] flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                        <span class="text-[10px] text-[#7B8D65] block">สถานะปัจจุบัน</span>
+                        <span id="view_status_badge" class="font-bold text-xs"></span>
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-[#7B8D65] block">วันที่บันทึกระบบ</span>
+                        <span id="view_registered_at" class="font-mono text-[#2C3E2D] font-medium">-</span>
+                    </div>
+                </div>
+
+                <!-- Personal Info -->
+                <div class="border border-[#EAE5D9] rounded-2xl p-4 space-y-2.5 bg-white">
+                    <h4 class="font-heading font-bold text-[#2C3E2D] text-xs flex items-center gap-1.5 border-b border-[#FAF8F2] pb-2">
+                        <i data-lucide="id-card" class="w-3.5 h-3.5 text-[#5A6B47]"></i> ข้อมูลประจำตัวนิสิต
+                    </h4>
+                    <div class="grid grid-cols-2 gap-2 text-[#4A3B32]">
+                        <div><span class="text-[#7B8D65]">ชื่อ-สกุล:</span> <strong id="view_full_name" class="text-[#2C3E2D]"></strong></div>
+                        <div><span class="text-[#7B8D65]">รหัสนิสิต:</span> <span id="view_student_code" class="font-mono font-bold text-[#C86D51]"></span></div>
+                        <div><span class="text-[#7B8D65]">เลข ปชช.:</span> <span id="view_citizen_id" class="font-mono"></span></div>
+                        <div><span class="text-[#7B8D65]">ชั้นปี:</span> <span id="view_study_year"></span></div>
+                        <div><span class="text-[#7B8D65]">คณะ:</span> <span id="view_faculty"></span></div>
+                        <div><span class="text-[#7B8D65]">สาขาวิชา:</span> <span id="view_major"></span></div>
+                        <div><span class="text-[#7B8D65]">เบอร์โทร:</span> <span id="view_phone" class="font-mono"></span></div>
+                        <div><span class="text-[#7B8D65]">อีเมล:</span> <span id="view_email" class="font-mono"></span></div>
+                    </div>
+                </div>
+
+                <!-- Organization & Batch -->
+                <div class="border border-[#EAE5D9] rounded-2xl p-4 space-y-2 bg-white">
+                    <h4 class="font-heading font-bold text-[#2C3E2D] text-xs flex items-center gap-1.5 border-b border-[#FAF8F2] pb-2">
+                        <i data-lucide="landmark" class="w-3.5 h-3.5 text-[#5A6B47]"></i> สังกัดและโครงการที่ลงทะเบียน
+                    </h4>
+                    <div class="space-y-1.5 text-[#4A3B32]">
+                        <div><span class="text-[#7B8D65]">ส่วนงาน:</span> <strong id="view_org_name" class="text-[#2C3E2D]"></strong></div>
+                        <div><span class="text-[#7B8D65]">โครงการ:</span> <span id="view_batch_title" class="font-medium text-[#2C3E2D]"></span></div>
+                        <div class="text-[11px] text-[#7B8D65]"><span id="view_batch_dates"></span> (ปีการศึกษา <span id="view_batch_year"></span>)</div>
+                    </div>
+                </div>
+
+                <div class="pt-3 border-t border-[#EAE5D9] flex justify-end">
+                    <button type="button" onclick="document.getElementById('view-student-modal').classList.add('hidden')" class="px-5 py-2 bg-[#2C3E2D] text-white rounded-xl text-xs font-medium hover:bg-[#1E2B1F] transition">
+                        ปิดหน้าต่าง
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        function openViewStudentModal(student) {
+            document.getElementById('view_reg_no_display').innerText = 'เลขที่สมัคร: ' + (student.registration_no || '-');
+            document.getElementById('view_full_name').innerText = student.full_name || '-';
+            document.getElementById('view_student_code').innerText = student.student_code || '-';
+            document.getElementById('view_citizen_id').innerText = student.citizen_id || '-';
+            document.getElementById('view_study_year').innerText = 'ชั้นปีที่ ' + (student.study_year || 1);
+            document.getElementById('view_faculty').innerText = student.faculty || '-';
+            document.getElementById('view_major').innerText = student.major || '-';
+            document.getElementById('view_phone').innerText = student.phone || '-';
+            document.getElementById('view_email').innerText = student.email || '-';
+            document.getElementById('view_org_name').innerText = student.org_name || '-';
+            document.getElementById('view_batch_title').innerText = student.batch_title || '-';
+            document.getElementById('view_batch_dates').innerText = 'ช่วงเวลา: ' + (student.batch_dates || '-');
+            document.getElementById('view_batch_year').innerText = student.batch_year || '-';
+            document.getElementById('view_registered_at').innerText = student.registered_at || '-';
+
+            const badge = document.getElementById('view_status_badge');
+            if (student.status === 'COMPLETED') {
+                badge.className = 'px-3 py-1 rounded-full text-[11px] font-semibold bg-[#5A6B47]/15 text-[#5A6B47] border border-[#5A6B47]/30 inline-block';
+                badge.innerText = 'ผ่านเกณฑ์ 10 วัน (Passed)';
+            } else if (student.status === 'CHECKED_IN') {
+                badge.className = 'px-3 py-1 rounded-full text-[11px] font-semibold bg-[#2C3E2D]/15 text-[#2C3E2D] border border-[#2C3E2D]/30 inline-block';
+                badge.innerText = 'กำลังปฏิบัติธรรม (Checked In)';
+            } else {
+                badge.className = 'px-3 py-1 rounded-full text-[11px] font-semibold bg-[#C86D51]/15 text-[#C86D51] border border-[#C86D51]/30 inline-block';
+                badge.innerText = 'ลงทะเบียนแล้ว (Registered)';
+            }
+
+            document.getElementById('view-student-modal').classList.remove('hidden');
+        }
+
         function openEditStudentModal(student) {
             const form = document.getElementById('edit-student-form');
             form.action = "{{ url('/admin/ug/students/update') }}/" + student.id;

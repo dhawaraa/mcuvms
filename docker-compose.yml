@@ -9,7 +9,7 @@ services:
   # Database Server (MariaDB / MySQL 8.0 Compatible)
   mcuvms-db:
     container_name: MCUVMS-DB
-    image: mariadb:10.6
+    image: docker.io/library/mariadb:10.6
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_mcuvms_pass}
@@ -20,7 +20,7 @@ services:
       - "3310:3306" # Port ภายนอก 3310 (ไม่ชน 3307, 3308, 3390, 3399)
     volumes:
       - mcuvms_db_data:/var/lib/mysql
-      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro,z
     networks:
       - mcuvms-network
     healthcheck:
@@ -42,22 +42,26 @@ services:
     environment:
       APP_ENV: development
       APP_URL: http://localhost:8086
+      DB_CONNECTION: mysql
       DB_HOST: mcuvms-db
       DB_PORT: 3306
+      DB_DATABASE: ${DB_NAME:-mcuvms_db}
+      DB_USERNAME: ${DB_USER:-mcuvms_user}
+      DB_PASSWORD: ${DB_PASSWORD:-mcuvms_password}
       DB_NAME: ${DB_NAME:-mcuvms_db}
       DB_USER: ${DB_USER:-mcuvms_user}
       DB_PASS: ${DB_PASSWORD:-mcuvms_password}
     ports:
       - "8086:80" # Port ภายนอก 8086 สำหรับเว็บไซต์ MCUVMS
     volumes:
-      - ./mcuvms-laravel:/var/www/html
+      - ./mcuvms-laravel:/var/www/html:z
     networks:
       - mcuvms-network
 
   # Database Web GUI (phpMyAdmin)
   mcuvms-pma:
     container_name: MCUVMS-GUI
-    image: phpmyadmin:latest
+    image: docker.io/library/phpmyadmin:latest
     restart: unless-stopped
     depends_on:
       - mcuvms-db

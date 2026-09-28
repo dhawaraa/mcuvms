@@ -10,9 +10,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="/assets/js/lucide.min.js"></script>
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/assets/js/tailwindcss.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -166,9 +166,9 @@
                     <div class="flex flex-wrap items-center gap-2">
                         <select name="bulk_action" id="bulk-action-select" class="px-3 py-1.5 text-xs bg-white border border-[#D5CEBC] rounded-lg text-[#2C3E2D] font-medium focus:ring-1 focus:ring-[#5A6B47]">
                             <option value="">-- เลือกการจัดการจำนวนมาก (Bulk Action) --</option>
-                            <option value="APPROVE">✅ อนุมัติผลการสะสมวัน (Approve All)</option>
-                            <option value="REJECT">↩️ ส่งกลับแก้ไขแฟ้มสะสมวัน (Reject All)</option>
-                            <option value="RESET">⏳ ปรับสถานะกลับเป็น: กำลังสะสมวัน</option>
+                            <option value="APPROVE">อนุมัติผลการสะสมวัน (Approve All)</option>
+                            <option value="REJECT">ส่งกลับแก้ไขแฟ้มสะสมวัน (Reject All)</option>
+                            <option value="RESET">ปรับสถานะกลับเป็น: กำลังสะสมวัน</option>
                         </select>
                         <button type="button" onclick="submitBulkAction()" class="bg-[#2C3E2D] hover:bg-[#1E2B1F] text-white px-4 py-1.5 rounded-lg text-xs font-medium shadow-sm transition flex items-center gap-1.5">
                             <i data-lucide="play" class="w-3.5 h-3.5"></i> นำไปใช้ (Apply)
@@ -240,34 +240,76 @@
                                             </span>
                                         @endif
                                     </td>
-                                    <td class="p-4 text-right space-x-2">
+                                    <td class="p-4 text-right space-x-1.5 whitespace-nowrap">
+                                        <!-- 1. ปุ่มสถานะการอนุมัติ (วางไว้หน้าสุดตามคำสั่ง) -->
                                         @if ($s->submission_status === 'APPROVED')
-                                            <a href="{{ route('grad.certificate', ['code' => $s->student_code]) }}" target="_blank" class="bg-[#5A6B47] hover:bg-[#2C3E2D] text-white px-3 py-1.5 rounded-lg text-xs font-medium inline-flex items-center gap-1 shadow-sm transition">
+                                            <a href="{{ route('grad.certificate', ['code' => $s->student_code]) }}" target="_blank" class="bg-[#5A6B47] hover:bg-[#2C3E2D] text-white px-2.5 py-1.5 rounded-lg text-xs font-medium inline-flex items-center gap-1 shadow-sm transition">
                                                 <i data-lucide="award" class="w-3.5 h-3.5"></i> ใบรับรอง
-                                            </a>
-                                            <a href="{{ route('grad.progress', ['student_code' => $s->student_code]) }}" target="_blank" class="text-[#7B8D65] hover:text-[#2C3E2D] hover:underline font-medium inline-flex items-center gap-1 transition text-xs">
-                                                <i data-lucide="external-link" class="w-3.5 h-3.5"></i> ประวัติ
                                             </a>
                                         @elseif ($s->submission_status === 'SUBMITTED')
                                             <form action="{{ route('admin.grad.approve') }}" method="POST" class="inline-block" onsubmit="return confirm('ยืนยันอนุมัติผลสะสมวันของนิสิตท่านนี้?')">
                                                 @csrf
                                                 <input type="hidden" name="student_id" value="{{ $s->id }}">
-                                                <button type="submit" class="bg-[#5A6B47] hover:bg-[#2C3E2D] text-white px-3 py-1.5 rounded-lg text-xs font-medium inline-flex items-center gap-1 shadow-sm transition">
-                                                    <i data-lucide="check" class="w-3.5 h-3.5"></i> อนุมัติผล
+                                                <button type="submit" class="bg-[#5A6B47] hover:bg-[#2C3E2D] text-white px-2.5 py-1.5 rounded-lg text-xs font-medium inline-flex items-center gap-1 shadow-sm transition">
+                                                    <i data-lucide="check" class="w-3.5 h-3.5"></i> อนุมัติ
                                                 </button>
                                             </form>
                                             <form action="{{ route('admin.grad.reject') }}" method="POST" class="inline-block" onsubmit="return confirm('ส่งกลับให้นิสิตแก้ไข?')">
                                                 @csrf
                                                 <input type="hidden" name="student_id" value="{{ $s->id }}">
-                                                <button type="submit" class="bg-[#C86D51] hover:bg-[#A85238] text-white px-3 py-1.5 rounded-lg text-xs font-medium inline-flex items-center gap-1 shadow-sm transition">
-                                                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> ส่งกลับแก้ไข
+                                                <button type="submit" class="bg-[#C86D51] hover:bg-[#A85238] text-white px-2.5 py-1.5 rounded-lg text-xs font-medium inline-flex items-center gap-1 shadow-sm transition">
+                                                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> ส่งกลับ
                                                 </button>
                                             </form>
-                                        @else
-                                            <a href="{{ route('grad.progress', ['student_code' => $s->student_code]) }}" target="_blank" class="text-[#5A6B47] hover:text-[#2C3E2D] hover:underline font-medium inline-flex items-center gap-1 transition">
-                                                <i data-lucide="external-link" class="w-3.5 h-3.5"></i> ดูประวัติ
-                                            </a>
                                         @endif
+
+                                        <!-- 2. ปุ่มดูรายละเอียด -->
+                                        <button type="button"
+                                            onclick="openViewGradModal({
+                                                id: {{ $s->id }},
+                                                student_code: @js($s->student_code),
+                                                full_name: @js($s->prefix . $s->first_name . ' ' . $s->last_name),
+                                                degree_level: @js($s->degree_level === 'DOCTORAL' ? 'ปริญญาเอก (Doctoral)' : 'ปริญญาโท (Master)'),
+                                                program_name: @js($s->program_name ?? '-'),
+                                                org_name: @js($s->organizationUnit->name_th ?? 'มจร'),
+                                                accumulated_days: {{ $s->accumulated_days }},
+                                                target_days: {{ $s->target_days }},
+                                                status: @js($s->submission_status),
+                                                approved_at: @js($s->approved_at ? \Carbon\Carbon::parse($s->approved_at)->format('d/m/Y H:i น.') : '-')
+                                            })"
+                                            title="ดูรายละเอียดการสะสมวัน"
+                                            class="p-1.5 bg-[#FAF8F2] hover:bg-[#5A6B47]/15 text-[#2C3E2D] rounded-lg border border-[#EAE5D9] transition inline-flex items-center">
+                                            <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                                        </button>
+
+                                        <!-- 3. ปุ่มแก้ไขข้อมูล -->
+                                        <button type="button"
+                                            onclick="openEditGradModal({
+                                                id: {{ $s->id }},
+                                                student_code: @js($s->student_code),
+                                                prefix: @js($s->prefix ?? ''),
+                                                first_name: @js($s->first_name),
+                                                last_name: @js($s->last_name),
+                                                degree_level: @js($s->degree_level),
+                                                program_name: @js($s->program_name ?? ''),
+                                                target_days: {{ $s->target_days }},
+                                                accumulated_days: {{ $s->accumulated_days }},
+                                                submission_status: @js($s->submission_status),
+                                                org_unit_id: {{ $s->org_unit_id }}
+                                            })"
+                                            title="แก้ไขข้อมูลนิสิต"
+                                            class="p-1.5 bg-[#FAF8F2] hover:bg-[#5A6B47]/15 text-[#5A6B47] rounded-lg border border-[#EAE5D9] transition inline-flex items-center">
+                                            <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                                        </button>
+
+                                        <a href="{{ route('grad.progress', ['student_code' => $s->student_code]) }}" target="_blank" title="ดูแฟ้มสะสมวันออนไลน์" class="p-1.5 bg-[#FAF8F2] hover:bg-[#5A6B47]/15 text-[#7B8D65] rounded-lg border border-[#EAE5D9] transition inline-flex items-center">
+                                            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                                        </a>
+
+                                        <!-- 4. ปุ่มลบ -->
+                                        <a href="{{ route('admin.grad.student.delete', ['id' => $s->id]) }}" onclick="return confirm('ยืนยันลบข้อมูลนิสิตบัณฑิตศึกษาท่านนี้หรือไม่?')" title="ลบข้อมูลนิสิต" class="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg border border-red-200 transition inline-flex items-center">
+                                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                        </a>
                                     </td>
                                 </tr>
                             @empty
@@ -292,7 +334,218 @@
 
     </main>
 
+    <!-- Modal: ดูรายละเอียดการสะสมวันนิสิตบัณฑิตศึกษา (View Details) -->
+    <div id="view-grad-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl border border-[#EAE5D9] shadow-2xl max-w-xl w-full p-6 md:p-8 overflow-y-auto max-h-[90vh]">
+            <div class="flex justify-between items-center pb-4 border-b border-[#EAE5D9] mb-5">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-[#5A6B47]/15 text-[#5A6B47] flex items-center justify-center">
+                        <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-heading font-bold text-[#2C3E2D]">รายละเอียดนิสิตบัณฑิตศึกษา</h3>
+                        <p class="text-xs text-[#7B8D65]" id="view_grad_code">รหัสนิสิต</p>
+                    </div>
+                </div>
+                <button type="button" onclick="document.getElementById('view-grad-modal').classList.add('hidden')" class="p-1.5 text-[#8C8275] hover:text-[#2C3E2D] rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4 text-xs">
+                <!-- Status & Progress -->
+                <div class="p-3.5 rounded-2xl bg-[#FAF8F2] border border-[#EAE5D9] flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                        <span class="text-[10px] text-[#7B8D65] block">สถานะการพิจารณา</span>
+                        <span id="view_grad_status_badge" class="font-bold text-xs"></span>
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-[#7B8D65] block">วันที่อนุมัติผล</span>
+                        <span id="view_grad_approved_at" class="font-mono text-[#2C3E2D] font-medium">-</span>
+                    </div>
+                </div>
+
+                <!-- Academic Info -->
+                <div class="border border-[#EAE5D9] rounded-2xl p-4 space-y-2 bg-white">
+                    <h4 class="font-heading font-bold text-[#2C3E2D] text-xs flex items-center gap-1.5 border-b border-[#FAF8F2] pb-2">
+                        <i data-lucide="id-card" class="w-3.5 h-3.5 text-[#5A6B47]"></i> ข้อมูลนิสิตและหลักสูตร
+                    </h4>
+                    <div class="grid grid-cols-2 gap-2 text-[#4A3B32]">
+                        <div><span class="text-[#7B8D65]">ชื่อ-สกุล:</span> <strong id="view_grad_name" class="text-[#2C3E2D]"></strong></div>
+                        <div><span class="text-[#7B8D65]">ระดับการศึกษา:</span> <span id="view_grad_degree" class="font-medium text-[#2C3E2D]"></span></div>
+                        <div class="col-span-2"><span class="text-[#7B8D65]">สาขาวิชา/หลักสูตร:</span> <span id="view_grad_program"></span></div>
+                        <div class="col-span-2"><span class="text-[#7B8D65]">ส่วนงานต้นสังกัด:</span> <strong id="view_grad_org" class="text-[#2C3E2D]"></strong></div>
+                    </div>
+                </div>
+
+                <!-- Meditation Credit Days -->
+                <div class="border border-[#EAE5D9] rounded-2xl p-4 space-y-2 bg-white">
+                    <h4 class="font-heading font-bold text-[#2C3E2D] text-xs flex items-center gap-1.5 border-b border-[#FAF8F2] pb-2">
+                        <i data-lucide="calendar-check" class="w-3.5 h-3.5 text-[#5A6B47]"></i> ความคืบหน้าการสะสมวันปฏิบัติธรรม
+                    </h4>
+                    <div class="flex items-center justify-between text-sm py-2">
+                        <span class="text-[#4A3B32]">จำนวนวันสะสม / เกณฑ์ที่ต้องผ่าน:</span>
+                        <span id="view_grad_days" class="font-bold text-lg text-[#5A6B47]"></span>
+                    </div>
+                </div>
+
+                <div class="pt-3 border-t border-[#EAE5D9] flex justify-end">
+                    <button type="button" onclick="document.getElementById('view-grad-modal').classList.add('hidden')" class="px-5 py-2 bg-[#2C3E2D] text-white rounded-xl text-xs font-medium hover:bg-[#1E2B1F] transition">
+                        ปิดหน้าต่าง
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: แก้ไขข้อมูลนิสิตบัณฑิตศึกษา (Edit Modal) -->
+    <div id="edit-grad-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl border border-[#EAE5D9] shadow-2xl max-w-xl w-full p-6 md:p-8 overflow-y-auto max-h-[90vh]">
+            <div class="flex justify-between items-center pb-4 border-b border-[#EAE5D9] mb-5">
+                <div>
+                    <h3 class="text-lg font-heading font-bold text-[#2C3E2D]">แก้ไขข้อมูลนิสิตบัณฑิตศึกษา</h3>
+                    <p class="text-xs text-[#7B8D65]">แก้ไขข้อมูลหลักสูตร เกณฑ์วันสะสม และสถานะการอนุมัติ</p>
+                </div>
+                <button type="button" onclick="document.getElementById('edit-grad-modal').classList.add('hidden')" class="p-1.5 text-[#8C8275] hover:text-[#2C3E2D] rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form id="edit-grad-form" method="POST" class="space-y-4 text-xs">
+                @csrf
+                @if ($isCentralOrSuper)
+                    <div>
+                        <label class="block font-semibold text-[#4A3B32] mb-1">ส่วนงานต้นสังกัด <span class="text-[#C86D51]">*</span></label>
+                        <select id="edit_grad_org" name="org_unit_id" class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                            @foreach ($orgUnits as $org)
+                                <option value="{{ $org->id }}">{{ $org->name_th }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                @endif
+
+                <div class="grid grid-cols-3 gap-3">
+                    <div>
+                        <label class="block font-semibold text-[#4A3B32] mb-1">รหัสนิสิต <span class="text-[#C86D51]">*</span></label>
+                        <input type="text" id="edit_grad_code" name="student_code" required class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs font-mono focus:ring-1 focus:ring-[#5A6B47]">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-[#4A3B32] mb-1">คำนำหน้า</label>
+                        <input type="text" id="edit_grad_prefix" name="prefix" placeholder="เช่น พระ/พระมหา/นาย" class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-[#4A3B32] mb-1">ชื่อ <span class="text-[#C86D51]">*</span></label>
+                        <input type="text" id="edit_grad_first_name" name="first_name" required class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-[#4A3B32] mb-1">นามสกุล / ฉายา <span class="text-[#C86D51]">*</span></label>
+                        <input type="text" id="edit_grad_last_name" name="last_name" required class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-[#4A3B32] mb-1">ระดับการศึกษา <span class="text-[#C86D51]">*</span></label>
+                        <select id="edit_grad_degree" name="degree_level" required onchange="updateGradTargetDays(this.value)" class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                            <option value="MASTER">ปริญญาโท (30 วัน)</option>
+                            <option value="DOCTORAL">ปริญญาเอก (45 วัน)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-semibold text-[#4A3B32] mb-1">สาขาวิชา / หลักสูตร</label>
+                    <input type="text" id="edit_grad_program" name="program_name" placeholder="เช่น พุทธศาสตรดุษฎีบัณฑิต" class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                </div>
+
+                <div class="grid grid-cols-3 gap-3">
+                    <div>
+                        <label class="block font-semibold text-[#4A3B32] mb-1">วันสะสม (วัน) <span class="text-[#C86D51]">*</span></label>
+                        <input type="number" id="edit_grad_accumulated" name="accumulated_days" min="0" required class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs font-mono font-bold text-[#5A6B47] focus:ring-1 focus:ring-[#5A6B47]">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-[#4A3B32] mb-1">เกณฑ์เป้าหมาย <span class="text-[#C86D51]">*</span></label>
+                        <input type="number" id="edit_grad_target" name="target_days" min="1" required class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs font-mono focus:ring-1 focus:ring-[#5A6B47]">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-[#4A3B32] mb-1">สถานะอนุมัติ <span class="text-[#C86D51]">*</span></label>
+                        <select id="edit_grad_status" name="submission_status" required class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                            <option value="ACCUMULATING">กำลังสะสมวัน</option>
+                            <option value="SUBMITTED">ยื่นขออนุมัติแล้ว (Lock)</option>
+                            <option value="APPROVED">อนุมัติผลสมบูรณ์</option>
+                            <option value="REJECTED">ส่งกลับแก้ไข</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-[#EAE5D9] flex justify-end gap-2.5">
+                    <button type="button" onclick="document.getElementById('edit-grad-modal').classList.add('hidden')" class="px-4 py-2 text-[#6B6357] hover:text-[#2C3E2D] rounded-xl">ยกเลิก</button>
+                    <button type="submit" class="px-5 py-2 bg-[#5A6B47] hover:bg-[#2C3E2D] text-white rounded-xl font-medium shadow-md transition flex items-center gap-1.5">
+                        <i data-lucide="check" class="w-4 h-4"></i>
+                        <span>บันทึกการแก้ไข</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
+        function openViewGradModal(data) {
+            document.getElementById('view_grad_code').innerText = 'รหัสนิสิต: ' + data.student_code;
+            document.getElementById('view_grad_name').innerText = data.full_name;
+            document.getElementById('view_grad_degree').innerText = data.degree_level;
+            document.getElementById('view_grad_program').innerText = data.program_name;
+            document.getElementById('view_grad_org').innerText = data.org_name;
+            document.getElementById('view_grad_days').innerText = data.accumulated_days + ' / ' + data.target_days + ' วัน';
+            document.getElementById('view_grad_approved_at').innerText = data.approved_at;
+
+            const badge = document.getElementById('view_grad_status_badge');
+            if (data.status === 'APPROVED') {
+                badge.className = 'px-3 py-1 rounded-full text-[11px] font-semibold bg-[#5A6B47]/15 text-[#5A6B47] border border-[#5A6B47]/30 inline-block';
+                badge.innerText = 'อนุมัติผ่านเกณฑ์สมบูรณ์';
+            } else if (data.status === 'SUBMITTED') {
+                badge.className = 'px-3 py-1 rounded-full text-[11px] font-semibold bg-[#C86D51]/15 text-[#C86D51] border border-[#C86D51]/30 inline-block';
+                badge.innerText = 'ยื่นขออนุมัติแล้ว (รอตรวจสอบ)';
+            } else if (data.status === 'REJECTED') {
+                badge.className = 'px-3 py-1 rounded-full text-[11px] font-semibold bg-red-100 text-red-800 border border-red-200 inline-block';
+                badge.innerText = 'ส่งกลับแก้ไขแฟ้มสะสมวัน';
+            } else {
+                badge.className = 'px-3 py-1 rounded-full text-[11px] font-semibold bg-[#FAF8F2] text-[#7B8D65] border border-[#EAE5D9] inline-block';
+                badge.innerText = 'กำลังสะสมวันปฏิบัติธรรม';
+            }
+
+            document.getElementById('view-grad-modal').classList.remove('hidden');
+        }
+
+        function openEditGradModal(data) {
+            const form = document.getElementById('edit-grad-form');
+            form.action = "{{ url('/admin/grad/student/update') }}/" + data.id;
+
+            const orgSelect = document.getElementById('edit_grad_org');
+            if (orgSelect && data.org_unit_id) {
+                orgSelect.value = data.org_unit_id;
+            }
+
+            document.getElementById('edit_grad_code').value = data.student_code || '';
+            document.getElementById('edit_grad_prefix').value = data.prefix || '';
+            document.getElementById('edit_grad_first_name').value = data.first_name || '';
+            document.getElementById('edit_grad_last_name').value = data.last_name || '';
+            document.getElementById('edit_grad_degree').value = data.degree_level || 'MASTER';
+            document.getElementById('edit_grad_program').value = data.program_name || '';
+            document.getElementById('edit_grad_accumulated').value = data.accumulated_days || 0;
+            document.getElementById('edit_grad_target').value = data.target_days || 30;
+            document.getElementById('edit_grad_status').value = data.submission_status || 'ACCUMULATING';
+
+            document.getElementById('edit-grad-modal').classList.remove('hidden');
+        }
+
+        function updateGradTargetDays(degree) {
+            const targetInput = document.getElementById('edit_grad_target');
+            if (targetInput) {
+                targetInput.value = (degree === 'DOCTORAL') ? 45 : 30;
+            }
+        }
+
         function toggleSelectAll(master) {
             const checkboxes = document.querySelectorAll('.row-checkbox');
             checkboxes.forEach(cb => cb.checked = master.checked);

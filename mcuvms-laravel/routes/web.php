@@ -94,10 +94,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/grad/approve', [AdminController::class, 'gradApprove'])->name('grad.approve');
     Route::post('/grad/reject', [AdminController::class, 'gradReject'])->name('grad.reject');
     Route::post('/grad/approvals/bulk-action', [AdminController::class, 'gradApprovalsBulkAction'])->name('grad.approvals.bulk');
+    Route::post('/grad/student/update/{id}', [AdminController::class, 'gradStudentUpdate'])->name('grad.student.update');
+    Route::get('/grad/student/delete/{id}', [AdminController::class, 'gradStudentDelete'])->name('grad.student.delete');
 
     Route::get('/public_sar.php', [AdminController::class, 'publicSar'])->name('public.sar');
     Route::get('/public/sar', [AdminController::class, 'publicSar']);
     Route::post('/public/sar/bulk-action', [AdminController::class, 'publicSarBulkAction'])->name('public.sar.bulk');
+    Route::post('/public/sar/update/{id}', [AdminController::class, 'publicSarUpdate'])->name('public.sar.update');
+    Route::get('/public/sar/delete/{id}', [AdminController::class, 'publicSarDelete'])->name('public.sar.delete');
 
     // News Management
     Route::get('/news.php', [AdminController::class, 'newsIndex'])->name('news.index');

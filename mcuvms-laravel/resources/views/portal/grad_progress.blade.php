@@ -10,9 +10,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="/assets/js/lucide.min.js"></script>
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/assets/js/tailwindcss.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -209,8 +209,8 @@
                                     <td class="p-3 text-center font-bold text-[#C86D51]">{{ $c->days_count }} วัน</td>
                                     <td class="p-3">{{ $c->master_name }}</td>
                                     <td class="p-3 text-center">
-                                        <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#E9EFE2] text-[#3D523E] border border-[#CADBC0]">
-                                            ✓ ตรวจสอบแล้ว
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#E9EFE2] text-[#3D523E] border border-[#CADBC0] inline-flex items-center gap-1">
+                                            <i data-lucide="check" class="w-3 h-3 text-[#5A6B47]"></i> ตรวจสอบแล้ว
                                         </span>
                                     </td>
                                 </tr>

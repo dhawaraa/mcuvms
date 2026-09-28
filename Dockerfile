@@ -24,5 +24,8 @@ RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
 
 WORKDIR /var/www/html
 
+# ติดตั้ง Composer เพื่อจัดการ dependencies ของ Laravel
+COPY --from=docker.io/library/composer:2 /usr/bin/composer /usr/bin/composer
+
 EXPOSE 80
 

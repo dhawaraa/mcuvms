@@ -13,9 +13,9 @@
         rel="stylesheet">
 
     <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="/assets/js/lucide.min.js"></script>
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/assets/js/tailwindcss.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -258,6 +258,21 @@
                                 </td>
                                 <td class="p-4 text-right">
                                     <div class="flex items-center justify-end gap-1.5">
+                                        <!-- Quick Status Switch (วางไว้หน้าสุด) -->
+                                        @if ($b->status === 'OPEN')
+                                            <a href="{{ route('admin.ug.batches.status', ['id' => $b->id, 'status' => 'CLOSED']) }}"
+                                                title="กดเพื่อปิดรับสมัครชั่วคราว"
+                                                class="p-1.5 bg-[#FAF8F2] hover:bg-[#EAE5D9] text-[#4A3B32] rounded-lg border border-[#EAE5D9] transition">
+                                                <i data-lucide="pause-circle" class="w-3.5 h-3.5"></i>
+                                            </a>
+                                        @else
+                                            <a href="{{ route('admin.ug.batches.status', ['id' => $b->id, 'status' => 'OPEN']) }}"
+                                                title="กดเพื่อเปิดรับสมัคร"
+                                                class="p-1.5 bg-[#5A6B47]/10 hover:bg-[#5A6B47]/20 text-[#5A6B47] rounded-lg border border-[#5A6B47]/30 transition">
+                                                <i data-lucide="play-circle" class="w-3.5 h-3.5"></i>
+                                            </a>
+                                        @endif
+
                                         <!-- Edit Batch -->
                                         <button type="button" onclick="openEditBatchModal({
                                                     id: {{ $b->id }},
@@ -273,21 +288,6 @@
                                             class="p-1.5 bg-[#FAF8F2] hover:bg-[#5A6B47]/15 text-[#5A6B47] rounded-lg border border-[#EAE5D9] transition">
                                             <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                                         </button>
-
-                                        <!-- Quick Status Switch -->
-                                        @if ($b->status === 'OPEN')
-                                            <a href="{{ route('admin.ug.batches.status', ['id' => $b->id, 'status' => 'CLOSED']) }}"
-                                                title="ปิดรับสมัครชั่วคราว"
-                                                class="p-1.5 bg-[#FAF8F2] hover:bg-[#EAE5D9] text-[#4A3B32] rounded-lg border border-[#EAE5D9] transition">
-                                                <i data-lucide="pause-circle" class="w-3.5 h-3.5"></i>
-                                            </a>
-                                        @else
-                                            <a href="{{ route('admin.ug.batches.status', ['id' => $b->id, 'status' => 'OPEN']) }}"
-                                                title="เปิดรับสมัคร"
-                                                class="p-1.5 bg-[#5A6B47]/10 hover:bg-[#5A6B47]/20 text-[#5A6B47] rounded-lg border border-[#5A6B47]/30 transition">
-                                                <i data-lucide="play-circle" class="w-3.5 h-3.5"></i>
-                                            </a>
-                                        @endif
 
                                         <!-- Delete -->
                                         <a href="{{ route('admin.ug.batches.delete', $b->id) }}"

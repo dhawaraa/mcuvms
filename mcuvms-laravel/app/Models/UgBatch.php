@@ -8,6 +8,7 @@ class UgBatch extends Model
 {
     protected $table = 'ug_batches';
     protected $guarded = [];
+    public $timestamps = false;
 
     public function organizationUnit()
     {

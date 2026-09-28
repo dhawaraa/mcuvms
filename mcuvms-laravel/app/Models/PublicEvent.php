@@ -8,6 +8,7 @@ class PublicEvent extends Model
 {
     protected $table = 'public_events';
     protected $guarded = [];
+    public $timestamps = false;
 
     public function organizationUnit()
     {

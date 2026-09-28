@@ -8,6 +8,7 @@ class PublicRegistration extends Model
 {
     protected $table = 'public_registrations';
     protected $guarded = [];
+    public $timestamps = false;
 
     public function event()
     {
