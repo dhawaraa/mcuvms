@@ -1,0 +1,126 @@
+# ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย (MCUVMS)
+**Mahachulalongkornrajavidyalaya University Vipassana Meditation Information System**
+
+ระบบบริหารจัดการและประมวลผลข้อมูลการปฏิบัติวิปัสสนากรรมฐานของมหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย ครอบคลุมส่วนงานทั่วประเทศ (วิทยาเขต, วิทยาลัยสงฆ์, และส่วนกลาง) พัฒนาบนพื้นฐานของ **Laravel 11, PHP 8.4, MariaDB 10.6, Apache 2.4, และ Tailwind CSS (Blade Views)** เพื่อรองรับการติดตั้งบนโครงสร้างพื้นฐานโฮสติ้งของมหาวิทยาลัยโดยเฉพาะ
+
+---
+
+## 🏛️ สถาปัตยกรรมระบบ (Architecture & Tech Stack)
+
+- **Backend Framework:** Laravel 11.x (PHP 8.4.8)
+- **Web Server:** Apache 2.4.63
+- **Database:** MariaDB 10.6.21
+- **Frontend / Styling:** Blade Views, Tailwind CSS, ฟอนต์ Sarabun / Prompt / Inter
+- **Design System:** Earth Tones / Organic Palette (เขียวมะกอก `#5A6B47`, เขียวป่าลึก `#2C3E2D`, ดินเผา `#C86D51`, ทราย/หินอ่อน `#F7F5EE`, เปลือกไม้ `#4A3B32`)
+- **Icon System:** [Lucide Icons](https://lucide.dev/icons/) 100%
+- **Charts & Visualizations:** Chart.js 4.x
+
+---
+
+## ⚡️ เริ่มต้นใช้งานผ่าน Docker (Quick Start)
+
+ระบบพร้อมรันทันทีผ่าน Docker Compose:
+
+1. **เริ่มระบบ (Start Containers):**
+   ```bash
+   docker compose up -d
+   ```
+
+2. **การเข้าถึงระบบผ่านเบราว์เซอร์:**
+   - **หน้าบ้าน (Portal):** [http://localhost:8086/](http://localhost:8086/)
+   - **หน้าเข้าสู่ระบบหลังบ้าน (Admin Login):** [http://localhost:8086/login.php](http://localhost:8086/login.php)
+   - **ฐานข้อมูล (phpMyAdmin GUI):** [http://localhost:8088/](http://localhost:8088/)
+
+3. **ข้อมูลบัญชีผู้ใช้ระบบหลังบ้าน (Default Credentials):**
+   *(รหัสผ่านทุกบัญชีคือ `password`)*
+   - **Super Admin:** ผู้ใช้ `admin`
+   - **เจ้าหน้าที่ส่วนกลาง (Central Officer):** ผู้ใช้ `central`
+   - **เจ้าหน้าที่วิทยาเขตเชียงใหม่:** ผู้ใช้ `officer_cmi`
+   - **เจ้าหน้าที่วิทยาเขตขอนแก่น:** ผู้ใช้ `officer_kkn`
+
+---
+
+## 📦 โมดูลการทำงานหลัก (Core Business Modules)
+
+### 1. โมดูลระดับปริญญาตรี (Undergraduate - 10 วัน/ปี รวม 40 วัน)
+- จัดการกำหนดการปฏิบัติธรรมประจำปีการศึกษา (`UgBatch`)
+- ระบบนำเข้าข้อมูลนิสิตผ่านไฟล์ CSV พร้อมตรวจความถูกต้อง (`/admin/ug_import.php`)
+- ระบบตรวจสอบสังกัดวิทยาเขตอัตโนมัติ (Campus-Binding Rule) กรองให้นิสิตลงทะเบียนเฉพาะโครงการของวิทยาเขตตนเองเท่านั้น
+- ระบบสแกน QR Code เช็คชื่อหน้างาน (Mobile Scanner - `/admin/ug_scanner.php`)
+- ระบบพิมพ์ใบเซ็นชื่อ A4 Print-ready 10 วัน (`/admin/ug_attendance.php`)
+- ส่งออกข้อมูลทะเบียนนิสิตเป็นไฟล์ CSV/Excel พร้อม UTF-8 BOM (`/admin/ug/export`)
+
+### 2. โมดูลระดับบัณฑิตศึกษา (Graduate - สะสม ป.โท 30 วัน / ป.เอก 45 วัน)
+- ระบบสะสมวันปฏิบัติธรรมและตรวจสอบเกณฑ์ขั้นต่ำ
+- กฎเหล็ก Lock Engine: ไม่อนุญาตให้ยื่นขออนุมัติหากสะสมวันไม่ครบ และล็อกรายการทันทีเมื่อสถานะเป็น SUBMITTED
+- บันทึกผลการพิจารณาของคณะกรรมการและการพิมพ์ใบรับรอง
+
+### 3. โมดูลบริการวิชาการแก่สังคม (Public Meditation Community)
+- เปิดรับสมัครประชาชนและพุทธศาสนิกชนเข้าร่วมโครงการปฏิบัติวิปัสสนากรรมฐาน
+- รายงานสถิติและผลการดำเนินงานระดับชาติจำแนกตามส่วนงาน
+
+### 4. ระบบสถิติ แดชบอร์ด และการวิเคราะห์ข้อมูล
+- **Admin Dashboard (`/admin/dashboard.php`):** การ์ดสรุป KPI สถิติกราฟแท่ง (Bar Chart) จำแนกรายส่วนงาน เปรียบเทียบ 3 กลุ่มเป้าหมาย (ป.ตรี, บัณฑิตศึกษา, บริการวิชาการ) พร้อมตารางสรุป
+- **Executive Analytics (`/admin/executive_analytics.php`):** ระบบวิเคราะห์เปรียบเทียบเชิงลึกระหว่างส่วนงานสำหรับผู้บริหาร
+
+### 5. ระบบข่าวสารและติดต่อสอบถาม
+- **ข่าวสารประชาสัมพันธ์ (`/admin/news.php` / `/news.php`):** จัดการข่าว ปักหมุด กรองหมวดหมู่ บันทึกยอดวิว และแชร์ลิงก์
+- **ติดต่อสอบถาม (`/contact.php` / `/admin/contact_settings.php`):** ฟอร์มรับข้อความหน้าบ้าน และระบบตั้งค่าข้อมูลติดต่อ/กล่องข้อความหลังบ้าน
+
+---
+
+## ⚙️ โครงสร้างเมนูแผงควบคุมหลังบ้าน (Admin Console)
+
+- 📊 **ภาพรวมระบบ**
+  - ภาพรวมระบบ (Dashboard & Campus Bar Chart)
+  - สถิติวิเคราะห์ผู้บริหาร (Executive Analytics)
+- 🧘 **ปฏิบัติธรรม ป.ตรี (40 วัน)**
+  - กำหนดการโครงการ (10 วัน/ปี)
+  - นำเข้าข้อมูลนิสิต (CSV Import)
+  - ทะเบียนและผลการปฏิบัติธรรม
+  - สแกน QR หน้างาน (Mobile Scanner)
+  - พิมพ์ใบเซ็นชื่อ (10 วัน)
+- 🎓 **บัณฑิตศึกษา (30/45 วัน)**
+  - ทะเบียนนิสิตบัณฑิตศึกษา
+  - ตรวจสอบคำขออนุมัติ
+- 👥 **ภาคประชาชน**
+  - โครงการปฏิบัติธรรม
+  - รายงานผลบริการวิชาการแก่สังคม
+- 📰 **ข่าวสารและประกาศ**
+  - จัดการข่าวสารและประกาศ
+- ⚙️ **การตั้งค่าระบบ**
+  - รายชื่อส่วนงานและรหัสย่อ (52 ส่วนงาน)
+  - จัดการผู้ใช้งานและกำหนดสิทธิ์
+  - ตั้งค่าระบบสำหรับติดต่อสอบถาม
+
+---
+
+## 🛠️ คำสั่งสำคัญสำหรับนักพัฒนา (Developer Commands)
+
+```bash
+# ตรวจสอบสถานะ Containers
+docker compose ps
+
+# ล้าง View Cache ของ Laravel เมื่อแก้ไขไฟล์ Blade
+docker exec MCUVMS php artisan view:clear
+
+# สั่ง Migrate ฐานข้อมูล
+docker exec MCUVMS php artisan migrate
+
+# สั่ง Seed ข้อมูลเริ่มต้น
+docker exec MCUVMS php artisan db:seed
+
+# เข้าสู่ Terminal ภายใน Web Container
+docker exec -it MCUVMS bash
+
+# ดู Log ของ Web Server
+docker logs -f MCUVMS
+```
+
+---
+
+## 📚 เอกสารประกอบระบบเพิ่มเติม
+
+- [HANDOFF.md](file:///Users/dhawara/Desktop/WebDEV/0-MCU/MCUVMS/HANDOFF.md) — บันทึกประวัติการพัฒนาและสถานะงานส่งมอบฉบับละเอียด
+- [AGENTS.md](file:///Users/dhawara/Desktop/WebDEV/0-MCU/MCUVMS/AGENTS.md) — กฎเหล็กและข้อกำหนดการเขียนโค้ด (Coding Guidelines & Earth Tones Standard)
+- [BLUEPRINT.md](file:///Users/dhawara/Desktop/WebDEV/0-MCU/MCUVMS/BLUEPRINT.md) — พิมพ์เขียวโครงสร้างข้อมูลและ Business Logic ของระบบ

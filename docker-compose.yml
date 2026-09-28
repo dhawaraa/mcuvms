@@ -1,0 +1,82 @@
+# Docker Compose สำหรับ MCUVMS (ระบบสารสนเทศวิปัสสนากรรมฐาน มจร)
+# จำลองสภาพแวดล้อมจริง: Apache 2.4 + PHP 8.4 + MariaDB/MySQL
+# จัดสรร Port ไม่ให้ซ้ำกับระบบอื่นใน Docker:
+# - Web Server: 8086
+# - MySQL Database: 3310
+# - phpMyAdmin GUI: 8088
+
+services:
+  # Database Server (MariaDB / MySQL 8.0 Compatible)
+  mcuvms-db:
+    container_name: MCUVMS-DB
+    image: mariadb:10.6
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_mcuvms_pass}
+      MYSQL_DATABASE: ${DB_NAME:-mcuvms_db}
+      MYSQL_USER: ${DB_USER:-mcuvms_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-mcuvms_password}
+    ports:
+      - "3310:3306" # Port ภายนอก 3310 (ไม่ชน 3307, 3308, 3390, 3399)
+    volumes:
+      - mcuvms_db_data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - mcuvms-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot_mcuvms_pass"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Apache 2.4 + PHP 8.4 Web Server
+  mcuvms-web:
+    container_name: MCUVMS
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      mcuvms-db:
+        condition: service_healthy
+    environment:
+      APP_ENV: development
+      APP_URL: http://localhost:8086
+      DB_HOST: mcuvms-db
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:-mcuvms_db}
+      DB_USER: ${DB_USER:-mcuvms_user}
+      DB_PASS: ${DB_PASSWORD:-mcuvms_password}
+    ports:
+      - "8086:80" # Port ภายนอก 8086 สำหรับเว็บไซต์ MCUVMS
+    volumes:
+      - ./mcuvms-laravel:/var/www/html
+    networks:
+      - mcuvms-network
+
+  # Database Web GUI (phpMyAdmin)
+  mcuvms-pma:
+    container_name: MCUVMS-GUI
+    image: phpmyadmin:latest
+    restart: unless-stopped
+    depends_on:
+      - mcuvms-db
+    environment:
+      PMA_HOST: mcuvms-db
+      PMA_PORT: 3306
+      PMA_USER: ${DB_USER:-mcuvms_user}
+      PMA_PASSWORD: ${DB_PASSWORD:-mcuvms_password}
+      UPLOAD_LIMIT: 64M
+    ports:
+      - "8088:80" # Port ภายนอก 8088 สำหรับเปิด phpMyAdmin
+    networks:
+      - mcuvms-network
+
+volumes:
+  mcuvms_db_data:
+    name: mcuvms_mariadb_data
+
+networks:
+  mcuvms-network:
+    name: mcuvms-network
+    driver: bridge
