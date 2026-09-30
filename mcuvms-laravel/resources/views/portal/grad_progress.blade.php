@@ -57,12 +57,25 @@
                         <div class="text-xs text-[#6B6357]">มหาจุฬาลงกรณราชวิทยาลัย</div>
                     </div>
                 </a>
-                <div class="flex items-center space-x-4">
-                    <a href="{{ route('home') }}" class="text-[#4A3B32] hover:text-[#C86D51] font-medium text-sm flex items-center gap-1.5 transition">
-                        <i data-lucide="arrow-left" class="w-4 h-4 text-[#5A6B47]"></i> กลับหน้าหลัก
+                <div class="flex items-center space-x-3 sm:space-x-4">
+                    @php
+                        $currentLang = session('locale', 'th');
+                    @endphp
+                    <!-- Language Switcher (TH / EN) -->
+                    <div class="flex items-center bg-[#EAE5D9] p-0.5 rounded-xl border border-[#D5CEBC] text-xs font-bold font-mono">
+                        <a href="{{ route('lang.switch', 'th') }}" title="ภาษาไทย" class="px-2 py-1 rounded-lg transition {{ $currentLang === 'th' ? 'bg-[#5A6B47] text-white shadow-sm' : 'text-[#6B6357] hover:text-[#2C3E2D]' }}">
+                            TH
+                        </a>
+                        <a href="{{ route('lang.switch', 'en') }}" title="English" class="px-2 py-1 rounded-lg transition {{ $currentLang === 'en' ? 'bg-[#5A6B47] text-white shadow-sm' : 'text-[#6B6357] hover:text-[#2C3E2D]' }}">
+                            EN
+                        </a>
+                    </div>
+
+                    <a href="{{ route('home') }}" class="text-[#4A3B32] hover:text-[#C86D51] font-semibold text-[15px] flex items-center gap-1.5 transition">
+                        <i data-lucide="arrow-left" class="w-4.5 h-4.5 text-[#5A6B47]"></i> <span class="hidden sm:inline">กลับหน้าหลัก</span>
                     </a>
-                    <a href="{{ route('login') }}" class="text-[#2C3E2D] hover:text-[#C86D51] font-medium text-sm border border-[#D5CEBC] px-3.5 py-1.5 rounded-lg bg-[#EAE5D9] flex items-center gap-1.5 transition">
-                        <i data-lucide="lock" class="w-3.5 h-3.5 text-[#5A6B47]"></i> เจ้าหน้าที่เข้าระบบ
+                    <a href="{{ route('login') }}" class="text-[#2C3E2D] hover:text-[#C86D51] font-semibold text-sm border border-[#D5CEBC] px-4 py-2 rounded-xl bg-[#EAE5D9] hover:bg-[#DDD7C8] flex items-center gap-1.5 shadow-sm transition">
+                        <i data-lucide="lock" class="w-4 h-4 text-[#5A6B47]"></i> <span class="hidden sm:inline">เจ้าหน้าที่เข้าระบบ</span>
                     </a>
                 </div>
             </div>
@@ -251,7 +264,7 @@
 
     <!-- Footer -->
     <footer class="bg-[#FAF8F2] border-t border-[#E3DEC9] py-6 text-center text-xs text-[#8C8275]">
-        มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย (MCU) • ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน (MCUVMS)
+        มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย  • ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน (MCUVMS)
     </footer>
 
     <script>

@@ -127,26 +127,27 @@ class UndergraduateController extends Controller
         $reg = UgRegistration::create([
             'registration_no' => $reg_no,
             'batch_id' => $validated['batch_id'],
+            'student_id' => $validated['student_code'],
             'student_code' => $validated['student_code'],
             'citizen_id' => $validated['citizen_id'] ?? '0000000000000',
             'id_card_hash' => !empty($validated['citizen_id']) ? hash('sha256', $validated['citizen_id']) : null,
-            'prefix' => $validated['prefix'],
+            'prefix' => $validated['prefix'] ?? null,
             'full_name' => $fullName,
             'first_name' => $validated['first_name'],
-            'last_name' => $validated['last_name'],
+            'last_name' => $validated['last_name'] ?? null,
             'org_unit_id' => $validated['org_unit_id'],
             'faculty' => $masterStudent->faculty ?? null,
             'major' => $masterStudent->major ?? null,
             'class_year' => $validated['study_year'] ?? 1,
             'study_year' => $validated['study_year'] ?? 1,
-            'phone' => $validated['phone'],
-            'email' => $validated['email'],
-            'health_conditions' => $validated['health_conditions'],
-            'emergency_contact' => $validated['emergency_contact'],
-            'status' => 'REGISTERED'
+            'phone' => $validated['phone'] ?? null,
+            'email' => $validated['email'] ?? null,
+            'health_conditions' => $validated['health_conditions'] ?? null,
+            'emergency_contact' => $validated['emergency_contact'] ?? null,
+            'status' => 'PENDING'
         ]);
 
-        return back()->with('success', 'ลงทะเบียนสำเร็จเรียบร้อยแล้ว!')
+        return back()->with('success', 'ส่งคำขอลงทะเบียนสำเร็จเรียบร้อยแล้ว! ข้อมูลของท่านอยู่ระหว่างรอเจ้าหน้าที่ส่วนงานตรวจสอบและอนุมัติสิทธิ์')
                      ->with('regSuccess', $reg_no);
     }
 

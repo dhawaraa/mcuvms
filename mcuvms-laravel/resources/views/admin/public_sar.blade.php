@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>รายงานผลบริการวิชาการแก่สังคม - MCUVMS Admin</title>
+    <title>รายงานสถิติวิปัสสนา - MCUVMS Admin</title>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -67,8 +67,8 @@
     <main class="flex-grow p-6 md:p-10 overflow-y-auto">
         <div class="flex flex-col sm:flex-row justify-between sm:items-center pb-6 mb-8 border-b border-[#D5CEBC] gap-4">
             <div>
-                <h1 class="text-2xl font-heading font-bold text-[#2C3E2D]">รายงานบริการวิชาการแก่สังคม (Module 3)</h1>
-                <p class="text-xs text-[#7B8D65] mt-1 font-medium">สถิติผู้เข้ารับการอบรมด้านจิตตปัญญาและการบริการสังคม มจร</p>
+                <h1 class="text-2xl font-heading font-bold text-[#2C3E2D]">รายงานสถิติวิปัสสนา (โมดูล 3)</h1>
+                <p class="text-xs text-[#7B8D65] mt-1 font-medium">สถิติผู้เข้ารับการอบรมคอร์สวิปัสสนากรรมฐานสำหรับประชาชนและการบริการวิชาการแก่สังคม มจร</p>
             </div>
             <button onclick="window.print()" class="bg-[#5A6B47] hover:bg-[#2C3E2D] text-white px-4 py-2.5 rounded-xl text-xs font-medium shadow-md transition flex items-center gap-2 self-start sm:self-auto">
                 <i data-lucide="printer" class="w-4 h-4"></i> พิมพ์รายงานสรุป
@@ -76,10 +76,10 @@
         </div>
 
         <!-- Summary Stat Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-6">
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-5 mb-6">
             <div class="earth-admin-card p-5">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-xs text-[#7B8D65] font-medium">ยอดผู้สมัครเข้าร่วมทั้งหมด</span>
+                    <span class="text-xs text-[#7B8D65] font-medium">ยอดผู้สมัครทั้งหมด</span>
                     <div class="w-8 h-8 rounded-xl bg-[#5A6B47]/15 text-[#5A6B47] flex items-center justify-center">
                         <i data-lucide="users" class="w-4 h-4"></i>
                     </div>
@@ -88,18 +88,27 @@
             </div>
             <div class="earth-admin-card p-5">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-xs text-[#7B8D65] font-medium">ได้รับสิทธิ์เข้าร่วม (Confirmed)</span>
+                    <span class="text-xs text-amber-700 font-medium">รอการตรวจสอบ (Pending)</span>
+                    <div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center">
+                        <i data-lucide="clock" class="w-4 h-4"></i>
+                    </div>
+                </div>
+                <div class="text-2xl font-heading font-bold text-amber-700 mt-1">{{ number_format($pending_count ?? 0) }} <span class="text-xs text-[#7B8D65] font-normal">ท่าน</span></div>
+            </div>
+            <div class="earth-admin-card p-5">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs text-[#5A6B47] font-medium">อนุมัติสิทธิ์แล้ว (Confirmed)</span>
                     <div class="w-8 h-8 rounded-xl bg-[#5A6B47]/15 text-[#5A6B47] flex items-center justify-center">
-                        <i data-lucide="check" class="w-4 h-4"></i>
+                        <i data-lucide="check-circle-2" class="w-4 h-4"></i>
                     </div>
                 </div>
                 <div class="text-2xl font-heading font-bold text-[#5A6B47] mt-1">{{ number_format($confirmed_count) }} <span class="text-xs text-[#7B8D65] font-normal">ท่าน</span></div>
             </div>
             <div class="earth-admin-card p-5">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-xs text-[#7B8D65] font-medium">บัญชีรายชื่อสำรอง (Waiting List)</span>
+                    <span class="text-xs text-[#C86D51] font-medium">บัญชีสำรอง (Waiting List)</span>
                     <div class="w-8 h-8 rounded-xl bg-[#C86D51]/15 text-[#C86D51] flex items-center justify-center">
-                        <i data-lucide="clock" class="w-4 h-4"></i>
+                        <i data-lucide="hourglass" class="w-4 h-4"></i>
                     </div>
                 </div>
                 <div class="text-2xl font-heading font-bold text-[#C86D51] mt-1">{{ number_format($waiting_count) }} <span class="text-xs text-[#7B8D65] font-normal">ท่าน</span></div>

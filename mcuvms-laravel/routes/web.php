@@ -53,6 +53,20 @@ Route::get('/contact', [HomeController::class, 'contact']);
 Route::post('/contact.php', [HomeController::class, 'contactSubmit'])->name('contact.submit');
 Route::post('/contact', [HomeController::class, 'contactSubmit']);
 
+// Donation Routes (Portal)
+Route::get('/donation.php', [HomeController::class, 'donation'])->name('donation');
+Route::get('/donation', [HomeController::class, 'donation']);
+Route::post('/donation.php', [HomeController::class, 'donationSubmit'])->name('donation.submit');
+Route::post('/donation', [HomeController::class, 'donationSubmit']);
+
+// Language Switch Route
+Route::get('/lang/{locale}', function ($locale) {
+    if (in_array($locale, ['th', 'en'])) {
+        session(['locale' => $locale]);
+    }
+    return redirect()->back();
+})->name('lang.switch');
+
 // Admin Console Routes
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard.php', [AdminController::class, 'dashboard'])->name('dashboard');
@@ -75,6 +89,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/ug/students', [AdminController::class, 'ugStudents']);
     Route::post('/ug/students/update/{id}', [AdminController::class, 'ugStudentUpdate'])->name('ug.students.update');
     Route::get('/ug/students/delete/{id}', [AdminController::class, 'ugStudentDelete'])->name('ug.students.delete');
+    Route::get('/ug/student/approve/{id}', [AdminController::class, 'ugStudentApprove'])->name('ug.student.approve');
+    Route::post('/ug/student/reject/{id}', [AdminController::class, 'ugStudentReject'])->name('ug.student.reject');
     Route::get('/ug/checkin/{id}', [AdminController::class, 'ugCheckin'])->name('ug.checkin');
     Route::get('/ug/complete/{id}', [AdminController::class, 'ugComplete'])->name('ug.complete');
     Route::post('/ug/students/bulk-action', [AdminController::class, 'ugStudentsBulkAction'])->name('ug.students.bulk');
@@ -87,6 +103,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/ug_attendance.php', [AdminController::class, 'ugAttendancePrint'])->name('ug.attendance');
     Route::get('/ug/attendance', [AdminController::class, 'ugAttendancePrint']);
 
+    // Module 1: รายงานสถิติการปฏิบัติธรรม ป.ตรี (SAR & Analytics)
+    Route::get('/ug_sar.php', [AdminController::class, 'ugSar'])->name('ug.sar');
+    Route::get('/ug/sar', [AdminController::class, 'ugSar']);
+
     Route::get('/ug/export', [AdminController::class, 'ugExportRegistrar'])->name('ug.export');
 
     Route::get('/grad_approvals.php', [AdminController::class, 'gradApprovals'])->name('grad.approvals');
@@ -96,6 +116,20 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/grad/approvals/bulk-action', [AdminController::class, 'gradApprovalsBulkAction'])->name('grad.approvals.bulk');
     Route::post('/grad/student/update/{id}', [AdminController::class, 'gradStudentUpdate'])->name('grad.student.update');
     Route::get('/grad/student/delete/{id}', [AdminController::class, 'gradStudentDelete'])->name('grad.student.delete');
+
+    // Module 3: Public Community & Meditation Courses
+    Route::get('/public_events.php', [AdminController::class, 'publicEvents'])->name('public.events');
+    Route::get('/public/events', [AdminController::class, 'publicEvents']);
+    Route::post('/public/events', [AdminController::class, 'publicEventStore'])->name('public.events.store');
+    Route::post('/public/events/update/{id}', [AdminController::class, 'publicEventUpdate'])->name('public.events.update');
+    Route::get('/public/events/status/{id}/{status}', [AdminController::class, 'publicEventStatus'])->name('public.events.status');
+    Route::get('/public/events/delete/{id}', [AdminController::class, 'publicEventDelete'])->name('public.events.delete');
+
+    Route::get('/public_students.php', [AdminController::class, 'publicStudents'])->name('public.students');
+    Route::get('/public/students', [AdminController::class, 'publicStudents']);
+    Route::get('/public/student/approve/{id}', [AdminController::class, 'publicStudentApprove'])->name('public.student.approve');
+    Route::post('/public/student/reject/{id}', [AdminController::class, 'publicStudentReject'])->name('public.student.reject');
+    Route::get('/public/export', [AdminController::class, 'publicExport'])->name('public.export');
 
     Route::get('/public_sar.php', [AdminController::class, 'publicSar'])->name('public.sar');
     Route::get('/public/sar', [AdminController::class, 'publicSar']);
@@ -134,5 +168,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/contact-settings', [AdminController::class, 'contactSettingsUpdate'])->name('contact.settings.update');
     Route::get('/contact-inquiries/status/{id}/{status}', [AdminController::class, 'contactInquiryStatus'])->name('contact.inquiries.status');
     Route::get('/contact-inquiries/delete/{id}', [AdminController::class, 'contactInquiryDelete'])->name('contact.inquiries.delete');
+
+    // 3. Donation Management & Analytics: จัดการการบริจาคและสถิติ
+    Route::get('/donations.php', [AdminController::class, 'donationsIndex'])->name('donations.index');
+    Route::get('/donations', [AdminController::class, 'donationsIndex']);
+    Route::post('/donations/status/{id}', [AdminController::class, 'donationStatus'])->name('donations.status');
+    Route::post('/donations/update/{id}', [AdminController::class, 'donationUpdate'])->name('donations.update');
+    Route::get('/donations/delete/{id}', [AdminController::class, 'donationDelete'])->name('donations.delete');
+    Route::post('/donations/settings', [AdminController::class, 'donationSettingsUpdate'])->name('donations.settings');
+    Route::get('/donations/export', [AdminController::class, 'donationExport'])->name('donations.export');
 });
 

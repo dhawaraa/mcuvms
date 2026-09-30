@@ -72,8 +72,8 @@
                     </div>
                 </a>
                 <div>
-                    <a href="{{ route('home') }}" class="text-[#4A3B32] hover:text-[#C86D51] font-medium text-xs flex items-center gap-1.5 transition">
-                        <i data-lucide="arrow-left" class="w-4 h-4 text-[#5A6B47]"></i> กลับหน้าหลัก
+                    <a href="{{ route('home') }}" class="text-[#4A3B32] hover:text-[#C86D51] font-semibold text-[15px] flex items-center gap-1.5 transition">
+                        <i data-lucide="arrow-left" class="w-4.5 h-4.5 text-[#5A6B47]"></i> กลับหน้าหลัก
                     </a>
                 </div>
             </div>
@@ -185,7 +185,7 @@
 
     <!-- Footer -->
     <footer class="bg-[#FAF8F2] border-t border-[#E3DEC9] py-6 text-center text-xs text-[#8C8275]">
-        ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน (MCUVMS) &bull; มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย
+        มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย  • ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน (MCUVMS)
     </footer>
 
     <script>

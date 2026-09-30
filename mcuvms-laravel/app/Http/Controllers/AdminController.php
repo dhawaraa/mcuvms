@@ -13,6 +13,7 @@ use App\Models\NewsArticle;
 use App\Models\User;
 use App\Models\SiteSetting;
 use App\Models\ContactInquiry;
+use App\Models\Donation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
@@ -581,7 +582,7 @@ class AdminController extends Controller
             'faculty' => 'nullable|string|max:100',
             'major' => 'nullable|string|max:100',
             'batch_id' => 'required|integer',
-            'status' => 'required|in:REGISTERED,CHECKED_IN,COMPLETED',
+            'status' => 'required|in:REGISTERED,PENDING,APPROVED,CHECKED_IN,COMPLETED,REJECTED',
             'org_unit_id' => 'nullable|integer',
         ]);
 
@@ -625,6 +626,46 @@ class AdminController extends Controller
 
         $reg->delete();
         return back()->with('success', 'ลบข้อมูลการลงทะเบียนของนิสิตเรียบร้อยแล้ว');
+    }
+
+    public function ugStudentApprove($id)
+    {
+        $this->checkAuth();
+        $admin = Session::get('admin_user');
+        $isCentralOrSuper = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
+
+        $reg = UgRegistration::findOrFail($id);
+
+        if (!$isCentralOrSuper && $reg->org_unit_id != $admin['org_unit_id']) {
+            return back()->with('error', 'ท่านไม่มีสิทธิ์จัดการข้อมูลนิสิตของส่วนงานอื่น');
+        }
+
+        $reg->status = 'APPROVED';
+        $reg->reject_reason = null;
+        $reg->save();
+
+        return back()->with('success', 'อนุมัติสิทธิ์เข้าร่วมโครงการให้นิสิต (' . $reg->student_code . ' ' . $reg->full_name . ') เรียบร้อยแล้ว');
+    }
+
+    public function ugStudentReject(Request $request, $id)
+    {
+        $this->checkAuth();
+        $admin = Session::get('admin_user');
+        $isCentralOrSuper = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
+
+        $reg = UgRegistration::findOrFail($id);
+
+        if (!$isCentralOrSuper && $reg->org_unit_id != $admin['org_unit_id']) {
+            return back()->with('error', 'ท่านไม่มีสิทธิ์จัดการข้อมูลนิสิตของส่วนงานอื่น');
+        }
+
+        $reason = $request->input('reject_reason', 'คุณสมบัติไม่ตรงตามเกณฑ์ หรือข้อมูลไม่ถูกต้อง');
+
+        $reg->status = 'REJECTED';
+        $reg->reject_reason = $reason;
+        $reg->save();
+
+        return back()->with('success', 'ปฏิเสธคำขอลงทะเบียนของนิสิต (' . $reg->student_code . ' ' . $reg->full_name . ') เรียบร้อยแล้ว');
     }
 
     public function ugCheckin($id)
@@ -691,6 +732,27 @@ class AdminController extends Controller
         }
 
         switch ($action) {
+            case 'APPROVED':
+                $query->update([
+                    'status' => 'APPROVED',
+                    'reject_reason' => null,
+                ]);
+                return back()->with('success', "อนุมัติสิทธิ์เข้าร่วมโครงการจำนวนมากสำเร็จแล้ว ({$count} รายการ)");
+
+            case 'REJECTED':
+                $query->update([
+                    'status' => 'REJECTED',
+                    'reject_reason' => 'ไม่อนุมัติสิทธิ์โดยเจ้าหน้าที่ส่วนงาน (Bulk Action)',
+                ]);
+                return back()->with('success', "ปฏิเสธคำขอลงทะเบียนจำนวนมากสำเร็จแล้ว ({$count} รายการ)");
+
+            case 'PENDING':
+                $query->update([
+                    'status' => 'PENDING',
+                    'checked_in_at' => null,
+                ]);
+                return back()->with('success', "ปรับสถานะเป็นรอตรวจสอบคุณสมบัติ ({$count} รายการ)");
+
             case 'CHECKED_IN':
                 $query->update([
                     'status' => 'CHECKED_IN',
@@ -705,13 +767,6 @@ class AdminController extends Controller
                     'evaluation_score' => 100,
                 ]);
                 return back()->with('success', "บันทึกผ่านเกณฑ์ 10 วัน จำนวนมากสำเร็จแล้ว ({$count} รายการ)");
-
-            case 'REGISTERED':
-                $query->update([
-                    'status' => 'REGISTERED',
-                    'checked_in_at' => null,
-                ]);
-                return back()->with('success', "ปรับสถานะกลับเป็นลงทะเบียนแล้ว ({$count} รายการ)");
 
             case 'DELETE':
                 $query->delete();
@@ -797,6 +852,22 @@ class AdminController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => "ไม่พบข้อมูลนิสิตจากรหัส '{$cleanCode}' ในโครงการนี้ กรุณาตรวจสอบอีกครั้ง"
+            ]);
+        }
+
+        // ตรวจสอบสถานะการอนุมัติสิทธิ์: นิสิตต้องได้รับอนุมัติ (APPROVED) ก่อน จึงจะมีสิทธิ์เข้าเช็คอิน
+        if ($student->status === 'PENDING') {
+            return response()->json([
+                'success' => false,
+                'message' => "คำขอลงทะเบียนของนิสิตท่านนี้ ({$student->student_code} {$student->full_name}) 'อยู่ระหว่างรอเจ้าหน้าที่ตรวจสอบคุณสมบัติ' ยังไม่ได้รับอนุมัติสิทธิ์เข้าร่วมโครงการ"
+            ]);
+        }
+
+        if ($student->status === 'REJECTED') {
+            $reasonText = $student->reject_reason ? " (เหตุผล: {$student->reject_reason})" : "";
+            return response()->json([
+                'success' => false,
+                'message' => "คำขอลงทะเบียนของนิสิตท่านนี้ 'ไม่ผ่านการอนุมัติสิทธิ์'{$reasonText}"
             ]);
         }
 
@@ -964,6 +1035,127 @@ class AdminController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
+    public function ugSar(Request $request)
+    {
+        $this->checkAuth();
+        $admin = Session::get('admin_user');
+        $isCentralOrSuper = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
+
+        // Scope Query ตามสิทธิ์ส่วนงาน
+        $baseQuery = UgRegistration::query();
+        if (!$isCentralOrSuper && !empty($admin['org_unit_id'])) {
+            $baseQuery->where('org_unit_id', $admin['org_unit_id']);
+        }
+
+        // ตัวกรองปีการศึกษา / รุ่นโครงการ
+        $batchId = $request->input('batch_id');
+        $academicYear = $request->input('academic_year');
+        $orgUnitId = $request->input('org_unit_id');
+
+        if ($batchId) {
+            $baseQuery->where('batch_id', $batchId);
+        }
+        if ($academicYear) {
+            $baseQuery->whereHas('batch', function($q) use ($academicYear) {
+                $q->where('academic_year', $academicYear);
+            });
+        }
+        if ($isCentralOrSuper && $orgUnitId) {
+            $baseQuery->where('org_unit_id', $orgUnitId);
+        }
+
+        // 1. KPI Cards ภาพรวม
+        $totalRegistered = (clone $baseQuery)->count();
+        $checkedInCount = (clone $baseQuery)->whereIn('status', ['CHECKED_IN', 'COMPLETED'])->count();
+        $completedCount = (clone $baseQuery)->where('status', 'COMPLETED')->count();
+        $pendingCount = (clone $baseQuery)->where('status', 'REGISTERED')->count();
+        $passRate = $totalRegistered > 0 ? round(($completedCount / $totalRegistered) * 100, 1) : 0;
+        $checkinRate = $totalRegistered > 0 ? round(($checkedInCount / $totalRegistered) * 100, 1) : 0;
+
+        // 2. สถิติแยกตามชั้นปี (ปี 1 - 4)
+        $yearStats = (clone $baseQuery)
+            ->select('study_year', DB::raw('count(*) as total'), 
+                     DB::raw("sum(case when status = 'COMPLETED' then 1 else 0 end) as completed"),
+                     DB::raw("sum(case when status in ('CHECKED_IN', 'COMPLETED') then 1 else 0 end) as checked_in"))
+            ->groupBy('study_year')
+            ->orderBy('study_year', 'asc')
+            ->get();
+
+        // 3. สถิติแยกตามสมณเพศ/เพศ (บรรพชิต vs คฤหัสถ์)
+        $monkPrefixes = ['พระ', 'สามเณร', 'พระมหา', 'พระครู', 'พระปลัด', 'พระสมุห์', 'พระใบฎีกา', 'พระอธิการ', 'แม่ชี'];
+        $monkCount = (clone $baseQuery)->where(function($q) use ($monkPrefixes) {
+            foreach ($monkPrefixes as $p) {
+                $q->orWhere('prefix', 'like', "%{$p}%");
+            }
+        })->count();
+        $laymanCount = max(0, $totalRegistered - $monkCount);
+
+        // 4. สถิติแยกตามส่วนงาน (Organization Units Breakdown)
+        $orgUnitStats = UgRegistration::with('organizationUnit')
+            ->select('org_unit_id',
+                     DB::raw('count(*) as total'),
+                     DB::raw("sum(case when status in ('CHECKED_IN', 'COMPLETED') then 1 else 0 end) as checked_in"),
+                     DB::raw("sum(case when status = 'COMPLETED' then 1 else 0 end) as completed"),
+                     DB::raw("sum(case when status = 'REGISTERED' then 1 else 0 end) as registered_only"))
+            ->when(!$isCentralOrSuper && !empty($admin['org_unit_id']), function($q) use ($admin) {
+                $q->where('org_unit_id', $admin['org_unit_id']);
+            })
+            ->when($batchId, function($q) use ($batchId) {
+                $q->where('batch_id', $batchId);
+            })
+            ->when($academicYear, function($q) use ($academicYear) {
+                $q->whereHas('batch', function($b) use ($academicYear) {
+                    $b->where('academic_year', $academicYear);
+                });
+            })
+            ->when($isCentralOrSuper && $orgUnitId, function($q) use ($orgUnitId) {
+                $q->where('org_unit_id', $orgUnitId);
+            })
+            ->groupBy('org_unit_id')
+            ->orderBy('total', 'desc')
+            ->get();
+
+        // 5. สถิติแยกตามคณะ (Faculty Breakdown)
+        $facultyStats = (clone $baseQuery)
+            ->select(DB::raw("COALESCE(NULLIF(faculty, ''), 'ไม่ระบุคณะ') as faculty_name"),
+                     DB::raw('count(*) as total'),
+                     DB::raw("sum(case when status = 'COMPLETED' then 1 else 0 end) as completed"))
+            ->groupBy('faculty_name')
+            ->orderBy('total', 'desc')
+            ->get();
+
+        // 6. โครงการ/รุ่น และ ส่วนงานสำหรับ Filter Dropdowns
+        $batchQuery = UgBatch::with('organizationUnit')->orderBy('academic_year', 'desc')->orderBy('start_date', 'desc');
+        if (!$isCentralOrSuper && !empty($admin['org_unit_id'])) {
+            $batchQuery->where('org_unit_id', $admin['org_unit_id']);
+        }
+        $batches = $batchQuery->get();
+        $academicYears = UgBatch::select('academic_year')->distinct()->orderBy('academic_year', 'desc')->pluck('academic_year');
+        $orgUnits = OrganizationUnit::where('is_active', 1)->orderBy('id', 'asc')->get();
+
+        return view('admin.ug_sar', compact(
+            'totalRegistered',
+            'checkedInCount',
+            'completedCount',
+            'pendingCount',
+            'passRate',
+            'checkinRate',
+            'yearStats',
+            'monkCount',
+            'laymanCount',
+            'orgUnitStats',
+            'facultyStats',
+            'batches',
+            'academicYears',
+            'orgUnits',
+            'isCentralOrSuper',
+            'admin',
+            'batchId',
+            'academicYear',
+            'orgUnitId'
+        ));
+    }
+
     public function gradApprovals(Request $request)
     {
         $this->checkAuth();
@@ -1106,8 +1298,10 @@ class AdminController extends Controller
         $isCentralOrSuper = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
 
         $total_registered = PublicRegistration::count();
+        $pending_count = PublicRegistration::where('status', 'PENDING')->count();
         $confirmed_count = PublicRegistration::where('status', 'CONFIRMED')->count();
         $waiting_count = PublicRegistration::where('status', 'WAITING_LIST')->count();
+        $rejected_count = PublicRegistration::where('status', 'REJECTED')->count();
 
         $gender_stats = PublicRegistration::select('gender', DB::raw('count(*) as count'))
             ->groupBy('gender')
@@ -1165,7 +1359,7 @@ class AdminController extends Controller
         $events = PublicEvent::orderBy('start_date', 'desc')->get();
         $orgUnits = OrganizationUnit::where('is_active', 1)->orderBy('id', 'asc')->get();
 
-        return view('admin.public_sar', compact('total_registered', 'confirmed_count', 'waiting_count', 'gender_stats', 'age_stats', 'registrations', 'events', 'orgUnits', 'isCentralOrSuper'));
+        return view('admin.public_sar', compact('total_registered', 'pending_count', 'confirmed_count', 'waiting_count', 'rejected_count', 'gender_stats', 'age_stats', 'registrations', 'events', 'orgUnits', 'isCentralOrSuper'));
     }
 
     // จัดการจำนวนมาก (Bulk Action) สำหรับการอนุมัติบัณฑิตศึกษา (Module 2)
@@ -1247,11 +1441,31 @@ class AdminController extends Controller
         switch ($action) {
             case 'CONFIRMED':
                 $query->update(['status' => 'CONFIRMED']);
-                return back()->with('success', "ปรับสถานะเป็น ได้รับสิทธิ์เข้าร่วม (Confirmed) จำนวน {$count} ท่าน");
+                // Recalculate confirmed counts for affected events
+                $affectedEvents = PublicRegistration::whereIn('id', $ids)->pluck('event_id')->unique();
+                foreach ($affectedEvents as $evId) {
+                    $cnt = PublicRegistration::where('event_id', $evId)->where('status', 'CONFIRMED')->count();
+                    PublicEvent::where('id', $evId)->update(['confirmed_count' => $cnt]);
+                }
+                return back()->with('success', "อนุมัติสิทธิ์เข้าร่วม (Confirmed) จำนวน {$count} ท่าน");
 
             case 'WAITING_LIST':
                 $query->update(['status' => 'WAITING_LIST']);
                 return back()->with('success', "ปรับสถานะเป็น รายชื่อสำรอง (Waiting List) จำนวน {$count} ท่าน");
+
+            case 'REJECTED':
+                $query->update(['status' => 'REJECTED']);
+                // Recalculate confirmed counts for affected events
+                $affectedEvents = PublicRegistration::whereIn('id', $ids)->pluck('event_id')->unique();
+                foreach ($affectedEvents as $evId) {
+                    $cnt = PublicRegistration::where('event_id', $evId)->where('status', 'CONFIRMED')->count();
+                    PublicEvent::where('id', $evId)->update(['confirmed_count' => $cnt]);
+                }
+                return back()->with('success', "ปฏิเสธ/ไม่อนุมัติคำขอจำนวน {$count} ท่าน");
+
+            case 'PENDING':
+                $query->update(['status' => 'PENDING']);
+                return back()->with('success', "ปรับสถานะเป็น รอการตรวจสอบ (Pending) จำนวน {$count} ท่าน");
 
             case 'ATTENDED':
                 $query->update(['status' => 'ATTENDED']);
@@ -1262,12 +1476,64 @@ class AdminController extends Controller
                 return back()->with('success', "ปรับสถานะเป็น ยกเลิกการเข้าร่วม จำนวน {$count} ท่าน");
 
             case 'DELETE':
+                $affectedEvents = PublicRegistration::whereIn('id', $ids)->pluck('event_id')->unique();
                 $query->delete();
+                foreach ($affectedEvents as $evId) {
+                    $cnt = PublicRegistration::where('event_id', $evId)->where('status', 'CONFIRMED')->count();
+                    PublicEvent::where('id', $evId)->update(['confirmed_count' => $cnt]);
+                }
                 return back()->with('success', "ลบข้อมูลผู้สมัครเข้าร่วมจำนวนมากสำเร็จ ({$count} รายการ)");
 
             default:
                 return back()->with('error', 'การดำเนินการไม่ถูกต้อง');
         }
+    }
+
+    public function publicStudentApprove($id)
+    {
+        $this->checkAuth();
+        $admin = Session::get('admin_user');
+        $isCentralOrSuper = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
+
+        $reg = PublicRegistration::with('event')->findOrFail($id);
+
+        if (!$isCentralOrSuper && !empty($admin['org_unit_id']) && $reg->event->org_unit_id != $admin['org_unit_id']) {
+            return back()->with('error', 'ท่านไม่มีสิทธิ์อนุมัติผู้สมัครของส่วนงานอื่น');
+        }
+
+        $reg->status = 'CONFIRMED';
+        $reg->reject_reason = null;
+        $reg->save();
+
+        // Update event confirmed count
+        $cnt = PublicRegistration::where('event_id', $reg->event_id)->where('status', 'CONFIRMED')->count();
+        PublicEvent::where('id', $reg->event_id)->update(['confirmed_count' => $cnt]);
+
+        return back()->with('success', "อนุมัติสิทธิ์การเข้าร่วมอบรมของ ({$reg->full_name}) เรียบร้อยแล้ว");
+    }
+
+    public function publicStudentReject(Request $request, $id)
+    {
+        $this->checkAuth();
+        $admin = Session::get('admin_user');
+        $isCentralOrSuper = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
+
+        $reg = PublicRegistration::with('event')->findOrFail($id);
+
+        if (!$isCentralOrSuper && !empty($admin['org_unit_id']) && $reg->event->org_unit_id != $admin['org_unit_id']) {
+            return back()->with('error', 'ท่านไม่มีสิทธิ์ปฏิเสธผู้สมัครของส่วนงานอื่น');
+        }
+
+        $reason = $request->input('reject_reason', 'คุณสมบัติหรือข้อมูลไม่ผ่านเกณฑ์การอบรม');
+        $reg->status = 'REJECTED';
+        $reg->reject_reason = $reason;
+        $reg->save();
+
+        // Update event confirmed count
+        $cnt = PublicRegistration::where('event_id', $reg->event_id)->where('status', 'CONFIRMED')->count();
+        PublicEvent::where('id', $reg->event_id)->update(['confirmed_count' => $cnt]);
+
+        return back()->with('success', "ปฏิเสธคำขอการเข้าร่วมของ ({$reg->full_name}) เรียบร้อยแล้ว (เหตุผล: {$reason})");
     }
 
     public function publicSarUpdate(Request $request, $id)
@@ -1315,6 +1581,297 @@ class AdminController extends Controller
         $reg->delete();
 
         return back()->with('success', 'ลบข้อมูลผู้สมัครเข้าร่วมเรียบร้อยแล้ว');
+    }
+
+    public function publicEvents(Request $request)
+    {
+        $this->checkAuth();
+        $admin = Session::get('admin_user');
+        $isCentralOrSuper = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
+
+        $query = PublicEvent::with(['organizationUnit', 'registrations'])->orderBy('start_date', 'desc');
+
+        if (!$isCentralOrSuper && !empty($admin['org_unit_id'])) {
+            $query->where('org_unit_id', $admin['org_unit_id']);
+        } elseif ($request->filled('filter_org')) {
+            $query->where('org_unit_id', $request->input('filter_org'));
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->input('status'));
+        }
+
+        if ($request->filled('search')) {
+            $s = trim($request->input('search'));
+            $query->where(function ($q) use ($s) {
+                $q->where('title', 'LIKE', "%{$s}%")
+                  ->orWhere('location_name', 'LIKE', "%{$s}%");
+            });
+        }
+
+        $perPage = $this->getPerPage($request);
+        $events = $query->paginate($perPage)->withQueryString();
+        $orgUnits = OrganizationUnit::where('is_active', 1)->orderBy('id', 'asc')->get();
+
+        return view('admin.public_events', compact('events', 'orgUnits', 'isCentralOrSuper'));
+    }
+
+    public function publicEventStore(Request $request)
+    {
+        $this->checkAuth();
+        $admin = Session::get('admin_user');
+        $isCentralOrSuper = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'location_name' => 'required|string|max:255',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'max_quota' => 'required|integer|min:1',
+            'status' => 'required|in:OPEN,CLOSED,COMPLETED',
+            'org_unit_id' => 'nullable|integer',
+        ]);
+
+        $orgUnitId = ($isCentralOrSuper && !empty($validated['org_unit_id']))
+            ? $validated['org_unit_id']
+            : ($admin['org_unit_id'] ?? 1);
+
+        PublicEvent::create([
+            'org_unit_id' => $orgUnitId,
+            'title' => $validated['title'],
+            'location_name' => $validated['location_name'],
+            'start_date' => $validated['start_date'],
+            'end_date' => $validated['end_date'],
+            'max_quota' => $validated['max_quota'],
+            'status' => $validated['status'],
+            'confirmed_count' => 0,
+            'waiting_count' => 0,
+        ]);
+
+        return back()->with('success', 'สร้างคอร์ส/โครงการปฏิบัติธรรมใหม่สำเร็จเรียบร้อยแล้ว');
+    }
+
+    public function publicEventUpdate(Request $request, $id)
+    {
+        $this->checkAuth();
+        $admin = Session::get('admin_user');
+        $isCentralOrSuper = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
+
+        $event = PublicEvent::findOrFail($id);
+
+        if (!$isCentralOrSuper && !empty($admin['org_unit_id']) && $event->org_unit_id != $admin['org_unit_id']) {
+            return back()->with('error', 'ท่านไม่มีสิทธิ์แก้ไขโครงการของส่วนงานอื่น');
+        }
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'location_name' => 'required|string|max:255',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'max_quota' => 'required|integer|min:1',
+            'status' => 'required|in:OPEN,CLOSED,COMPLETED',
+            'org_unit_id' => 'nullable|integer',
+        ]);
+
+        if ($isCentralOrSuper && !empty($validated['org_unit_id'])) {
+            $event->org_unit_id = $validated['org_unit_id'];
+        }
+
+        $event->title = $validated['title'];
+        $event->location_name = $validated['location_name'];
+        $event->start_date = $validated['start_date'];
+        $event->end_date = $validated['end_date'];
+        $event->max_quota = $validated['max_quota'];
+        $event->status = $validated['status'];
+        $event->save();
+
+        return back()->with('success', "แก้ไขข้อมูลโครงการ ({$event->title}) สำเร็จเรียบร้อยแล้ว");
+    }
+
+    public function publicEventStatus($id, $status)
+    {
+        $this->checkAuth();
+        $admin = Session::get('admin_user');
+        $isCentralOrSuper = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
+
+        $event = PublicEvent::findOrFail($id);
+
+        if (!$isCentralOrSuper && !empty($admin['org_unit_id']) && $event->org_unit_id != $admin['org_unit_id']) {
+            return back()->with('error', 'ท่านไม่มีสิทธิ์ปรับสถานะโครงการของส่วนงานอื่น');
+        }
+
+        if (!in_array($status, ['OPEN', 'CLOSED', 'COMPLETED'])) {
+            return back()->with('error', 'สถานะไม่ถูกต้อง');
+        }
+
+        $event->status = $status;
+        $event->save();
+
+        $statusText = ($status === 'OPEN') ? 'เปิดรับสมัคร' : (($status === 'CLOSED') ? 'ปิดรับสมัคร' : 'เสร็จสิ้นโครงการ');
+        return back()->with('success', "เปลี่ยนสถานะโครงการเป็น \"{$statusText}\" เรียบร้อยแล้ว");
+    }
+
+    public function publicEventDelete($id)
+    {
+        $this->checkAuth();
+        $admin = Session::get('admin_user');
+        $isCentralOrSuper = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
+
+        $event = PublicEvent::findOrFail($id);
+
+        if (!$isCentralOrSuper && !empty($admin['org_unit_id']) && $event->org_unit_id != $admin['org_unit_id']) {
+            return back()->with('error', 'ท่านไม่มีสิทธิ์ลบโครงการของส่วนงานอื่น');
+        }
+
+        $event->delete();
+
+        return back()->with('success', 'ลบโครงการปฏิบัติธรรมเรียบร้อยแล้ว');
+    }
+
+    public function publicStudents(Request $request)
+    {
+        $this->checkAuth();
+        $admin = Session::get('admin_user');
+        $isCentralOrSuper = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
+
+        $query = PublicRegistration::with(['event.organizationUnit'])->orderBy('registered_at', 'desc');
+
+        if (!$isCentralOrSuper && !empty($admin['org_unit_id'])) {
+            $query->whereHas('event', function ($q) use ($admin) {
+                $q->where('org_unit_id', $admin['org_unit_id']);
+            });
+        } elseif ($request->filled('filter_org')) {
+            $orgId = $request->input('filter_org');
+            $query->whereHas('event', function ($q) use ($orgId) {
+                $q->where('org_unit_id', $orgId);
+            });
+        }
+
+        if ($request->filled('search')) {
+            $s = trim($request->input('search'));
+            $cleanQueue = preg_replace('/[^0-9]/', '', $s);
+            $query->where(function ($q) use ($s, $cleanQueue) {
+                $q->where('full_name', 'LIKE', "%{$s}%")
+                  ->orWhere('phone', 'LIKE', "%{$s}%")
+                  ->orWhere('citizen_id', 'LIKE', "%{$s}%")
+                  ->orWhere('registration_no', 'LIKE', "%{$s}%");
+                if ($cleanQueue) {
+                    $q->orWhere('queue_no', intval($cleanQueue));
+                }
+            });
+        }
+
+        if ($request->filled('event_id')) {
+            $query->where('event_id', $request->input('event_id'));
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->input('status'));
+        }
+
+        if ($request->filled('applicant_type')) {
+            $query->where('applicant_type', $request->input('applicant_type'));
+        }
+
+        $perPage = $this->getPerPage($request);
+        $registrations = $query->paginate($perPage)->withQueryString();
+        $events = PublicEvent::orderBy('start_date', 'desc')->get();
+        $orgUnits = OrganizationUnit::where('is_active', 1)->orderBy('id', 'asc')->get();
+
+        return view('admin.public_students', compact('registrations', 'events', 'orgUnits', 'isCentralOrSuper'));
+    }
+
+    public function publicExport(Request $request)
+    {
+        $this->checkAuth();
+        $admin = Session::get('admin_user');
+        $isCentralOrSuper = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
+
+        $query = PublicRegistration::with(['event.organizationUnit'])->orderBy('registered_at', 'desc');
+
+        if (!$isCentralOrSuper && !empty($admin['org_unit_id'])) {
+            $query->whereHas('event', function ($q) use ($admin) {
+                $q->where('org_unit_id', $admin['org_unit_id']);
+            });
+        }
+
+        if ($request->filled('event_id')) {
+            $query->where('event_id', $request->input('event_id'));
+        }
+
+        $items = $query->get();
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="public_registrations_' . date('Ymd_His') . '.csv"',
+        ];
+
+        $callback = function () use ($items) {
+            $fh = fopen('php://output', 'w');
+            // Add BOM for UTF-8 Excel support
+            fputs($fh, "\xEF\xBB\xBF");
+
+            fputcsv($fh, [
+                'ลำดับคิว',
+                'เลขที่ลงทะเบียน',
+                'สถานะผู้สมัคร',
+                'รหัสนิสิต (ถ้ามี)',
+                'เลขบัตร ปชช./Passport',
+                'คำนำหน้า',
+                'ชื่อ-นามสกุล',
+                'ฉายา',
+                'เพศ',
+                'อายุ',
+                'พรรษา',
+                'เบอร์โทร',
+                'ที่อยู่',
+                'ตำบล/แขวง',
+                'อำเภอ/เขต',
+                'จังหวัด',
+                'รหัสไปรษณีย์',
+                'ห้องพัก/อาคาร',
+                'ยานพาหนะ/ทะเบียนรถ',
+                'ประเภทอาหาร',
+                'ความต้องการพิเศษ',
+                'โครงการที่เข้าร่วม',
+                'ส่วนงานผู้จัด',
+                'สถานะ',
+                'วันที่ลงทะเบียน'
+            ]);
+
+            foreach ($items as $r) {
+                fputcsv($fh, [
+                    $r->queue_no,
+                    $r->registration_no,
+                    $r->applicant_type === 'STUDENT' ? 'นิสิต มจร' : 'ประชาชนทั่วไป',
+                    $r->student_id ?: '-',
+                    "'" . $r->citizen_id,
+                    $r->prefix,
+                    $r->full_name,
+                    $r->buddhist_name ?: '-',
+                    $r->gender,
+                    $r->age,
+                    $r->vassa ?: 0,
+                    "'" . $r->phone,
+                    $r->address ?: '-',
+                    $r->subdistrict ?: '-',
+                    $r->district ?: '-',
+                    $r->province ?: '-',
+                    $r->postal_code ?: '-',
+                    $r->room_info ?: '-',
+                    $r->vehicle_info ?: '-',
+                    $r->dietary_restriction ?: '-',
+                    $r->congenital_disease ?: '-',
+                    $r->event->title ?? '-',
+                    $r->event->organizationUnit->name_th ?? '-',
+                    $r->status,
+                    $r->registered_at
+                ]);
+            }
+            fclose($fh);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 
     public function newsIndex(Request $request)
@@ -1854,6 +2411,291 @@ class AdminController extends Controller
         ContactInquiry::where('id', $id)->delete();
 
         return back()->with('success', 'ลบข้อความสอบถามเรียบร้อยแล้ว');
+    }
+
+    // ==========================================
+    // Donation Management (ระบบจัดการการบริจาคและสรุปสถิติ)
+    // ==========================================
+    public function donationsIndex(Request $request)
+    {
+        $this->checkAuth();
+
+        $query = Donation::with('verifier')->orderBy('created_at', 'desc');
+
+        // ฟิลเตอร์สถานะ
+        if ($request->filled('status') && $request->status !== 'ALL') {
+            $query->where('status', $request->status);
+        }
+
+        // ฟิลเตอร์ลดหย่อนภาษี
+        if ($request->filled('tax_deductible') && $request->tax_deductible !== 'ALL') {
+            $query->where('is_tax_deductible', $request->tax_deductible == '1');
+        }
+
+        // ฟิลเตอร์ช่วงวันที่
+        if ($request->filled('date_from')) {
+            $query->whereDate('transfer_date', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('transfer_date', '<=', $request->date_to);
+        }
+
+        // ค้นหาคำสำคัญ (ชื่อ, เลขผู้เสียภาษี, เลขที่ใบแจ้ง, เบอร์โทร)
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $query->where(function ($q) use ($search) {
+                $q->where('donor_name', 'like', "%{$search}%")
+                  ->orWhere('tax_id', 'like', "%{$search}%")
+                  ->orWhere('donation_no', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        $donations = $query->paginate(20)->withQueryString();
+
+        // สรุปสถิติรวมทั้งหมด (Analytics & Metrics)
+        $metrics = [
+            'total_count' => Donation::count(),
+            'total_amount' => (float) Donation::sum('amount'),
+            'verified_count' => Donation::where('status', 'VERIFIED')->count(),
+            'verified_amount' => (float) Donation::where('status', 'VERIFIED')->sum('amount'),
+            'pending_count' => Donation::where('status', 'PENDING')->count(),
+            'pending_amount' => (float) Donation::where('status', 'PENDING')->sum('amount'),
+            'rejected_count' => Donation::where('status', 'REJECTED')->count(),
+            'rejected_amount' => (float) Donation::where('status', 'REJECTED')->sum('amount'),
+            'tax_deductible_count' => Donation::where('is_tax_deductible', 1)->count(),
+            'tax_deductible_amount' => (float) Donation::where('is_tax_deductible', 1)->sum('amount'),
+        ];
+
+        // สถิติยอดบริจาคตามเดือน (6 เดือนล่าสุดสำหรับ Chart)
+        $monthlyStats = Donation::select(
+                DB::raw("DATE_FORMAT(transfer_date, '%Y-%m') as month"),
+                DB::raw("COUNT(*) as count"),
+                DB::raw("SUM(amount) as total_amount")
+            )
+            ->whereNotNull('transfer_date')
+            ->groupBy('month')
+            ->orderBy('month', 'desc')
+            ->limit(6)
+            ->get()
+            ->reverse();
+
+        // ข้อมูลการตั้งค่าบัญชีรับบริจาค
+        $donationSettings = SiteSetting::getByGroup('donation');
+
+        return view('admin.donations_index', compact('donations', 'metrics', 'monthlyStats', 'donationSettings'));
+    }
+
+    public function donationStatus(Request $request, $id)
+    {
+        $this->checkAuth();
+
+        $donation = Donation::findOrFail($id);
+        $status = $request->input('status');
+        $adminNotes = $request->input('admin_notes');
+
+        if (!in_array($status, ['PENDING', 'VERIFIED', 'REJECTED'])) {
+            return back()->with('error', 'สถานะไม่ถูกต้อง');
+        }
+
+        $adminUser = Session::get('admin_user');
+
+        $donation->update([
+            'status' => $status,
+            'admin_notes' => $adminNotes ?? $donation->admin_notes,
+            'verified_by' => in_array($status, ['VERIFIED', 'REJECTED']) ? ($adminUser['id'] ?? null) : null,
+            'verified_at' => in_array($status, ['VERIFIED', 'REJECTED']) ? now() : null,
+        ]);
+
+        return back()->with('success', "อัปเดตสถานะการบริจาค [{$donation->donation_no}] เป็น {$status} เรียบร้อยแล้ว");
+    }
+
+    public function donationUpdate(Request $request, $id)
+    {
+        $this->checkAuth();
+
+        $donation = Donation::findOrFail($id);
+
+        $validated = $request->validate([
+            'donor_name' => 'required|string|max:255',
+            'tax_id' => 'nullable|string|max:20',
+            'is_tax_deductible' => 'nullable|boolean',
+            'amount' => 'required|numeric|min:1',
+            'bank_account' => 'required|string|max:150',
+            'transfer_date' => 'required|date',
+            'transfer_time' => 'nullable|string|max:10',
+            'phone' => 'nullable|string|max:50',
+            'email' => 'nullable|email|max:150',
+            'address' => 'nullable|string|max:1000',
+            'purpose' => 'nullable|string|max:255',
+            'note' => 'nullable|string|max:2000',
+            'admin_notes' => 'nullable|string|max:1000',
+            'status' => 'required|in:PENDING,VERIFIED,REJECTED',
+            'slip' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:10240',
+        ]);
+
+        $updateData = [
+            'donor_name' => $validated['donor_name'],
+            'tax_id' => $validated['tax_id'] ?? null,
+            'is_tax_deductible' => $request->boolean('is_tax_deductible'),
+            'amount' => $validated['amount'],
+            'bank_account' => $validated['bank_account'],
+            'transfer_date' => $validated['transfer_date'],
+            'transfer_time' => $validated['transfer_time'] ?? null,
+            'phone' => $validated['phone'] ?? null,
+            'email' => $validated['email'] ?? null,
+            'address' => $validated['address'] ?? null,
+            'purpose' => $validated['purpose'] ?? null,
+            'note' => $validated['note'] ?? null,
+            'admin_notes' => $validated['admin_notes'] ?? null,
+            'status' => $validated['status'],
+        ];
+
+        // หากมีการแนบสลิปใหม่เพิ่มเติม/แทนที่เดิม
+        if ($request->hasFile('slip')) {
+            // ลบสลิปเก่าหากมี
+            if ($donation->slip_path && Storage::disk('public')->exists($donation->slip_path)) {
+                Storage::disk('public')->delete($donation->slip_path);
+            }
+            $slipFile = $request->file('slip');
+            $extension = $slipFile->getClientOriginalExtension();
+            $filename = 'slip_' . date('Ymd_His') . '_' . uniqid() . '.' . $extension;
+            $updateData['slip_path'] = $slipFile->storeAs('donations', $filename, 'public');
+        }
+
+        // หากมีการเปลี่ยนสถานะ
+        $adminUser = Session::get('admin_user');
+        if (in_array($validated['status'], ['VERIFIED', 'REJECTED'])) {
+            $updateData['verified_by'] = $adminUser['id'] ?? null;
+            $updateData['verified_at'] = now();
+        } else {
+            $updateData['verified_by'] = null;
+            $updateData['verified_at'] = null;
+        }
+
+        $donation->update($updateData);
+
+        return back()->with('success', "แก้ไขและบันทึกข้อมูลการบริจาค [{$donation->donation_no}] เรียบร้อยแล้ว");
+    }
+
+    public function donationDelete($id)
+    {
+        $this->checkAuth();
+
+        $donation = Donation::findOrFail($id);
+        
+        // ลบไฟล์สลิปหากมี
+        if ($donation->slip_path && Storage::disk('public')->exists($donation->slip_path)) {
+            Storage::disk('public')->delete($donation->slip_path);
+        }
+
+        $no = $donation->donation_no;
+        $donation->delete();
+
+        return back()->with('success', "ลบรายการบริจาค [{$no}] เรียบร้อยแล้ว");
+    }
+
+    public function donationSettingsUpdate(Request $request)
+    {
+        $this->checkAuth();
+
+        $keys = [
+            'donation_bank_name',
+            'donation_account_name',
+            'donation_account_number',
+            'donation_promptpay',
+            'donation_info_notes',
+        ];
+
+        foreach ($keys as $key) {
+            if ($request->has($key)) {
+                SiteSetting::updateOrInsert(
+                    ['setting_key' => $key],
+                    [
+                        'setting_value' => $request->input($key),
+                        'setting_group' => 'donation',
+                        'updated_at' => now(),
+                    ]
+                );
+            }
+        }
+
+        return back()->with('success', 'บันทึกการตั้งค่าบัญชีรับบริจาคเรียบร้อยแล้ว');
+    }
+
+    public function donationExport(Request $request)
+    {
+        $this->checkAuth();
+
+        $query = Donation::with('verifier')->orderBy('transfer_date', 'desc');
+
+        if ($request->filled('status') && $request->status !== 'ALL') {
+            $query->where('status', $request->status);
+        }
+        if ($request->filled('tax_deductible') && $request->tax_deductible !== 'ALL') {
+            $query->where('is_tax_deductible', $request->tax_deductible == '1');
+        }
+
+        $donations = $query->get();
+
+        $filename = 'MCU_Donations_' . date('Ymd_His') . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ];
+
+        $callback = function () use ($donations) {
+            $output = fopen('php://output', 'w');
+            // Add UTF-8 BOM for Excel in Thai
+            fputs($output, "\xEF\xBB\xBF");
+
+            fputcsv($output, [
+                'ลำดับ',
+                'เลขที่รายการ',
+                'ชื่อ-นามสกุล ผู้บริจาค',
+                'เลขประจำตัวผู้เสียภาษี',
+                'ต้องการลดหย่อนภาษี',
+                'จำนวนเงิน (บาท)',
+                'บัญชีธนาคารปลายทาง',
+                'วันที่โอน',
+                'เวลาที่โอน',
+                'เบอร์โทรศัพท์',
+                'อีเมล',
+                'ที่อยู่สำหรับออกใบเสร็จ',
+                'วัตถุประสงค์',
+                'สถานะ',
+                'หมายเหตุเจ้าหน้าที่',
+                'วันที่บันทึกระบบ'
+            ]);
+
+            $i = 1;
+            foreach ($donations as $d) {
+                fputcsv($output, [
+                    $i++,
+                    $d->donation_no,
+                    $d->donor_name,
+                    $d->tax_id ?? '-',
+                    $d->is_tax_deductible ? 'ใช่ (ลดหย่อนภาษี)' : 'ไม่ลดหย่อน',
+                    number_format($d->amount, 2, '.', ''),
+                    $d->bank_account ?? '-',
+                    $d->transfer_date ? $d->transfer_date->format('Y-m-d') : '-',
+                    $d->transfer_time ?? '-',
+                    $d->phone ?? '-',
+                    $d->email ?? '-',
+                    $d->address ?? '-',
+                    $d->purpose ?? '-',
+                    $d->status,
+                    $d->admin_notes ?? '-',
+                    $d->created_at ? $d->created_at->format('Y-m-d H:i:s') : '-',
+                ]);
+            }
+
+            fclose($output);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 
     private function checkAuth()

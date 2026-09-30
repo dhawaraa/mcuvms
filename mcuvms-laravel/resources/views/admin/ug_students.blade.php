@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <script src="/assets/js/lucide.min.js"></script>
 
     <script src="/assets/js/tailwindcss.min.js"></script>
@@ -130,9 +131,12 @@
 
                     <select name="status" onchange="this.form.submit()" class="px-3 py-1.5 text-xs bg-[#FAF8F2] border border-[#EAE5D9] rounded-lg text-[#2C3E2D] font-medium focus:ring-1 focus:ring-[#5A6B47]">
                         <option value="">-- ทุกสถานะ --</option>
-                        <option value="REGISTERED" {{ request('status') === 'REGISTERED' ? 'selected' : '' }}>ลงทะเบียนแล้ว</option>
-                        <option value="CHECKED_IN" {{ request('status') === 'CHECKED_IN' ? 'selected' : '' }}>กำลังปฏิบัติธรรม (เช็คอิน)</option>
-                        <option value="COMPLETED" {{ request('status') === 'COMPLETED' ? 'selected' : '' }}>ผ่านเกณฑ์ 10 วัน</option>
+                        <option value="PENDING" {{ request('status') === 'PENDING' ? 'selected' : '' }}>รอตรวจสอบ (Pending)</option>
+                        <option value="APPROVED" {{ request('status') === 'APPROVED' ? 'selected' : '' }}>อนุมัติสิทธิ์แล้ว (Approved)</option>
+                        <option value="CHECKED_IN" {{ request('status') === 'CHECKED_IN' ? 'selected' : '' }}>กำลังปฏิบัติธรรม (Checked-in)</option>
+                        <option value="COMPLETED" {{ request('status') === 'COMPLETED' ? 'selected' : '' }}>ผ่านเกณฑ์ 10 วัน (Completed)</option>
+                        <option value="REJECTED" {{ request('status') === 'REJECTED' ? 'selected' : '' }}>ไม่อนุมัติ (Rejected)</option>
+                        <option value="REGISTERED" {{ request('status') === 'REGISTERED' ? 'selected' : '' }}>ลงทะเบียนแล้ว (เดิม)</option>
                     </select>
 
                     @if ($isCentralOrSuper)
@@ -198,9 +202,11 @@
                     <div class="flex flex-wrap items-center gap-2">
                         <select name="bulk_action" id="bulk-action-select" class="px-3 py-1.5 text-xs bg-white border border-[#D5CEBC] rounded-lg text-[#2C3E2D] font-medium focus:ring-1 focus:ring-[#5A6B47]">
                             <option value="">-- เลือกการจัดการจำนวนมาก (Bulk Action) --</option>
+                            <option value="APPROVED">อนุมัติสิทธิ์เข้าร่วม (Approve/Confirmed)</option>
+                            <option value="REJECTED">ปฏิเสธคำขอ (Reject)</option>
+                            <option value="PENDING">ปรับเป็นรอตรวจสอบ (Pending)</option>
                             <option value="CHECKED_IN">เช็คอินรายงานตัว (Checked-in)</option>
                             <option value="COMPLETED">บันทึกผ่านเกณฑ์ 10 วัน (Passed)</option>
-                            <option value="REGISTERED">ปรับสถานะเป็น: ลงทะเบียนแล้ว</option>
                             <option value="DELETE">ลบข้อมูลที่เลือก (Delete)</option>
                         </select>
                         <button type="button" onclick="submitBulkAction()" class="bg-[#2C3E2D] hover:bg-[#1E2B1F] text-white px-4 py-1.5 rounded-lg text-xs font-medium shadow-sm transition flex items-center gap-1.5">
@@ -257,6 +263,18 @@
                                             <span class="inline-flex px-3 py-1 rounded-full text-[11px] font-semibold bg-[#2C3E2D]/15 text-[#2C3E2D] border border-[#2C3E2D]/30 items-center justify-center gap-1">
                                                 <i data-lucide="activity" class="w-3.5 h-3.5"></i> กำลังปฏิบัติธรรม
                                             </span>
+                                        @elseif ($r->status === 'APPROVED')
+                                            <span class="inline-flex px-3 py-1 rounded-full text-[11px] font-semibold bg-[#5A6B47]/20 text-[#5A6B47] border border-[#5A6B47]/40 items-center justify-center gap-1">
+                                                <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> อนุมัติสิทธิ์แล้ว
+                                            </span>
+                                        @elseif ($r->status === 'REJECTED')
+                                            <span class="inline-flex px-3 py-1 rounded-full text-[11px] font-semibold bg-red-100 text-red-700 border border-red-300 items-center justify-center gap-1" title="{{ $r->reject_reason }}">
+                                                <i data-lucide="x-circle" class="w-3.5 h-3.5"></i> ไม่อนุมัติ
+                                            </span>
+                                        @elseif ($r->status === 'PENDING')
+                                            <span class="inline-flex px-3 py-1 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-800 border border-amber-300 items-center justify-center gap-1">
+                                                <i data-lucide="clock" class="w-3.5 h-3.5"></i> รอตรวจสอบ
+                                            </span>
                                         @else
                                             <span class="inline-flex px-3 py-1 rounded-full text-[11px] font-semibold bg-[#C86D51]/15 text-[#C86D51] border border-[#C86D51]/30 items-center justify-center gap-1">
                                                 <i data-lucide="clock" class="w-3.5 h-3.5"></i> ลงทะเบียนแล้ว
@@ -264,23 +282,37 @@
                                         @endif
                                     </td>
                                     <td class="p-4 text-right space-x-1.5 whitespace-nowrap">
-                                        <!-- 1. ปุ่มเปลี่ยนสถานะด่วน (วางไว้หน้าสุดตามคำสั่ง) -->
-                                        @if ($r->status === 'REGISTERED')
-                                            <a href="{{ route('admin.ug.checkin', ['id' => $r->id]) }}" class="bg-[#5A6B47] hover:bg-[#2C3E2D] text-white px-2.5 py-1.5 rounded-lg text-xs font-medium inline-flex items-center gap-1 shadow-sm transition">
+                                        <!-- ปุ่มอนุมัติสิทธิ์ (Approve) -->
+                                        @if ($r->status === 'PENDING' || $r->status === 'REGISTERED')
+                                            <a href="{{ route('admin.ug.student.approve', ['id' => $r->id]) }}" onclick="return confirm('ยืนยันอนุมัติสิทธิ์การเข้าร่วมโครงการของ {{ addslashes($r->full_name) }}?')" title="อนุมัติสิทธิ์เข้าร่วมโครงการ" class="bg-[#5A6B47] hover:bg-[#2C3E2D] text-white px-2.5 py-1.5 rounded-lg text-xs font-medium inline-flex items-center gap-1 shadow-sm transition">
+                                                <i data-lucide="check" class="w-3.5 h-3.5"></i> อนุมัติสิทธิ์
+                                            </a>
+                                            <button type="button" onclick="openUgRejectModal({{ $r->id }}, '{{ addslashes($r->full_name) }}')" title="ปฏิเสธสิทธิ์ (Reject)" class="p-1.5 text-amber-700 hover:bg-amber-100 rounded-lg border border-amber-300 transition inline-flex items-center">
+                                                <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                                            </button>
+                                        @elseif ($r->status === 'APPROVED')
+                                            <a href="{{ route('admin.ug.checkin', ['id' => $r->id]) }}" class="bg-[#2C3E2D] hover:bg-[#1E2B1F] text-white px-2.5 py-1.5 rounded-lg text-xs font-medium inline-flex items-center gap-1 shadow-sm transition" title="เช็คอินเข้าปฏิบัติธรรม">
                                                 <i data-lucide="qr-code" class="w-3.5 h-3.5"></i> เช็คอิน
                                             </a>
+                                            <button type="button" onclick="openUgRejectModal({{ $r->id }}, '{{ addslashes($r->full_name) }}')" title="ยกเลิก/ปฏิเสธสิทธิ์" class="p-1.5 text-red-600 hover:bg-red-50 rounded-lg border border-red-200 transition inline-flex items-center">
+                                                <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                                            </button>
                                         @elseif ($r->status === 'CHECKED_IN')
-                                            <a href="{{ route('admin.ug.complete', ['id' => $r->id]) }}" class="bg-[#2C3E2D] hover:bg-[#1E2B1F] text-white px-2.5 py-1.5 rounded-lg text-xs font-medium inline-flex items-center gap-1 shadow-sm transition">
-                                                <i data-lucide="check" class="w-3.5 h-3.5"></i> ผ่าน 10 วัน
+                                            <a href="{{ route('admin.ug.complete', ['id' => $r->id]) }}" class="bg-[#5A6B47] hover:bg-[#2C3E2D] text-white px-2.5 py-1.5 rounded-lg text-xs font-medium inline-flex items-center gap-1 shadow-sm transition">
+                                                <i data-lucide="check-check" class="w-3.5 h-3.5"></i> ผ่าน 10 วัน
                                             </a>
-                                        @else
+                                        @elseif ($r->status === 'COMPLETED')
                                             <a href="{{ route('ug.certificate', ['reg_no' => $r->registration_no]) }}" target="_blank" title="ดูหนังสือรับรอง e-Certificate" class="p-1.5 bg-[#5A6B47]/15 hover:bg-[#5A6B47]/25 text-[#5A6B47] rounded-lg border border-[#5A6B47]/30 transition inline-flex items-center gap-1">
                                                 <i data-lucide="award" class="w-3.5 h-3.5"></i>
                                                 <span class="text-[10px] font-semibold">ใบรับรอง</span>
                                             </a>
+                                        @elseif ($r->status === 'REJECTED')
+                                            <a href="{{ route('admin.ug.student.approve', ['id' => $r->id]) }}" onclick="return confirm('ยืนยันกลับมาอนุมัติสิทธิ์ให้ {{ addslashes($r->full_name) }} หรือไม่?')" title="กลับมาอนุมัติสิทธิ์" class="p-1.5 text-[#5A6B47] hover:bg-[#5A6B47]/15 rounded-lg border border-[#5A6B47]/30 transition inline-flex items-center">
+                                                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                                            </a>
                                         @endif
 
-                                        <!-- 2. ปุ่มดูรายละเอียด -->
+                                        <!-- ปุ่มดูรายละเอียด -->
                                         <button type="button"
                                             onclick="openViewStudentModal({
                                                 id: {{ $r->id }},
@@ -298,14 +330,15 @@
                                                 batch_year: @js($r->batch->academic_year ?? '-'),
                                                 batch_dates: @js(($r->batch->start_date ?? '') . ' ถึง ' . ($r->batch->end_date ?? '')),
                                                 registered_at: @js($r->created_at ? $r->created_at->format('d/m/Y H:i น.') : '-'),
-                                                status: @js($r->status)
+                                                status: @js($r->status),
+                                                reject_reason: @js($r->reject_reason ?? '')
                                             })"
                                             title="ดูรายละเอียดข้อมูลการลงทะเบียน"
                                             class="p-1.5 bg-[#FAF8F2] hover:bg-[#5A6B47]/15 text-[#2C3E2D] rounded-lg border border-[#EAE5D9] transition inline-flex items-center">
                                             <i data-lucide="eye" class="w-3.5 h-3.5"></i>
                                         </button>
 
-                                        <!-- 3. ปุ่มแก้ไขข้อมูล -->
+                                        <!-- ปุ่มแก้ไขข้อมูล -->
                                         <button type="button"
                                             onclick="openEditStudentModal({
                                                 id: {{ $r->id }},
@@ -328,7 +361,7 @@
                                             <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                                         </button>
 
-                                        <!-- 4. ปุ่มลบ -->
+                                        <!-- ปุ่มลบ -->
                                         <a href="{{ route('admin.ug.students.delete', ['id' => $r->id]) }}" onclick="return confirm('ยืนยันลบข้อมูลการลงทะเบียนของนิสิตท่านนี้หรือไม่?')" title="ลบข้อมูลการลงทะเบียน" class="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg border border-red-200 transition inline-flex items-center">
                                             <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                                         </a>
@@ -457,9 +490,12 @@
                 <div>
                     <label class="block font-semibold text-[#4A3B32] mb-1">สถานะการปฏิบัติธรรม <span class="text-[#C86D51]">*</span></label>
                     <select id="edit_reg_status" name="status" class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
-                        <option value="REGISTERED">ลงทะเบียนแล้ว (Registered)</option>
+                        <option value="PENDING">รอตรวจสอบ (Pending)</option>
+                        <option value="APPROVED">อนุมัติสิทธิ์แล้ว (Approved)</option>
                         <option value="CHECKED_IN">เข้าปฏิบัติธรรม / เช็คอินแล้ว (Checked In)</option>
                         <option value="COMPLETED">ผ่านเกณฑ์ 10 วัน (Completed)</option>
+                        <option value="REJECTED">ไม่อนุมัติ (Rejected)</option>
+                        <option value="REGISTERED">ลงทะเบียนแล้ว (Registered)</option>
                     </select>
                 </div>
 
@@ -567,12 +603,31 @@
             } else if (student.status === 'CHECKED_IN') {
                 badge.className = 'px-3 py-1 rounded-full text-[11px] font-semibold bg-[#2C3E2D]/15 text-[#2C3E2D] border border-[#2C3E2D]/30 inline-block';
                 badge.innerText = 'กำลังปฏิบัติธรรม (Checked In)';
+            } else if (student.status === 'APPROVED') {
+                badge.className = 'px-3 py-1 rounded-full text-[11px] font-semibold bg-[#5A6B47]/20 text-[#5A6B47] border border-[#5A6B47]/40 inline-block';
+                badge.innerText = 'อนุมัติสิทธิ์แล้ว (Approved)';
+            } else if (student.status === 'REJECTED') {
+                badge.className = 'px-3 py-1 rounded-full text-[11px] font-semibold bg-red-100 text-red-700 border border-red-300 inline-block';
+                badge.innerText = 'ไม่อนุมัติ (Rejected)' + (student.reject_reason ? ' : ' + student.reject_reason : '');
+            } else if (student.status === 'PENDING') {
+                badge.className = 'px-3 py-1 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-800 border border-amber-300 inline-block';
+                badge.innerText = 'รอตรวจสอบคุณสมบัติ (Pending)';
             } else {
                 badge.className = 'px-3 py-1 rounded-full text-[11px] font-semibold bg-[#C86D51]/15 text-[#C86D51] border border-[#C86D51]/30 inline-block';
                 badge.innerText = 'ลงทะเบียนแล้ว (Registered)';
             }
 
             document.getElementById('view-student-modal').classList.remove('hidden');
+        }
+
+        function openUgRejectModal(id, studentName) {
+            document.getElementById('reject-student-name').innerText = studentName;
+            document.getElementById('reject-form').action = "{{ url('/admin/ug/student/reject') }}/" + id;
+            document.getElementById('reject-modal').classList.remove('hidden');
+        }
+
+        function closeUgRejectModal() {
+            document.getElementById('reject-modal').classList.add('hidden');
         }
 
         function openEditStudentModal(student) {
@@ -595,7 +650,7 @@
             document.getElementById('edit_faculty').value = student.faculty || '';
             document.getElementById('edit_major').value = student.major || '';
             document.getElementById('edit_batch_id').value = student.batch_id;
-            document.getElementById('edit_reg_status').value = student.status || 'REGISTERED';
+            document.getElementById('edit_reg_status').value = student.status || 'PENDING';
 
             document.getElementById('edit-student-modal').classList.remove('hidden');
         }
@@ -647,5 +702,42 @@
 
         lucide.createIcons();
     </script>
+
+    <!-- Reject Modal -->
+    <div id="reject-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-[#D5CEBC]">
+            <div class="flex items-center gap-3 text-red-600 mb-4">
+                <div class="p-2.5 bg-red-100 rounded-xl">
+                    <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h3 class="font-heading font-bold text-base text-[#2C3E2D]">ปฏิเสธคำขอลงทะเบียน</h3>
+                    <p class="text-xs text-[#7B8D65]">ระบุเหตุผลในการไม่อนุมัติสิทธิ์</p>
+                </div>
+            </div>
+            
+            <p class="text-xs text-[#4A3B32] mb-3">
+                กำลังปฏิเสธคำขอของนิสิต: <strong id="reject-student-name" class="text-red-700"></strong>
+            </p>
+
+            <form id="reject-form" method="POST" action="">
+                @csrf
+                <div class="mb-4">
+                    <label class="block text-xs font-semibold text-[#4A3B32] mb-1">เหตุผลในการปฏิเสธ <span class="text-red-500">*</span></label>
+                    <textarea name="reject_reason" required rows="3" class="w-full text-xs rounded-xl border-[#D5CEBC] bg-[#FAF8F2] p-2.5 text-[#2D2A26] focus:border-red-500 focus:ring-1 focus:ring-red-500" placeholder="เช่น ไม่ใช่นิสิตในวิทยาเขตต้นสังกัด, ติดภารกิจอื่น, คุณสมบัติไม่ครบถ้วน"></textarea>
+                </div>
+
+                <div class="flex items-center justify-end gap-2">
+                    <button type="button" onclick="closeUgRejectModal()" class="px-4 py-2 rounded-xl text-xs font-medium text-[#7B8D65] hover:bg-[#FAF8F2] transition">
+                        ยกเลิก
+                    </button>
+                    <button type="submit" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 hover:bg-red-700 text-white shadow-sm transition flex items-center gap-1.5">
+                        <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                        <span>ยืนยันปฏิเสธสิทธิ์</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

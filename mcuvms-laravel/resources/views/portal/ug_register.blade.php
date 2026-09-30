@@ -73,12 +73,25 @@
                         <div class="text-xs text-[#6B6357]">มหาจุฬาลงกรณราชวิทยาลัย</div>
                     </div>
                 </a>
-                <div class="flex items-center space-x-4">
-                    <a href="{{ route('home') }}" class="text-[#4A3B32] hover:text-[#C86D51] font-medium text-sm flex items-center gap-1.5 transition">
-                        <i data-lucide="arrow-left" class="w-4 h-4 text-[#5A6B47]"></i> กลับหน้าหลัก
+                <div class="flex items-center space-x-3 sm:space-x-4">
+                    @php
+                        $currentLang = session('locale', 'th');
+                    @endphp
+                    <!-- Language Switcher (TH / EN) -->
+                    <div class="flex items-center bg-[#EAE5D9] p-0.5 rounded-xl border border-[#D5CEBC] text-xs font-bold font-mono">
+                        <a href="{{ route('lang.switch', 'th') }}" title="ภาษาไทย" class="px-2 py-1 rounded-lg transition {{ $currentLang === 'th' ? 'bg-[#5A6B47] text-white shadow-sm' : 'text-[#6B6357] hover:text-[#2C3E2D]' }}">
+                            TH
+                        </a>
+                        <a href="{{ route('lang.switch', 'en') }}" title="English" class="px-2 py-1 rounded-lg transition {{ $currentLang === 'en' ? 'bg-[#5A6B47] text-white shadow-sm' : 'text-[#6B6357] hover:text-[#2C3E2D]' }}">
+                            EN
+                        </a>
+                    </div>
+
+                    <a href="{{ route('home') }}" class="text-[#4A3B32] hover:text-[#C86D51] font-semibold text-[15px] flex items-center gap-1.5 transition">
+                        <i data-lucide="arrow-left" class="w-4.5 h-4.5 text-[#5A6B47]"></i> <span class="hidden sm:inline">กลับหน้าหลัก</span>
                     </a>
-                    <a href="{{ route('login') }}" class="text-[#2C3E2D] hover:text-[#C86D51] font-medium text-sm border border-[#D5CEBC] px-3.5 py-1.5 rounded-lg bg-[#EAE5D9] flex items-center gap-1.5 transition">
-                        <i data-lucide="lock" class="w-3.5 h-3.5 text-[#5A6B47]"></i> เจ้าหน้าที่เข้าระบบ
+                    <a href="{{ route('login') }}" class="text-[#2C3E2D] hover:text-[#C86D51] font-semibold text-sm border border-[#D5CEBC] px-4 py-2 rounded-xl bg-[#EAE5D9] hover:bg-[#DDD7C8] flex items-center gap-1.5 shadow-sm transition">
+                        <i data-lucide="lock" class="w-4 h-4 text-[#5A6B47]"></i> <span class="hidden sm:inline">เจ้าหน้าที่เข้าระบบ</span>
                     </a>
                 </div>
             </div>
@@ -111,20 +124,26 @@
 
         @if (session('regSuccess'))
             <div class="bg-white border border-[#D5CEBC] rounded-2xl p-8 shadow-sm text-center mb-8">
-                <div class="w-16 h-16 bg-[#E9EFE2] text-[#3D523E] rounded-full flex items-center justify-center mx-auto mb-4 border border-[#CADBC0]">
-                    <i data-lucide="check" class="w-8 h-8"></i>
+                <div class="w-16 h-16 bg-[#FAF8F2] text-amber-700 rounded-full flex items-center justify-center mx-auto mb-4 border border-amber-300">
+                    <i data-lucide="clock" class="w-8 h-8"></i>
                 </div>
-                <h2 class="text-2xl font-heading font-bold text-[#2C3E2D] mb-2">ลงทะเบียนเรียบร้อยแล้ว</h2>
-                <p class="text-[#6B6357] text-sm mb-6">กรุณาบันทึกหรือพิมพ์บัตรประจำตัวนี้เพื่อใช้ Check-in แสดงตนหน้าสถานที่ปฏิบัติธรรม</p>
+                <h2 class="text-2xl font-heading font-bold text-[#2C3E2D] mb-1">ส่งคำขอลงทะเบียนเรียบร้อยแล้ว</h2>
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 border border-amber-200 text-amber-800 rounded-full text-xs font-semibold mb-4">
+                    <i data-lucide="info" class="w-3.5 h-3.5"></i>
+                    <span>สถานะ: รอเจ้าหน้าที่ส่วนงานตรวจสอบคุณสมบัติ (Pending Approval)</span>
+                </div>
+                <p class="text-[#6B6357] text-xs max-w-lg mx-auto mb-6">
+                    เจ้าหน้าที่ส่วนงาน/วิทยาเขตของท่านจะทำการตรวจสอบความถูกต้องของข้อมูล เมื่อได้รับอนุมัติสิทธิ์ (APPROVED) แล้ว ท่านจึงจะสามารถใช้รหัสหรือ QR Code นี้ในการรายงานตัวเข้าปฏิบัติธรรม ณ วันเปิดโครงการ
+                </p>
                 
                 <div class="inline-block bg-[#F7F5EE] border border-[#D5CEBC] rounded-xl p-6 text-left max-w-sm w-full shadow-inner mb-6">
-                    <div class="text-xs text-[#8C8275] uppercase font-semibold">บัตรลงทะเบียนปฏิบัติธรรม มจร</div>
+                    <div class="text-xs text-[#8C8275] uppercase font-semibold">รหัสอ้างอิงการลงทะเบียน มจร</div>
                     <div class="text-lg font-heading font-bold text-[#C86D51] mt-1">{{ session('regSuccess') }}</div>
                     <div class="mt-4 pt-4 border-t border-[#E3DEC9] flex flex-col items-center">
                         <div class="bg-white p-3 border border-[#D5CEBC] rounded-lg shadow-sm text-center">
                             <img id="qr-image" crossOrigin="anonymous" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=MCUVMS-{{ session('regSuccess') }}" alt="QR Check-in" class="w-40 h-40 mx-auto" />
                             <div class="text-[10px] text-[#8C8275] mt-2 font-mono flex items-center justify-center gap-1">
-                                <i data-lucide="qr-code" class="w-3 h-3 text-[#5A6B47]"></i> Scan for Attendance Check-in
+                                <i data-lucide="qr-code" class="w-3 h-3 text-[#5A6B47]"></i> รหัสตรวจสอบ: MCUVMS-{{ session('regSuccess') }}
                             </div>
                         </div>
                         <button type="button" onclick="downloadQRCode('{{ session('regSuccess') }}')" class="mt-3.5 w-full bg-white hover:bg-[#FAF8F2] text-[#2C3E2D] border border-[#5A6B47]/40 hover:border-[#5A6B47] text-xs font-medium py-2 px-3 rounded-lg shadow-sm transition flex items-center justify-center gap-1.5">
@@ -318,7 +337,7 @@
 
     <!-- Footer -->
     <footer class="bg-[#FAF8F2] border-t border-[#E3DEC9] py-6 text-center text-xs text-[#8C8275]">
-        มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย (MCU) • ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน (MCUVMS)
+        มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย  • ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน (MCUVMS)
     </footer>
 
     <script>

@@ -2,6 +2,7 @@
 .env
 .superpowers/
 .claude/
+cloudflared.log
 
 # Laravel paths
 # mcuvms-laravel/vendor/ (bundled for serverless deployment on Vercel)

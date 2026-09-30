@@ -102,47 +102,101 @@
                     <div>
                         <a href="{{ route('home') }}" class="font-heading font-extrabold text-xl text-[#2C3E2D] tracking-tight leading-tight flex items-center gap-2">
                             MCUVMS
-                            <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-[#EAE5D9] text-[#4A3B32] border border-[#D5CEBC]">มจร</span>
+                            <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-[#EAE5D9] text-[#4A3B32] border border-[#D5CEBC]">{{ __('portal.mcu_short') }}</span>
                         </a>
-                        <p class="text-xs text-[#6B6357] font-medium">ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน</p>
+                        <p class="text-xs text-[#6B6357] font-medium">{{ __('portal.system_title') }}</p>
                     </div>
                 </div>
 
-                <!-- Nav Links: ปฏิทินกำหนดการ, ระดับปริญญาตรี, ระดับบัณฑิตศึกษา, ประชาชนทั่วไป, ติดต่อสอบถาม -->
-                <nav class="hidden lg:flex items-center space-x-7 text-sm font-medium text-[#4A3B32]">
-                    <a href="#calendar" class="hover:text-[#C86D51] transition flex items-center gap-1.5">
-                        <i data-lucide="calendar" class="w-4 h-4 text-[#5A6B47]"></i>
-                        <span>ปฏิทินกำหนดการ</span>
+                <!-- Nav Links: ปฏิทิน (Dropdown), ปริญญาตรี, บัณฑิตศึกษา, ประชาชนทั่วไป, ติดต่อ, ร่วมบริจาค -->
+                <nav class="hidden xl:flex items-center space-x-6 text-[15px] font-semibold text-[#4A3B32]">
+                    <!-- Schedule Dropdown Menu -->
+                    <div class="relative group py-2">
+                        <a href="#calendar" onclick="switchCategory('ALL')" class="hover:text-[#C86D51] transition flex items-center gap-1.5 focus:outline-none whitespace-nowrap py-1">
+                            <i data-lucide="calendar" class="w-4 h-4 text-[#5A6B47]"></i>
+                            <span>{{ __('portal.nav_calendar') }}</span>
+                            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-[#8C8275] group-hover:rotate-180 transition-transform duration-200"></i>
+                        </a>
+                        <!-- Dropdown Panel -->
+                        <div class="absolute left-0 top-full pt-2 w-64 hidden group-hover:block z-50 transition-all">
+                            <div class="bg-white/95 backdrop-blur-md border border-[#D5CEBC] rounded-2xl shadow-xl p-2 space-y-1">
+                                <a href="#calendar" onclick="switchCategory('ALL')" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-[#2C3E2D] hover:bg-[#FAF8F2] transition">
+                                    <span class="w-8 h-8 rounded-lg bg-[#5A6B47]/10 flex items-center justify-center text-[#5A6B47] shrink-0">
+                                        <i data-lucide="calendar-range" class="w-4 h-4"></i>
+                                    </span>
+                                    <div>
+                                        <div class="font-semibold text-sm">{{ __('portal.nav_all_schedules') }}</div>
+                                        <div class="text-xs text-[#7B8D65]">{{ __('portal.nav_all_schedules_desc') }}</div>
+                                    </div>
+                                </a>
+                                <a href="#calendar" onclick="switchCategory('UG')" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-[#2C3E2D] hover:bg-[#FAF8F2] transition">
+                                    <span class="w-8 h-8 rounded-lg bg-[#5A6B47]/15 flex items-center justify-center text-[#5A6B47] shrink-0">
+                                        <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                                    </span>
+                                    <div>
+                                        <div class="font-semibold text-sm text-[#5A6B47]">{{ __('portal.nav_ug_schedules') }}</div>
+                                        <div class="text-xs text-[#7B8D65]">{{ __('portal.nav_ug_schedules_desc') }}</div>
+                                    </div>
+                                </a>
+                                <a href="#calendar" onclick="switchCategory('PUBLIC')" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-[#2C3E2D] hover:bg-[#FAF8F2] transition">
+                                    <span class="w-8 h-8 rounded-lg bg-[#C86D51]/15 flex items-center justify-center text-[#C86D51] shrink-0">
+                                        <i data-lucide="users" class="w-4 h-4"></i>
+                                    </span>
+                                    <div>
+                                        <div class="font-semibold text-sm text-[#C86D51]">{{ __('portal.nav_public_schedules') }}</div>
+                                        <div class="text-xs text-[#7B8D65]">{{ __('portal.nav_public_schedules_desc') }}</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="{{ route('ug.register') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5 whitespace-nowrap py-1">
+                        <i data-lucide="graduation-cap" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
+                        <span>{{ __('portal.nav_ug') }}</span>
                     </a>
-                    <a href="{{ route('ug.register') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5">
-                        <i data-lucide="graduation-cap" class="w-4 h-4 text-[#5A6B47]"></i>
-                        <span>ระดับปริญญาตรี</span>
+                    <a href="{{ route('grad.progress') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5 whitespace-nowrap py-1">
+                        <i data-lucide="scroll" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
+                        <span>{{ __('portal.nav_grad') }}</span>
                     </a>
-                    <a href="{{ route('grad.progress') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5">
-                        <i data-lucide="scroll" class="w-4 h-4 text-[#5A6B47]"></i>
-                        <span>ระดับบัณฑิตศึกษา</span>
+                    <a href="{{ route('public.register') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5 whitespace-nowrap py-1">
+                        <i data-lucide="users" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
+                        <span>{{ __('portal.nav_public') }}</span>
                     </a>
-                    <a href="{{ route('public.register') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5">
-                        <i data-lucide="users" class="w-4 h-4 text-[#5A6B47]"></i>
-                        <span>ประชาชนทั่วไป</span>
+                    <a href="{{ route('contact') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5 whitespace-nowrap py-1">
+                        <i data-lucide="phone-call" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
+                        <span>{{ __('portal.nav_contact') }}</span>
                     </a>
-                    <a href="{{ route('contact') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5">
-                        <i data-lucide="phone-call" class="w-4 h-4 text-[#5A6B47]"></i>
-                        <span>ติดต่อสอบถาม</span>
+                    <a href="{{ route('donation') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5 text-[#C86D51] font-bold whitespace-nowrap py-1">
+                        <i data-lucide="gift" class="w-4.5 h-4.5 text-[#C86D51]"></i>
+                        <span>{{ __('portal.nav_donation') }}</span>
                     </a>
                 </nav>
 
-                <!-- Auth / Admin Button -->
-                <div class="flex items-center space-x-3">
+                <!-- Actions: Language Switcher & Auth / Admin Button -->
+                <div class="flex items-center space-x-2.5">
+                    @php
+                        $currentLang = session('locale', 'th');
+                    @endphp
+                    <!-- Language Switcher (TH / EN) -->
+                    <div class="flex items-center bg-[#EAE5D9] p-0.5 rounded-xl border border-[#D5CEBC] text-xs font-bold font-mono">
+                        <a href="{{ route('lang.switch', 'th') }}" title="ภาษาไทย" class="px-2 py-1 rounded-lg transition {{ $currentLang === 'th' ? 'bg-[#5A6B47] text-white shadow-sm' : 'text-[#6B6357] hover:text-[#2C3E2D]' }}">
+                            TH
+                        </a>
+                        <a href="{{ route('lang.switch', 'en') }}" title="English" class="px-2 py-1 rounded-lg transition {{ $currentLang === 'en' ? 'bg-[#5A6B47] text-white shadow-sm' : 'text-[#6B6357] hover:text-[#2C3E2D]' }}">
+                            EN
+                        </a>
+                    </div>
+
                     @if (Session::has('admin_user'))
-                        <a href="{{ route('admin.dashboard') }}" class="bg-[#2C3E2D] hover:bg-[#3D523E] text-[#F7F4EA] px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-2 shadow-sm transition">
+                        <a href="{{ route('admin.dashboard') }}" title="แผงควบคุมแอดมิน" class="bg-[#2C3E2D] hover:bg-[#3D523E] text-[#F7F4EA] px-3.5 py-2 rounded-xl text-sm font-semibold flex items-center gap-1.5 shadow-sm transition whitespace-nowrap">
                             <i data-lucide="layout-dashboard" class="w-4 h-4 text-[#A3B88C]"></i>
-                            <span>แผงควบคุม</span>
+                            <span class="hidden sm:inline">{{ __('portal.nav_admin_panel') }}</span>
                         </a>
                     @else
-                        <a href="{{ route('login') }}" class="px-4 py-2.5 text-xs font-semibold text-[#4A3B32] hover:text-[#2C3E2D] bg-[#EAE5D9] hover:bg-[#DDD7C8] rounded-xl transition border border-[#D5CEBC] shadow-sm flex items-center gap-2">
-                            <i data-lucide="lock" class="w-3.5 h-3.5 text-[#5A6B47]"></i>
-                            <span>เจ้าหน้าที่เข้าระบบ</span>
+                        <a href="{{ route('login') }}" title="เข้าสู่ระบบเจ้าหน้าที่" class="p-2 sm:px-3.5 sm:py-2 text-sm font-semibold text-[#4A3B32] hover:text-[#2C3E2D] bg-[#EAE5D9] hover:bg-[#DDD7C8] rounded-xl transition border border-[#D5CEBC] shadow-sm flex items-center gap-1.5 whitespace-nowrap">
+                            <i data-lucide="lock" class="w-4 h-4 text-[#5A6B47]"></i>
+                            <span class="hidden sm:inline">{{ __('portal.nav_admin_login') }}</span>
                         </a>
                     @endif
                 </div>
@@ -156,18 +210,18 @@
             
             <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#EAE5D9] border border-[#D5CEBC] text-[#4A3B32] text-xs font-semibold mb-6 shadow-sm">
                 <i data-lucide="leaf" class="w-3.5 h-3.5 text-[#5A6B47]"></i>
-                <span>ศูนย์ประสานงานวิปัสสนากรรมฐาน มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย</span>
+                <span>{{ __('portal.system_subtitle') }}</span>
             </div>
 
             <h1 class="text-3xl sm:text-5xl md:text-6xl font-heading font-extrabold text-[#2C3E2D] tracking-tight leading-[1.18] mb-6">
-                ระบบสารสนเทศ<br class="hidden sm:inline">
+                {{ __('portal.hero_title_1') }}<br class="hidden sm:inline">
                 <span class="bg-gradient-to-r from-[#2C3E2D] via-[#5A6B47] to-[#C86D51] bg-clip-text text-transparent">
-                    การปฏิบัติวิปัสสนากรรมฐาน มจร
+                    {{ __('portal.hero_title_2') }}
                 </span>
             </h1>
 
             <p class="text-[#5A544A] max-w-3xl mx-auto text-sm sm:text-base md:text-lg mb-12 leading-relaxed">
-                สร้างเสริมความสงบ สติ และปัญญาตามหลักพระพุทธศาสนา บูรณาการการลงทะเบียน ตรวจสอบประวัติการสะสมวันวิปัสสนา สำหรับนิสิตระดับปริญญาตรี บัณฑิตศึกษา และประชาชนทั่วไปอย่างยั่งยืน
+                {{ __('portal.hero_desc') }}
             </p>
 
             <!-- 3 Main Interactive Feature Cards (Organic Style) -->
@@ -180,14 +234,14 @@
                     </div>
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-[11px] font-bold uppercase tracking-wider text-[#A85238] font-mono">Module 01</span>
-                        <span class="px-2.5 py-0.5 rounded-full bg-[#F3E7E3] text-[#A85238] text-[10px] font-semibold border border-[#E8D1CB]">เกณฑ์ 10 วัน/ปี</span>
+                        <span class="px-2.5 py-0.5 rounded-full bg-[#F3E7E3] text-[#A85238] text-[10px] font-semibold border border-[#E8D1CB]">{{ __('portal.module_1_badge') }}</span>
                     </div>
-                    <h3 class="font-heading font-bold text-xl text-[#2C3E2D] mb-2">ระดับปริญญาตรี</h3>
+                    <h3 class="font-heading font-bold text-xl text-[#2C3E2D] mb-2">{{ __('portal.module_1_title') }}</h3>
                     <p class="text-xs text-[#6B6357] mb-6 leading-relaxed">
-                        เกณฑ์บังคับปฏิบัติธรรมปีละ 10 วัน ต่อเนื่อง 4 ปีการศึกษา (ครบ 40 วัน) ตรวจสอบรอบโครงการและออกบัตร QR Code สำหรับ Check-in
+                        {{ __('portal.module_1_desc') }}
                     </p>
                     <a href="{{ route('ug.register') }}" class="w-full inline-flex justify-between items-center py-2.5 px-4 rounded-xl text-xs font-semibold bg-[#2C3E2D] hover:bg-[#C86D51] text-white transition shadow-sm">
-                        <span>ลงทะเบียนนิสิต ป.ตรี</span>
+                        <span>{{ __('portal.module_1_btn') }}</span>
                         <i data-lucide="arrow-right" class="w-4 h-4"></i>
                     </a>
                 </div>
@@ -199,14 +253,14 @@
                     </div>
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-[11px] font-bold uppercase tracking-wider text-[#4A3B32] font-mono">Module 02</span>
-                        <span class="px-2.5 py-0.5 rounded-full bg-[#EAE5D9] text-[#4A3B32] text-[10px] font-semibold border border-[#D5CEBC]">เกณฑ์ 30 / 45 วัน</span>
+                        <span class="px-2.5 py-0.5 rounded-full bg-[#EAE5D9] text-[#4A3B32] text-[10px] font-semibold border border-[#D5CEBC]">{{ __('portal.module_2_badge') }}</span>
                     </div>
-                    <h3 class="font-heading font-bold text-xl text-[#2C3E2D] mb-2">ระดับบัณฑิตศึกษา</h3>
+                    <h3 class="font-heading font-bold text-xl text-[#2C3E2D] mb-2">{{ __('portal.module_2_title') }}</h3>
                     <p class="text-xs text-[#6B6357] mb-6 leading-relaxed">
-                        สะสมวันตามเกณฑ์ ป.โท 30 วัน / ป.เอก 45 วัน บันทึกพระวิปัสสนาจารย์ผู้สอบอารมณ์ และระบบล็อกยื่นผลอนุมัติเพื่อสอบวิทยานิพนธ์
+                        {{ __('portal.module_2_desc') }}
                     </p>
                     <a href="{{ route('grad.progress') }}" class="w-full inline-flex justify-between items-center py-2.5 px-4 rounded-xl text-xs font-semibold bg-[#2C3E2D] hover:bg-[#5A6B47] text-white transition shadow-sm">
-                        <span>ตรวจสอบวันสะสม ป.โท/เอก</span>
+                        <span>{{ __('portal.module_2_btn') }}</span>
                         <i data-lucide="arrow-right" class="w-4 h-4"></i>
                     </a>
                 </div>
@@ -218,14 +272,14 @@
                     </div>
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-[11px] font-bold uppercase tracking-wider text-[#5A6B47] font-mono">Module 03</span>
-                        <span class="px-2.5 py-0.5 rounded-full bg-[#E9EFE2] text-[#3D523E] text-[10px] font-semibold border border-[#CADBC0]">บริการวิชาการแก่สังคม</span>
+                        <span class="px-2.5 py-0.5 rounded-full bg-[#E9EFE2] text-[#3D523E] text-[10px] font-semibold border border-[#CADBC0]">{{ __('portal.module_3_badge') }}</span>
                     </div>
-                    <h3 class="font-heading font-bold text-xl text-[#2C3E2D] mb-2">ประชาชนทั่วไป</h3>
+                    <h3 class="font-heading font-bold text-xl text-[#2C3E2D] mb-2">{{ __('portal.module_3_title') }}</h3>
                     <p class="text-xs text-[#6B6357] mb-6 leading-relaxed">
-                        บริการวิชาการแก่สังคม อบรมจิตตปัญญา สมัครเข้าร่วมโครงการตามวิทยาเขตทั่วประเทศ พร้อมระบบคิวสำรอง Waiting List อัตโนมัติ
+                        {{ __('portal.module_3_desc') }}
                     </p>
                     <a href="{{ route('public.register') }}" class="w-full inline-flex justify-between items-center py-2.5 px-4 rounded-xl text-xs font-semibold bg-[#2C3E2D] hover:bg-[#5A6B47] text-white transition shadow-sm">
-                        <span>ลงทะเบียนประชาชน</span>
+                        <span>{{ __('portal.module_3_btn') }}</span>
                         <i data-lucide="arrow-right" class="w-4 h-4"></i>
                     </a>
                 </div>
@@ -239,13 +293,13 @@
     <section id="calendar" class="py-16 bg-[#F2EFE7] border-t border-[#E3DEC9]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 pb-6 border-b border-[#D5CEBC] gap-4">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 pb-6 border-b border-[#D5CEBC] gap-4">
                 <div>
                     <span class="text-xs font-bold text-[#5A6B47] uppercase tracking-widest font-mono flex items-center gap-1.5">
                         <i data-lucide="network" class="w-4 h-4"></i> MCU Meditation Network
                     </span>
                     <h2 class="text-2xl sm:text-3xl font-heading font-bold text-[#2C3E2D] mt-1">ปฏิทินปฏิบัติธรรมและกำหนดการเปิดรับสมัคร</h2>
-                    <p class="text-xs text-[#6B6357] mt-1">กำหนดการปฏิบัติวิปัสสนากรรมฐานประจำปีการศึกษา ครอบคลุมคณะ วิทยาเขต และวิทยาลัยสงฆ์</p>
+                    <p class="text-xs text-[#6B6357] mt-1">กำหนดการปฏิบัติวิปัสสนากรรมฐาน ทั้งระดับปริญญาตรี (10 วัน/ปี) และภาคประชาชน ทั่วประเทศ</p>
                 </div>
                 <div class="w-full md:w-auto">
                     <form method="GET" action="{{ route('home') }}#calendar">
@@ -258,6 +312,34 @@
                             @endforeach
                         </select>
                     </form>
+                </div>
+            </div>
+
+            <!-- Category Filter Tabs: ทั้งหมด, ปริญญาตรี, ภาคประชาชน -->
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+                <div class="inline-flex p-1.5 rounded-2xl bg-white border border-[#D5CEBC] shadow-xs gap-1.5" id="category-tabs">
+                    <button type="button" onclick="switchCategory('ALL')" id="tab-cat-ALL" class="px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 bg-[#2C3E2D] text-white shadow-xs">
+                        <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+                        <span>ทั้งหมด (All)</span>
+                        <span id="badge-count-all" class="px-1.5 py-0.2 rounded-full text-[10px] bg-white/20 font-mono">0</span>
+                    </button>
+                    <button type="button" onclick="switchCategory('UG')" id="tab-cat-UG" class="px-4 py-2 rounded-xl text-xs font-semibold text-[#4A3B32] hover:text-[#2C3E2D] hover:bg-[#FAF8F2] transition flex items-center gap-1.5">
+                        <i data-lucide="graduation-cap" class="w-3.5 h-3.5 text-[#5A6B47]"></i>
+                        <span>ปริญญาตรี (10 วัน/ปี)</span>
+                        <span id="badge-count-ug" class="px-1.5 py-0.2 rounded-full text-[10px] bg-[#5A6B47]/15 text-[#5A6B47] font-mono font-bold">0</span>
+                    </button>
+                    <button type="button" onclick="switchCategory('PUBLIC')" id="tab-cat-PUBLIC" class="px-4 py-2 rounded-xl text-xs font-semibold text-[#4A3B32] hover:text-[#2C3E2D] hover:bg-[#FAF8F2] transition flex items-center gap-1.5">
+                        <i data-lucide="users" class="w-3.5 h-3.5 text-[#C86D51]"></i>
+                        <span>ภาคประชาชน</span>
+                        <span id="badge-count-public" class="px-1.5 py-0.2 rounded-full text-[10px] bg-[#C86D51]/15 text-[#C86D51] font-mono font-bold">0</span>
+                    </button>
+                </div>
+
+                <div class="text-xs text-[#7B8D65] flex items-center gap-2">
+                    <span class="inline-block w-2 h-2 rounded-full bg-[#5A6B47]"></span>
+                    <span>สีเขียว = ป.ตรี</span>
+                    <span class="inline-block w-2 h-2 rounded-full bg-[#C86D51] ml-2"></span>
+                    <span>สีส้มอิฐ = ประชาชน</span>
                 </div>
             </div>
 
@@ -313,23 +395,16 @@
                         <div class="pt-4 mt-4 border-t border-[#EAE5D9] flex flex-wrap items-center justify-between gap-3 text-[11px] text-[#6B6357]">
                             <div class="flex flex-wrap items-center gap-3">
                                 <span class="flex items-center gap-1.5">
-                                    <span class="w-2 h-2 rounded-full bg-[#5A6B47]"></span>
-                                    <span>1 โครงการ</span>
+                                    <span class="w-2.5 h-2.5 rounded-full bg-[#5A6B47]"></span>
+                                    <span>ป.ตรี (10 วัน)</span>
                                 </span>
                                 <span class="flex items-center gap-1.5">
-                                    <span class="inline-flex gap-0.5">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-[#5A6B47]"></span>
-                                        <span class="w-1.5 h-1.5 rounded-full bg-[#7B8D65]"></span>
-                                    </span>
-                                    <span>2 โครงการ</span>
+                                    <span class="w-2.5 h-2.5 rounded-full bg-[#C86D51]"></span>
+                                    <span>ภาคประชาชน</span>
                                 </span>
                                 <span class="flex items-center gap-1.5">
-                                    <span class="px-1.5 py-0.2 rounded-full bg-[#5A6B47] text-white font-mono text-[9px] font-bold">3+</span>
-                                    <span>หลายโครงการ</span>
-                                </span>
-                                <span class="flex items-center gap-1.5">
-                                    <span class="w-2 h-2 rounded-full bg-[#C86D51]"></span>
-                                    <span>วันที่เลือก</span>
+                                    <span class="w-2.5 h-2.5 rounded-full border-2 border-[#2C3E2D]"></span>
+                                    <span>วันนี้</span>
                                 </span>
                             </div>
                             <span id="calendar-month-event-count" class="font-mono text-[#5A6B47] font-semibold">
@@ -455,7 +530,7 @@
                 <div>
                     <div class="flex items-center justify-center md:justify-start gap-3 mb-2">
                         <img src="{{ asset('images/mcu-logo.png') }}" alt="MCU Logo" class="w-8 h-8 object-contain">
-                        <span class="font-heading font-bold text-white text-base">ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน (MCUVMS)</span>
+                        <span class="font-heading font-bold text-white text-base">{{ __('portal.footer_brand') }}</span>
                     </div>
                     <p class="text-[#A3B88C]">มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย 79 หมู่ 1 ต.ลำไทร อ.วังน้อย จ.พระนครศรีอยุธยา 13170</p>
                     <p class="text-[#8C8275] mt-1">
@@ -474,25 +549,98 @@
     <script>
         lucide.createIcons();
 
-        // Raw Batches Data from Eloquent
-        const batchesData = @json($openBatches);
+        // Raw Data from Controller
+        const rawBatches = @json($openBatches);
+        const rawPublicEvents = @json($openPublicEvents);
+
+        // Standardize both UG Batches and Public Events into unified event objects
+        const ugEvents = rawBatches.map(b => ({
+            id: 'ug-' + b.id,
+            raw_id: b.id,
+            type: 'UG',
+            type_label: 'ปริญญาตรี (10 วัน)',
+            title: b.title,
+            start_date: b.start_date,
+            end_date: b.end_date || b.start_date,
+            location: b.location || 'ศูนย์วิปัสสนากรรมฐาน มจร',
+            max_quota: b.max_quota,
+            reg_count: b.registrations ? b.registrations.length : 0,
+            academic_year: b.academic_year,
+            org_name: b.organization_unit ? b.organization_unit.name_th : 'ส่วนงาน มจร',
+            org_code: b.organization_unit ? (b.organization_unit.code_provincial || b.organization_unit.code) : 'MCU',
+            register_url: "{{ route('ug.register') }}"
+        }));
+
+        const publicEvents = rawPublicEvents.map(p => ({
+            id: 'pub-' + p.id,
+            raw_id: p.id,
+            type: 'PUBLIC',
+            type_label: 'ภาคประชาชน',
+            title: p.title,
+            start_date: p.start_date,
+            end_date: p.end_date || p.start_date,
+            location: p.location_name || 'ศูนย์วิปัสสนากรรมฐาน มจร',
+            max_quota: p.max_quota,
+            reg_count: p.registrations ? p.registrations.length : (p.confirmed_count || 0),
+            academic_year: null,
+            org_name: p.organization_unit ? p.organization_unit.name_th : 'มจร',
+            org_code: p.organization_unit ? (p.organization_unit.code_provincial || p.organization_unit.code) : 'MCU',
+            register_url: "{{ route('public.register') }}?event_id=" + p.id
+        }));
+
+        const allEvents = [...ugEvents, ...publicEvents];
+
+        // Update Tab Badges Count
+        document.getElementById('badge-count-all').textContent = allEvents.length;
+        document.getElementById('badge-count-ug').textContent = ugEvents.length;
+        document.getElementById('badge-count-public').textContent = publicEvents.length;
+
+        let activeCategory = 'ALL'; // 'ALL', 'UG', 'PUBLIC'
 
         const thaiMonths = [
             'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
             'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
         ];
 
-        // Determine initial month: if any batch exists, default to month of first batch, else today
+        // Determine initial month: if any event exists, default to month of first event, else today
         let currentDate = new Date();
-        if (batchesData.length > 0) {
-            // Find earliest batch or upcoming batch
-            const firstBatchDate = new Date(batchesData[0].start_date);
-            if (!isNaN(firstBatchDate.getTime())) {
-                currentDate = firstBatchDate;
+        if (allEvents.length > 0) {
+            const firstDate = new Date(allEvents[0].start_date);
+            if (!isNaN(firstDate.getTime())) {
+                currentDate = firstDate;
             }
         }
 
         let selectedDay = null; // YYYY-MM-DD string or null
+
+        function getFilteredEvents() {
+            if (activeCategory === 'UG') return ugEvents;
+            if (activeCategory === 'PUBLIC') return publicEvents;
+            return allEvents;
+        }
+
+        function switchCategory(cat) {
+            activeCategory = cat;
+            selectedDay = null;
+
+            // Update Tab UI
+            const tabs = {
+                'ALL': document.getElementById('tab-cat-ALL'),
+                'UG': document.getElementById('tab-cat-UG'),
+                'PUBLIC': document.getElementById('tab-cat-PUBLIC')
+            };
+
+            for (const [key, btn] of Object.entries(tabs)) {
+                if (!btn) continue;
+                if (key === cat) {
+                    btn.className = "px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 bg-[#2C3E2D] text-white shadow-xs";
+                } else {
+                    btn.className = "px-4 py-2 rounded-xl text-xs font-semibold text-[#4A3B32] hover:text-[#2C3E2D] hover:bg-[#FAF8F2] transition flex items-center gap-1.5";
+                }
+            }
+
+            renderCalendar();
+        }
 
         function initCalendar() {
             renderCalendar();
@@ -523,11 +671,8 @@
             const thaiYear = year + 543;
             document.getElementById('calendar-month-year').textContent = `${thaiMonths[month]} ${thaiYear}`;
 
-            // First day of month (0 = Sun, 1 = Mon, ..., 6 = Sat)
             const firstDayIndex = new Date(year, month, 1).getDay();
-            // Total days in current month
             const totalDays = new Date(year, month + 1, 0).getDate();
-            // Total days in previous month
             const prevMonthTotalDays = new Date(year, month, 0).getDate();
 
             const grid = document.getElementById('calendar-days-grid');
@@ -546,30 +691,33 @@
                 grid.appendChild(cell);
             }
 
-            // Batches occurring this month
-            const monthBatches = [];
+            const activeEvents = getFilteredEvents();
+            const monthEvents = [];
 
             // 2. Current month days
             for (let day = 1; day <= totalDays; day++) {
                 const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 
-                // Find batches that span across this day
-                const dayBatches = batchesData.filter(b => {
-                    const start = b.start_date.substring(0, 10);
-                    const end = (b.end_date || b.start_date).substring(0, 10);
+                // Find events spanning across this date
+                const dayEvents = activeEvents.filter(e => {
+                    const start = e.start_date.substring(0, 10);
+                    const end = (e.end_date || e.start_date).substring(0, 10);
                     return dateStr >= start && dateStr <= end;
                 });
 
-                dayBatches.forEach(b => {
-                    if (!monthBatches.some(mb => mb.id === b.id)) {
-                        monthBatches.push(b);
+                dayEvents.forEach(e => {
+                    if (!monthEvents.some(me => me.id === e.id)) {
+                        monthEvents.push(e);
                     }
                 });
 
-                const hasEvents = dayBatches.length > 0;
-                const eventCount = dayBatches.length;
+                const hasEvents = dayEvents.length > 0;
+                const eventCount = dayEvents.length;
                 const isSelected = selectedDay === dateStr;
                 const isToday = isCurrentMonth && day === todayDate;
+
+                const hasUg = dayEvents.some(e => e.type === 'UG');
+                const hasPublic = dayEvents.some(e => e.type === 'PUBLIC');
 
                 const cell = document.createElement('button');
                 cell.type = 'button';
@@ -577,42 +725,35 @@
 
                 // Tooltip summarizing events for that day
                 if (hasEvents) {
-                    const tooltipText = dayBatches.map(b => `• ${b.organization_unit ? b.organization_unit.name_th : 'มจร'}: ${b.title}`).join('\n');
+                    const tooltipText = dayEvents.map(e => `• [${e.type_label}] ${e.org_name}: ${e.title}`).join('\n');
                     cell.title = `${day} ${thaiMonths[month]} (${eventCount} โครงการ):\n${tooltipText}`;
                 }
 
                 let cellClasses = 'min-h-[56px] sm:min-h-[62px] p-1 rounded-2xl transition flex flex-col items-center justify-between text-xs relative group ';
 
                 if (isSelected) {
-                    cellClasses += 'bg-[#C86D51] text-white font-bold shadow-md ring-2 ring-[#C86D51]/50';
+                    cellClasses += 'bg-[#2C3E2D] text-white font-bold shadow-md ring-2 ring-[#2C3E2D]/50';
                 } else if (hasEvents) {
                     cellClasses += 'bg-[#5A6B47]/10 hover:bg-[#5A6B47]/25 text-[#2C3E2D] font-bold border border-[#5A6B47]/25 hover:border-[#5A6B47]';
                 } else if (isToday) {
-                    cellClasses += 'bg-[#FAF8F2] text-[#5A6B47] font-bold border border-[#5A6B47] hover:bg-[#FAF8F2]';
+                    cellClasses += 'bg-[#FAF8F2] text-[#5A6B47] font-bold border-2 border-[#2C3E2D] hover:bg-[#FAF8F2]';
                 } else {
                     cellClasses += 'hover:bg-[#FAF8F2] text-[#4A3B32] border border-transparent';
                 }
 
-                // Render Multi-event indicators
-                let indicatorHtml = '';
-                if (eventCount === 1) {
-                    // Single event: one clean dot
-                    indicatorHtml = `<span class="w-2 h-2 rounded-full ${isSelected ? 'bg-white' : 'bg-[#5A6B47]'} shadow-2xs mb-0.5"></span>`;
-                } else if (eventCount === 2) {
-                    // Two events: two side-by-side dots
-                    indicatorHtml = `
+                // Render Dots with distinctive colors
+                let dotsHtml = '';
+                if (hasUg && hasPublic) {
+                    dotsHtml = `
                         <div class="flex items-center gap-1 mb-0.5">
-                            <span class="w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-white' : 'bg-[#5A6B47]'}"></span>
-                            <span class="w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-white' : 'bg-[#7B8D65]'}"></span>
+                            <span class="w-2 h-2 rounded-full ${isSelected ? 'bg-emerald-300' : 'bg-[#5A6B47]'}" title="ปริญญาตรี"></span>
+                            <span class="w-2 h-2 rounded-full ${isSelected ? 'bg-orange-300' : 'bg-[#C86D51]'}" title="ภาคประชาชน"></span>
                         </div>
                     `;
-                } else if (eventCount >= 3) {
-                    // 3 or more events: compact badge with count (e.g. "3 โครงการ")
-                    indicatorHtml = `
-                        <span class="inline-flex items-center justify-center px-1.5 py-0.2 rounded-full text-[9px] font-mono font-bold leading-tight ${isSelected ? 'bg-white text-[#C86D51]' : 'bg-[#5A6B47] text-white shadow-2xs'} mb-0.5">
-                            ${eventCount}
-                        </span>
-                    `;
+                } else if (hasUg) {
+                    dotsHtml = `<span class="w-2 h-2 rounded-full ${isSelected ? 'bg-white' : 'bg-[#5A6B47]'} shadow-2xs mb-0.5" title="ปริญญาตรี"></span>`;
+                } else if (hasPublic) {
+                    dotsHtml = `<span class="w-2 h-2 rounded-full ${isSelected ? 'bg-white' : 'bg-[#C86D51]'} shadow-2xs mb-0.5" title="ภาคประชาชน"></span>`;
                 }
 
                 cell.className = cellClasses;
@@ -622,7 +763,7 @@
                         ${eventCount > 1 && !isSelected ? `<span class="text-[8px] font-mono text-[#7B8D65] font-normal sm:inline hidden">${eventCount}</span>` : ''}
                     </div>
                     <div class="flex items-center justify-center w-full mt-auto">
-                        ${indicatorHtml}
+                        ${dotsHtml}
                     </div>
                 `;
                 grid.appendChild(cell);
@@ -639,19 +780,20 @@
             }
 
             // Update month event counter
-            document.getElementById('calendar-month-event-count').textContent = `${monthBatches.length} โครงการในเดือนนี้`;
+            document.getElementById('calendar-month-event-count').textContent = `${monthEvents.length} โครงการในเดือนนี้`;
 
             // Render Events in right list
-            renderEventsList(monthBatches);
+            renderEventsList(monthEvents);
         }
 
-        function renderEventsList(monthBatches) {
+        function renderEventsList(monthEvents) {
             const container = document.getElementById('calendar-events-container');
             const title = document.getElementById('events-list-title');
             const subtitle = document.getElementById('events-list-subtitle');
             const resetBtn = document.getElementById('reset-filter-btn');
 
-            let displayBatches = [];
+            let displayEvents = [];
+            const activeEvents = getFilteredEvents();
 
             if (selectedDay) {
                 resetBtn.classList.remove('hidden');
@@ -659,25 +801,25 @@
                 const thDay = `${parseInt(d)} ${thaiMonths[parseInt(m) - 1]} ${parseInt(y) + 543}`;
                 title.textContent = `โครงการวันที่ ${thDay}`;
                 
-                displayBatches = batchesData.filter(b => {
-                    const start = b.start_date.substring(0, 10);
-                    const end = (b.end_date || b.start_date).substring(0, 10);
+                displayEvents = activeEvents.filter(e => {
+                    const start = e.start_date.substring(0, 10);
+                    const end = (e.end_date || e.start_date).substring(0, 10);
                     return selectedDay >= start && selectedDay <= end;
                 });
-                subtitle.textContent = `พบ ${displayBatches.length} โครงการที่กำลังดำเนินการในวันนี้`;
+                subtitle.textContent = `พบ ${displayEvents.length} โครงการที่กำลังดำเนินการในวันนี้`;
             } else {
                 resetBtn.classList.add('hidden');
                 title.textContent = `รายการโครงการในเดือนนี้`;
-                subtitle.textContent = `มีทั้งหมด ${monthBatches.length} โครงการ เลื่อนเพื่อดูรายละเอียด`;
-                displayBatches = monthBatches;
+                subtitle.textContent = `มีทั้งหมด ${monthEvents.length} โครงการ เลื่อนเพื่อดูรายละเอียด`;
+                displayEvents = monthEvents;
             }
 
-            if (displayBatches.length === 0) {
+            if (displayEvents.length === 0) {
                 container.innerHTML = `
                     <div class="py-12 text-center text-[#8C8275]">
                         <i data-lucide="calendar-x" class="w-10 h-10 mx-auto mb-2 text-[#D5CEBC]"></i>
                         <p class="font-medium text-xs text-[#4A3B32]">ไม่พบโครงการปฏิบัติธรรมในวันที่เลือก</p>
-                        <p class="text-[11px] text-[#8C8275] mt-1">คลิกเลือกวันที่มีจุดสีเขียว หรือกด "ดูทั้งเดือน"</p>
+                        <p class="text-[11px] text-[#8C8275] mt-1">คลิกเลือกวันที่มีจุดสี หรือกดปุ่ม "ดูทั้งเดือน"</p>
                     </div>
                 `;
                 lucide.createIcons();
@@ -685,43 +827,51 @@
             }
 
             let html = '';
-            displayBatches.forEach(b => {
-                const regCount = b.registrations ? b.registrations.length : 0;
-                const isFull = b.max_quota > 0 && regCount >= b.max_quota;
-                const orgName = b.organization_unit ? b.organization_unit.name_th : 'ส่วนงาน มจร';
-                const orgCode = b.organization_unit ? (b.organization_unit.code_provincial || b.organization_unit.code) : 'MCU';
+            displayEvents.forEach(e => {
+                const regCount = e.reg_count;
+                const isFull = e.max_quota > 0 && regCount >= e.max_quota;
+                const isUg = e.type === 'UG';
+
+                const badgeBg = isUg ? 'bg-[#5A6B47]/15 text-[#3D523E] border-[#5A6B47]/30' : 'bg-[#C86D51]/15 text-[#A85238] border-[#C86D51]/30';
+                const typeIcon = isUg ? 'graduation-cap' : 'users';
 
                 html += `
                     <div class="pt-3.5 first:pt-0 group">
                         <div class="p-3.5 rounded-2xl bg-[#FAF8F2]/70 hover:bg-[#FAF8F2] border border-[#EAE5D9] hover:border-[#5A6B47] transition">
                             <div class="flex items-center justify-between gap-2 mb-1.5">
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-[#5A6B47]/15 text-[#3D523E]">
-                                    ${orgCode} &bull; ปี ${b.academic_year}
-                                </span>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold border flex items-center gap-1 ${badgeBg}">
+                                        <i data-lucide="${typeIcon}" class="w-3 h-3"></i>
+                                        <span>${e.type_label}</span>
+                                    </span>
+                                    <span class="px-1.5 py-0.5 rounded text-[10px] font-mono text-[#6B6357] bg-white border border-[#D5CEBC]">
+                                        ${e.org_code}
+                                    </span>
+                                </div>
                                 <span class="text-[10px] font-mono ${isFull ? 'text-[#C86D51] font-bold' : 'text-[#7B8D65]'}">
-                                    ${regCount} / ${b.max_quota} ที่นั่ง
+                                    ${regCount} / ${e.max_quota} ที่นั่ง
                                 </span>
                             </div>
                             <h4 class="font-heading font-bold text-xs text-[#2C3E2D] mb-1.5 leading-snug group-hover:text-[#C86D51] transition line-clamp-2">
-                                ${b.title}
+                                ${e.title}
                             </h4>
                             <div class="text-[11px] text-[#6B6357] space-y-1 mb-3 font-sans">
                                 <div class="flex items-center gap-1.5 truncate">
                                     <i data-lucide="building" class="w-3.5 h-3.5 text-[#5A6B47] shrink-0"></i>
-                                    <span class="truncate">${orgName}</span>
+                                    <span class="truncate">${e.org_name}</span>
                                 </div>
                                 <div class="flex items-center gap-1.5">
                                     <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#5A6B47] shrink-0"></i>
-                                    <span class="font-mono text-[#2C3E2D] font-medium">${b.start_date} &bull; ${b.end_date}</span>
+                                    <span class="font-mono text-[#2C3E2D] font-medium">${e.start_date} &bull; ${e.end_date}</span>
                                 </div>
                                 <div class="flex items-center gap-1.5 truncate text-[#8C8275]">
                                     <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#C86D51] shrink-0"></i>
-                                    <span class="truncate">${b.location || 'สถานที่ตามประกาศ'}</span>
+                                    <span class="truncate">${e.location}</span>
                                 </div>
                             </div>
                             <div class="pt-2 border-t border-[#EAE5D9]/80 flex items-center justify-end">
-                                <a href="{{ route('ug.register') }}" class="px-3 py-1.5 rounded-lg text-[11px] font-semibold transition inline-flex items-center gap-1 ${isFull ? 'bg-[#C86D51] text-white' : 'bg-[#2C3E2D] hover:bg-[#5A6B47] text-white shadow-xs'}">
-                                    <span>${isFull ? 'ที่นั่งเต็ม (ดูรายละเอียด)' : 'ลงทะเบียนเข้าร่วม'}</span>
+                                <a href="${e.register_url}" class="px-3 py-1.5 rounded-lg text-[11px] font-semibold transition inline-flex items-center gap-1 ${isFull ? 'bg-[#C86D51] text-white' : (isUg ? 'bg-[#2C3E2D] hover:bg-[#5A6B47]' : 'bg-[#C86D51] hover:bg-[#A85238]')} text-white shadow-xs">
+                                    <span>${isFull ? 'ดูรายละเอียด (ที่นั่งเต็ม)' : (isUg ? 'ลงทะเบียนนิสิต ป.ตรี' : 'สมัครเข้าร่วม (ประชาชน)')}</span>
                                     <i data-lucide="chevron-right" class="w-3 h-3"></i>
                                 </a>
                             </div>

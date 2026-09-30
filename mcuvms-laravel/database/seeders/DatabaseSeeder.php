@@ -16,6 +16,7 @@ use App\Models\NewsArticle;
 use App\Models\MeditationCalendar;
 use App\Models\SiteSetting;
 use App\Models\ContactInquiry;
+use App\Models\Donation;
 use App\Models\User;
 
 class DatabaseSeeder extends Seeder
@@ -305,7 +306,10 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($ugRegistrations as $reg) {
-            UgRegistration::updateOrCreate(['id' => $reg['id']], $reg);
+            UgRegistration::updateOrCreate(
+                ['batch_id' => $reg['batch_id'], 'student_code' => $reg['student_code']],
+                $reg
+            );
         }
 
         // 5. บัณฑิตศึกษา (GradStudent & GradCreditEntry) - อย่างน้อย 4 รายการ (ครบเกณฑ์ APPROVED, SUBMITTED, ACCUMULATING)
@@ -766,6 +770,141 @@ class DatabaseSeeder extends Seeder
 
         foreach ($inquiries as $inq) {
             ContactInquiry::updateOrCreate(['id' => $inq['id']], $inq);
+        }
+
+        // 11. ตั้งค่าบัญชีธนาคารสำหรับรับบริจาค (SiteSetting group: donation)
+        $donationSettings = [
+            [
+                'setting_key' => 'donation_bank_name',
+                'setting_value' => 'ธนาคารกรุงไทย (Krungthai Bank)',
+                'setting_group' => 'donation',
+                'label' => 'ชื่อธนาคาร',
+                'field_type' => 'text',
+            ],
+            [
+                'setting_key' => 'donation_account_name',
+                'setting_value' => 'มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย (กองทุนวิปัสสนาธุระ)',
+                'setting_group' => 'donation',
+                'label' => 'ชื่อบัญชี',
+                'field_type' => 'text',
+            ],
+            [
+                'setting_key' => 'donation_account_number',
+                'setting_value' => '123-4-56789-0',
+                'setting_group' => 'donation',
+                'label' => 'เลขที่บัญชี',
+                'field_type' => 'text',
+            ],
+            [
+                'setting_key' => 'donation_promptpay',
+                'setting_value' => '0994000159451',
+                'setting_group' => 'donation',
+                'label' => 'พร้อมเพย์ (เลขประจำตัวผู้เสียภาษี มจร)',
+                'field_type' => 'text',
+            ],
+            [
+                'setting_key' => 'donation_info_notes',
+                'setting_value' => 'การบริจาคเพื่อสนับสนุนการศึกษาและปฏิบัติวิปัสสนากรรมฐาน สามารถนำไปลดหย่อนภาษีได้ตามที่กฎหมายกำหนด โดยทางมหาวิทยาลัยจะออกใบเสร็จรับเงิน/ใบอนุโมทนาบัตร และเชื่อมโยงข้อมูลระบบ e-Donation ของกรมสรรพากร',
+                'setting_group' => 'donation',
+                'label' => 'คำชี้แจงการบริจาคและลดหย่อนภาษี',
+                'field_type' => 'textarea',
+            ],
+        ];
+
+        foreach ($donationSettings as $ds) {
+            SiteSetting::updateOrCreate(['setting_key' => $ds['setting_key']], $ds);
+        }
+
+        // 12. ข้อมูลตัวอย่างการบริจาค (Donations) - 4 รายการครอบคลุมสถานะต่าง ๆ
+        $sampleDonations = [
+            [
+                'id' => 1,
+                'donation_no' => 'DON-20260920-0001',
+                'donor_name' => 'นายสมเกียรติ สิทธิปัญญากุล',
+                'tax_id' => '1100500123456',
+                'is_tax_deductible' => 1,
+                'amount' => 5000.00,
+                'bank_account' => 'ธนาคารกรุงไทย (123-4-56789-0)',
+                'transfer_date' => '2026-09-20',
+                'transfer_time' => '10:30',
+                'slip_path' => null,
+                'phone' => '081-456-7890',
+                'email' => 'somkiat.sit@gmail.com',
+                'address' => '99/12 หมู่บ้านศุภาลัย ถ.พหลโยธิน แขวงลาดยาว เขตจตุจักร กรุงเทพฯ 10900',
+                'purpose' => 'สนับสนุนภัตตาหารและน้ำปานะพระวิปัสสนาจารย์และนิสิต',
+                'note' => 'ขออุทิศบุญกุศลนี้ให้บรรพบุรุษและเจ้ากรรมนายเวร',
+                'status' => 'VERIFIED',
+                'admin_notes' => 'ตรวจสอบยอดเงินเข้าบัญชีเรียบร้อย ออกใบอนุโมทนาบัตรเลขที่ MCU-REC-2569/089',
+                'verified_by' => 1,
+                'verified_at' => now()->subDays(10),
+            ],
+            [
+                'id' => 2,
+                'donation_no' => 'DON-20260925-0002',
+                'donor_name' => 'นางสาวกุลธิดา เจริญมงคล',
+                'tax_id' => '3101700987654',
+                'is_tax_deductible' => 1,
+                'amount' => 10000.00,
+                'bank_account' => 'ธนาคารกรุงไทย (123-4-56789-0)',
+                'transfer_date' => '2026-09-25',
+                'transfer_time' => '14:15',
+                'slip_path' => null,
+                'phone' => '089-765-4321',
+                'email' => 'kunthida.c@hotmail.com',
+                'address' => '45/8 ถ.สุเทพ ต.สุเทพ อ.เมือง จ.เชียงใหม่ 50200',
+                'purpose' => 'กองทุนพัฒนาอาคารและสถานที่ปฏิบัติธรรม',
+                'note' => 'ร่วมทำบุญสร้างบารมี',
+                'status' => 'VERIFIED',
+                'admin_notes' => 'ยอดเงินตรวจสอบเรียบร้อย ส่งใบเสร็จอิเล็กทรอนิกส์ทางอีเมลแล้ว',
+                'verified_by' => 1,
+                'verified_at' => now()->subDays(5),
+            ],
+            [
+                'id' => 3,
+                'donation_no' => 'DON-20260929-0003',
+                'donor_name' => 'อาจารย์ประสิทธิ์ เมตตาธรรม',
+                'tax_id' => '1509900334455',
+                'is_tax_deductible' => 1,
+                'amount' => 2500.00,
+                'bank_account' => 'ธนาคารกรุงไทย (123-4-56789-0)',
+                'transfer_date' => '2026-09-29',
+                'transfer_time' => '09:05',
+                'slip_path' => null,
+                'phone' => '086-111-2233',
+                'email' => 'prasit.met@mcu.ac.th',
+                'address' => '79 หมู่ 1 ต.ลำไทร อ.วังน้อย จ.พระนครศรีอยุธยา 13170',
+                'purpose' => 'ค่ายานพาหนะและกิจกรรมปฏิบัติธรรมนิสิต ป.ตรี',
+                'note' => 'ขอร่วมเป็นเจ้าภาพอุปถัมภ์โครงการปฏิบัติธรรมนิสิต',
+                'status' => 'PENDING',
+                'admin_notes' => null,
+                'verified_by' => null,
+                'verified_at' => null,
+            ],
+            [
+                'id' => 4,
+                'donation_no' => 'DON-20260930-0004',
+                'donor_name' => 'ผู้ไม่ประสงค์ออกนาม (คณะศรัทธาสาธุชน)',
+                'tax_id' => null,
+                'is_tax_deductible' => 0,
+                'amount' => 1000.00,
+                'bank_account' => 'ธนาคารกรุงไทย (123-4-56789-0)',
+                'transfer_date' => '2026-09-30',
+                'transfer_time' => '16:45',
+                'slip_path' => null,
+                'phone' => '082-333-4455',
+                'email' => null,
+                'address' => null,
+                'purpose' => 'บริจาคทั่วไปบำรุงศูนย์ปฏิบัติธรรม',
+                'note' => 'ขอร่วมอนุโมทนาบุญกับทุกท่าน',
+                'status' => 'PENDING',
+                'admin_notes' => null,
+                'verified_by' => null,
+                'verified_at' => null,
+            ],
+        ];
+
+        foreach ($sampleDonations as $d) {
+            Donation::updateOrCreate(['id' => $d['id']], $d);
         }
     }
 }

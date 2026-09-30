@@ -80,41 +80,58 @@
                     </div>
                 </div>
 
-                <!-- Nav Links: ปฏิทินกำหนดการ, ระดับปริญญาตรี, ระดับบัณฑิตศึกษา, ประชาชนทั่วไป, ติดต่อสอบถาม -->
-                <nav class="hidden lg:flex items-center space-x-7 text-sm font-medium text-[#4A3B32]">
-                    <a href="{{ route('home') }}#calendar" class="hover:text-[#C86D51] transition flex items-center gap-1.5">
-                        <i data-lucide="calendar" class="w-4 h-4 text-[#5A6B47]"></i>
-                        <span>ปฏิทินกำหนดการ</span>
+                <!-- Nav Links: ปฏิทิน, ปริญญาตรี, บัณฑิตศึกษา, ประชาชนทั่วไป, ติดต่อ, ร่วมบริจาค -->
+                <nav class="hidden xl:flex items-center space-x-6 text-[15px] font-semibold text-[#4A3B32]">
+                    <a href="{{ route('home') }}#calendar" class="hover:text-[#C86D51] transition flex items-center gap-1.5 whitespace-nowrap py-1">
+                        <i data-lucide="calendar" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
+                        <span>{{ __('portal.nav_calendar') }}</span>
                     </a>
-                    <a href="{{ route('ug.register') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5">
-                        <i data-lucide="graduation-cap" class="w-4 h-4 text-[#5A6B47]"></i>
-                        <span>ระดับปริญญาตรี</span>
+                    <a href="{{ route('ug.register') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5 whitespace-nowrap py-1">
+                        <i data-lucide="graduation-cap" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
+                        <span>{{ __('portal.nav_ug') }}</span>
                     </a>
-                    <a href="{{ route('grad.progress') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5">
-                        <i data-lucide="scroll" class="w-4 h-4 text-[#5A6B47]"></i>
-                        <span>ระดับบัณฑิตศึกษา</span>
+                    <a href="{{ route('grad.progress') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5 whitespace-nowrap py-1">
+                        <i data-lucide="scroll" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
+                        <span>{{ __('portal.nav_grad') }}</span>
                     </a>
-                    <a href="{{ route('public.register') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5">
-                        <i data-lucide="users" class="w-4 h-4 text-[#5A6B47]"></i>
-                        <span>ประชาชนทั่วไป</span>
+                    <a href="{{ route('public.register') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5 whitespace-nowrap py-1">
+                        <i data-lucide="users" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
+                        <span>{{ __('portal.nav_public') }}</span>
                     </a>
-                    <a href="{{ route('home') }}#contact" class="hover:text-[#C86D51] transition flex items-center gap-1.5">
-                        <i data-lucide="phone-call" class="w-4 h-4 text-[#5A6B47]"></i>
-                        <span>ติดต่อสอบถาม</span>
+                    <a href="{{ route('contact') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5 whitespace-nowrap py-1">
+                        <i data-lucide="phone-call" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
+                        <span>{{ __('portal.nav_contact') }}</span>
+                    </a>
+                    <a href="{{ route('donation') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5 text-[#C86D51] font-bold whitespace-nowrap py-1">
+                        <i data-lucide="gift" class="w-4.5 h-4.5 text-[#C86D51]"></i>
+                        <span>{{ __('portal.nav_donation') }}</span>
                     </a>
                 </nav>
 
-                <!-- Auth / Admin Button -->
-                <div class="flex items-center space-x-3">
+                <!-- Actions: Language Switcher & Auth / Admin Button -->
+                <div class="flex items-center space-x-2.5">
+                    @php
+                        $currentLang = session('locale', 'th');
+                    @endphp
+                    <!-- Language Switcher (TH / EN) -->
+                    <div class="flex items-center bg-[#EAE5D9] p-0.5 rounded-xl border border-[#D5CEBC] text-xs font-bold font-mono">
+                        <a href="{{ route('lang.switch', 'th') }}" title="ภาษาไทย" class="px-2 py-1 rounded-lg transition {{ $currentLang === 'th' ? 'bg-[#5A6B47] text-white shadow-sm' : 'text-[#6B6357] hover:text-[#2C3E2D]' }}">
+                            TH
+                        </a>
+                        <a href="{{ route('lang.switch', 'en') }}" title="English" class="px-2 py-1 rounded-lg transition {{ $currentLang === 'en' ? 'bg-[#5A6B47] text-white shadow-sm' : 'text-[#6B6357] hover:text-[#2C3E2D]' }}">
+                            EN
+                        </a>
+                    </div>
+
                     @if (Session::has('admin_user'))
-                        <a href="{{ route('admin.dashboard') }}" class="bg-[#2C3E2D] hover:bg-[#3D523E] text-[#F7F4EA] px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-2 shadow-sm transition">
+                        <a href="{{ route('admin.dashboard') }}" title="แผงควบคุมแอดมิน" class="bg-[#2C3E2D] hover:bg-[#3D523E] text-[#F7F4EA] px-3.5 py-2 rounded-xl text-sm font-semibold flex items-center gap-1.5 shadow-sm transition whitespace-nowrap">
                             <i data-lucide="layout-dashboard" class="w-4 h-4 text-[#A3B88C]"></i>
-                            <span>แผงควบคุม</span>
+                            <span class="hidden sm:inline">{{ __('portal.nav_admin_panel') }}</span>
                         </a>
                     @else
-                        <a href="{{ route('login') }}" class="px-4 py-2.5 text-xs font-semibold text-[#4A3B32] hover:text-[#2C3E2D] bg-[#EAE5D9] hover:bg-[#DDD7C8] rounded-xl transition border border-[#D5CEBC] shadow-sm flex items-center gap-2">
-                            <i data-lucide="lock" class="w-3.5 h-3.5 text-[#5A6B47]"></i>
-                            <span>เจ้าหน้าที่เข้าระบบ</span>
+                        <a href="{{ route('login') }}" title="เข้าสู่ระบบเจ้าหน้าที่" class="p-2 sm:px-3.5 sm:py-2 text-sm font-semibold text-[#4A3B32] hover:text-[#2C3E2D] bg-[#EAE5D9] hover:bg-[#DDD7C8] rounded-xl transition border border-[#D5CEBC] shadow-sm flex items-center gap-1.5 whitespace-nowrap">
+                            <i data-lucide="lock" class="w-4 h-4 text-[#5A6B47]"></i>
+                            <span class="hidden sm:inline">{{ __('portal.nav_admin_login') }}</span>
                         </a>
                     @endif
                 </div>
@@ -282,7 +299,7 @@
                 <div>
                     <div class="flex items-center justify-center md:justify-start gap-3 mb-2">
                         <img src="{{ asset('images/mcu-logo.png') }}" alt="MCU Logo" class="w-8 h-8 object-contain">
-                        <span class="font-heading font-bold text-white text-base">ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน (MCUVMS)</span>
+                        <span class="font-heading font-bold text-white text-base">{{ __('portal.footer_brand') }}</span>
                     </div>
                     <p class="text-[#A3B88C]">มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย 79 หมู่ 1 ต.ลำไทร อ.วังน้อย จ.พระนครศรีอยุธยา 13170</p>
                     <p class="text-[#8C8275] mt-1">สถาบันวิปัสสนาธุระ มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย</p>
