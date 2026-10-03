@@ -7,11 +7,11 @@
     $infoNotes = $settings['donation_info_notes'] ?? 'การบริจาคเพื่อสนับสนุนการศึกษาและปฏิบัติวิปัสสนากรรมฐาน สามารถนำไปลดหย่อนภาษีได้ตามที่กฎหมายกำหนด โดยมหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัยจะออกใบเสร็จรับเงิน/ใบอนุโมทนาบัตร และเชื่อมโยงข้อมูลระบบ e-Donation ของกรมสรรพากร';
 @endphp
 <!DOCTYPE html>
-<html lang="th" class="scroll-smooth">
+<html lang="{{ app()->getLocale() }}" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ร่วมบริจาคและแจ้งการโอนเงิน | MCUVMS กองทุนวิปัสสนาธุระ มจร</title>
+    <title>{{ __('portal.nav_donation') }} | VPSMCU {{ __('portal.system_title') }} {{ __('portal.mcu_short') }}</title>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -74,10 +74,10 @@
         <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-1 font-medium">
             <div class="flex items-center space-x-2">
                 <span class="inline-block w-2 h-2 rounded-full bg-[#7B8D65] animate-pulse"></span>
-                <span>มหาจุฬาลงกรณราชวิทยาลัย — ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน (MCUVMS)</span>
+                <span>{{ __('portal.top_announcement') }}</span>
             </div>
             <div class="flex items-center space-x-4 text-[#D8D2C2] text-[11px]">
-                <span class="flex items-center gap-1.5"><i data-lucide="heart" class="w-3.5 h-3.5 text-[#C86D51]"></i> กองทุนสนับสนุนการปฏิบัติวิปัสสนากรรมฐาน</span>
+                <span class="flex items-center gap-1.5"><i data-lucide="heart" class="w-3.5 h-3.5 text-[#C86D51]"></i> {{ __('portal.institute_name') }}</span>
             </div>
         </div>
     </div>
@@ -94,10 +94,10 @@
                     </a>
                     <div>
                         <a href="{{ route('home') }}" class="font-heading font-extrabold text-xl text-[#2C3E2D] tracking-tight leading-tight flex items-center gap-2">
-                            MCUVMS
-                            <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-[#EAE5D9] text-[#4A3B32] border border-[#D5CEBC]">มจร</span>
+                            VPSMCU
+                            <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-[#EAE5D9] text-[#4A3B32] border border-[#D5CEBC]">{{ __('portal.mcu_short') }}</span>
                         </a>
-                        <p class="text-xs text-[#6B6357] font-medium">ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน</p>
+                        <p class="text-xs text-[#6B6357] font-medium">{{ __('portal.system_title') }}</p>
                     </div>
                 </div>
 
@@ -105,27 +105,27 @@
                 <nav class="hidden xl:flex items-center space-x-6 text-[15px] font-semibold text-[#4A3B32]">
                     <a href="{{ route('home') }}#calendar" class="hover:text-[#C86D51] transition flex items-center gap-1.5 whitespace-nowrap py-1">
                         <i data-lucide="calendar" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
-                        <span>ปฏิทิน</span>
+                        <span>{{ __('portal.nav_calendar') }}</span>
                     </a>
                     <a href="{{ route('ug.register') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5 whitespace-nowrap py-1">
                         <i data-lucide="graduation-cap" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
-                        <span>ปริญญาตรี</span>
+                        <span>{{ __('portal.nav_ug') }}</span>
                     </a>
                     <a href="{{ route('grad.progress') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5 whitespace-nowrap py-1">
                         <i data-lucide="scroll" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
-                        <span>บัณฑิตศึกษา</span>
+                        <span>{{ __('portal.nav_grad') }}</span>
                     </a>
                     <a href="{{ route('public.register') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5 whitespace-nowrap py-1">
                         <i data-lucide="users" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
-                        <span>ประชาชนทั่วไป</span>
+                        <span>{{ __('portal.nav_public') }}</span>
                     </a>
                     <a href="{{ route('contact') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5 whitespace-nowrap py-1">
                         <i data-lucide="phone-call" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
-                        <span>ติดต่อ</span>
+                        <span>{{ __('portal.nav_contact') }}</span>
                     </a>
                     <a href="{{ route('donation') }}" class="text-[#C86D51] font-bold transition flex items-center gap-1.5 whitespace-nowrap py-1">
                         <i data-lucide="gift" class="w-4.5 h-4.5 text-[#C86D51]"></i>
-                        <span>ร่วมบริจาค</span>
+                        <span>{{ __('portal.nav_donation') }}</span>
                     </a>
                 </nav>
 
@@ -143,18 +143,6 @@
                             EN
                         </a>
                     </div>
-
-                    @if (Session::has('admin_user'))
-                        <a href="{{ route('admin.dashboard') }}" title="แผงควบคุมแอดมิน" class="bg-[#2C3E2D] hover:bg-[#3D523E] text-[#F7F4EA] px-3.5 py-2 rounded-xl text-sm font-semibold flex items-center gap-1.5 shadow-sm transition whitespace-nowrap">
-                            <i data-lucide="layout-dashboard" class="w-4 h-4 text-[#A3B88C]"></i>
-                            <span class="hidden sm:inline">แผงควบคุม</span>
-                        </a>
-                    @else
-                        <a href="{{ route('login') }}" title="เข้าสู่ระบบเจ้าหน้าที่" class="p-2 sm:px-3.5 sm:py-2 text-sm font-semibold text-[#4A3B32] hover:text-[#2C3E2D] bg-[#EAE5D9] hover:bg-[#DDD7C8] rounded-xl transition border border-[#D5CEBC] shadow-sm flex items-center gap-1.5 whitespace-nowrap">
-                            <i data-lucide="lock" class="w-4 h-4 text-[#5A6B47]"></i>
-                            <span class="hidden sm:inline">เข้าสู่ระบบ</span>
-                        </a>
-                    @endif
                 </div>
             </div>
         </div>
@@ -167,11 +155,11 @@
         <div class="bg-gradient-to-r from-[#2C3E2D] via-[#3A4F3C] to-[#5A6B47] rounded-3xl p-6 md:p-10 text-white shadow-lg shadow-[#2C3E2D]/15 mb-8 border border-[#2C3E2D]/20">
             <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/15 backdrop-blur-sm rounded-full text-xs font-semibold uppercase tracking-wider mb-3 border border-white/20 text-[#FAF8F2]">
                 <i data-lucide="heart-handshake" class="w-3.5 h-3.5 text-[#EAE5D9]"></i>
-                <span>MCUVMS Donation & Dana Portal</span>
+                <span>{{ __('portal.donation_header_badge') }}</span>
             </div>
-            <h1 class="text-2xl md:text-4xl font-heading font-bold mb-3 text-[#FAF8F2]">ร่วมบริจาคและแจ้งการบริจาคทำบุญ</h1>
+            <h1 class="text-2xl md:text-4xl font-heading font-bold mb-3 text-[#FAF8F2]">{{ __('portal.donation_header_title') }}</h1>
             <p class="text-[#EAE5D9] text-sm md:text-base max-w-3xl leading-relaxed">
-                ขอเชิญร่วมทำบุญอุปถัมภ์โครงการปฏิบัติวิปัสสนากรรมฐานนิสิต ป.ตรี, บัณฑิตศึกษา และประชาชนทั่วไป เพื่อส่งเสริมการศึกษาพระธรรมและสนับสนุนภัตตาหาร น้ำปานะ ค่ายานพาหนะ และสถานที่ปฏิบัติธรรม สามารถนำไปลดหย่อนภาษีได้
+                {{ __('portal.donation_header_desc') }}
             </p>
         </div>
 
@@ -185,17 +173,17 @@
                         @if (session('donation_no'))
                             <div class="mt-2 p-3 bg-white/80 rounded-xl border border-[#D5CEBC] flex flex-wrap items-center gap-4 text-xs text-[#4A3B32]">
                                 <div>
-                                    เลขที่อ้างอิงการบริจาค: <strong class="font-mono text-[#C86D51] font-bold text-sm">{{ session('donation_no') }}</strong>
+                                    {{ __('portal.donation_ref_label') }} <strong class="font-mono text-[#C86D51] font-bold text-sm">{{ session('donation_no') }}</strong>
                                 </div>
                                 <div>
-                                    ผู้บริจาค: <strong class="text-[#2C3E2D]">{{ session('donor_name') }}</strong>
+                                    {{ __('portal.donation_donor_label') }} <strong class="text-[#2C3E2D]">{{ session('donor_name') }}</strong>
                                 </div>
                                 <div>
-                                    ยอดเงิน: <strong class="text-[#5A6B47] font-bold">{{ session('amount') }} บาท</strong>
+                                    {{ __('portal.donation_amount_summary') }} <strong class="text-[#5A6B47] font-bold">{{ session('amount') }} {{ __('portal.donation_baht') }}</strong>
                                 </div>
                             </div>
                             <p class="text-[11px] text-[#7B8D65] mt-1.5">
-                                เจ้าหน้าที่จะตรวจสอบยอดเงินและเอกสารหลักฐาน และจัดส่งใบอนุโมทนาบัตรให้ตามข้อมูลที่แจ้งไว้
+                                {{ __('portal.donation_officer_note') }}
                             </p>
                         @endif
                     </div>
@@ -208,7 +196,7 @@
             <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-2xl mb-8 shadow-sm">
                 <div class="flex items-center mb-1">
                     <i data-lucide="alert-circle" class="w-5 h-5 text-red-500 mr-2 shrink-0"></i>
-                    <h5 class="text-sm font-bold text-red-800">กรุณาตรวจสอบข้อมูลที่กรอก</h5>
+                    <h5 class="text-sm font-bold text-red-800">{{ __('portal.donation_error_heading') }}</h5>
                 </div>
                 <ul class="list-disc list-inside text-xs text-red-700 space-y-0.5 ml-2">
                     @foreach ($errors->all() as $err)
@@ -225,9 +213,9 @@
                     <i data-lucide="coins" class="w-6 h-6"></i>
                 </div>
                 <div>
-                    <div class="text-[11px] font-mono uppercase text-[#7B8D65] font-semibold">ยอดผู้ร่วมบุญทั้งหมด</div>
+                    <div class="text-[11px] font-mono uppercase text-[#7B8D65] font-semibold">{{ __('portal.donation_stat_total') }}</div>
                     <div class="text-xl font-heading font-extrabold text-[#2C3E2D]">
-                        {{ number_format($totalDonationsAmount ?? 0, 2) }} <span class="text-xs font-normal text-[#6B6357]">บาท</span>
+                        {{ number_format($totalDonationsAmount ?? 0, 2) }} <span class="text-xs font-normal text-[#6B6357]">{{ __('portal.donation_baht') }}</span>
                     </div>
                 </div>
             </div>
@@ -237,9 +225,9 @@
                     <i data-lucide="users" class="w-6 h-6"></i>
                 </div>
                 <div>
-                    <div class="text-[11px] font-mono uppercase text-[#A85238] font-semibold">จำนวนศรัทธาสาธุชน</div>
+                    <div class="text-[11px] font-mono uppercase text-[#A85238] font-semibold">{{ __('portal.donation_stat_count') }}</div>
                     <div class="text-xl font-heading font-extrabold text-[#2C3E2D]">
-                        {{ number_format($totalDonationsCount ?? 0) }} <span class="text-xs font-normal text-[#6B6357]">รายการ</span>
+                        {{ number_format($totalDonationsCount ?? 0) }} <span class="text-xs font-normal text-[#6B6357]">{{ __('portal.donation_records_unit') }}</span>
                     </div>
                 </div>
             </div>
@@ -249,11 +237,11 @@
                     <i data-lucide="file-check-2" class="w-6 h-6"></i>
                 </div>
                 <div>
-                    <div class="text-[11px] font-mono uppercase text-[#5A6B47] font-semibold">สิทธิประโยชน์ทางภาษี</div>
+                    <div class="text-[11px] font-mono uppercase text-[#5A6B47] font-semibold">{{ __('portal.donation_tax_benefit') }}</div>
                     <div class="text-sm font-heading font-bold text-[#2C3E2D]">
-                        ลดหย่อนภาษีได้ 100%
+                        {{ __('portal.donation_tax_deduct_100') }}
                     </div>
-                    <div class="text-[10px] text-[#7B8D65]">ระบบ e-Donation สรรพากร</div>
+                    <div class="text-[10px] text-[#7B8D65]">{{ __('portal.donation_tax_edonation') }}</div>
                 </div>
             </div>
         </div>
@@ -270,9 +258,9 @@
                             <i data-lucide="credit-card" class="w-6 h-6"></i>
                         </div>
                         <div>
-                            <span class="text-[11px] font-mono uppercase text-[#7B8D65] font-semibold">ช่องทางโอนเงินทำบุญ</span>
+                            <span class="text-[11px] font-mono uppercase text-[#7B8D65] font-semibold">{{ __('portal.donation_bank_channel') }}</span>
                             <h3 class="font-heading font-bold text-base text-[#2C3E2D] leading-tight">
-                                บัญชีธนาคาร มจร
+                                {{ __('portal.donation_mcu_bank') }}
                             </h3>
                         </div>
                     </div>
@@ -280,7 +268,7 @@
                     <!-- Bank Details Box -->
                     <div class="bg-gradient-to-br from-[#FAF8F2] to-[#F2EFE7] rounded-2xl p-4 border border-[#E3DEC9] mb-4 space-y-3">
                         <div>
-                            <div class="text-[11px] text-[#7B8D65]">ธนาคารผู้รับโอน</div>
+                            <div class="text-[11px] text-[#7B8D65]">{{ __('portal.donation_bank_receiver') }}</div>
                             <div class="font-semibold text-sm text-[#2C3E2D] flex items-center gap-2">
                                 <i data-lucide="landmark" class="w-4 h-4 text-[#5A6B47]"></i>
                                 <span>{{ $bankName }}</span>
@@ -288,31 +276,31 @@
                         </div>
 
                         <div>
-                            <div class="text-[11px] text-[#7B8D65]">ชื่อบัญชี</div>
+                            <div class="text-[11px] text-[#7B8D65]">{{ __('portal.donation_acc_name') }}</div>
                             <div class="font-bold text-xs text-[#2C3E2D] leading-relaxed">
                                 {{ $accName }}
                             </div>
                         </div>
 
                         <div class="pt-2 border-t border-[#E3DEC9]">
-                            <div class="text-[11px] text-[#7B8D65] mb-1">เลขที่บัญชีเงินฝาก</div>
+                            <div class="text-[11px] text-[#7B8D65] mb-1">{{ __('portal.donation_acc_num') }}</div>
                             <div class="flex items-center justify-between bg-white px-3.5 py-2.5 rounded-xl border border-[#D5CEBC]">
                                 <span id="bank-acc-text" class="font-mono font-extrabold text-base md:text-lg text-[#C86D51] tracking-wider">{{ $accNum }}</span>
                                 <button type="button" onclick="copyToClipboard('bank-acc-text', 'copy-badge-1')" class="px-2.5 py-1 text-[11px] bg-[#FAF8F2] hover:bg-[#5A6B47] hover:text-white rounded-lg border border-[#D5CEBC] transition flex items-center gap-1 font-semibold text-[#4A3B32]">
                                     <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                                    <span id="copy-badge-1">คัดลอก</span>
+                                    <span id="copy-badge-1">{{ __('portal.donation_copy') }}</span>
                                 </button>
                             </div>
                         </div>
 
                         @if(!empty($promptpay))
                             <div class="pt-2 border-t border-[#E3DEC9]">
-                                <div class="text-[11px] text-[#7B8D65] mb-1">พร้อมเพย์ e-Donation (เลขประจำตัวผู้เสียภาษี)</div>
+                                <div class="text-[11px] text-[#7B8D65] mb-1">{{ __('portal.donation_promptpay_edonation') }}</div>
                                 <div class="flex items-center justify-between bg-white px-3.5 py-2 rounded-xl border border-[#D5CEBC]">
                                     <span id="promptpay-text" class="font-mono font-bold text-sm text-[#2C3E2D]">{{ $promptpay }}</span>
                                     <button type="button" onclick="copyToClipboard('promptpay-text', 'copy-badge-2')" class="px-2.5 py-1 text-[11px] bg-[#FAF8F2] hover:bg-[#5A6B47] hover:text-white rounded-lg border border-[#D5CEBC] transition flex items-center gap-1 font-semibold text-[#4A3B32]">
                                         <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                                        <span id="copy-badge-2">คัดลอก</span>
+                                        <span id="copy-badge-2">{{ __('portal.donation_copy') }}</span>
                                     </button>
                                 </div>
                             </div>
@@ -323,7 +311,7 @@
                     <div class="p-4 rounded-2xl bg-[#5A6B47]/10 border border-[#5A6B47]/20 text-xs text-[#2D2A26] space-y-2">
                         <div class="flex items-center gap-2 font-bold text-[#5A6B47]">
                             <i data-lucide="shield-check" class="w-4 h-4"></i>
-                            <span>การลดหย่อนภาษี (Tax Deduction)</span>
+                            <span>{{ __('portal.donation_tax_info_title') }}</span>
                         </div>
                         <p class="leading-relaxed text-[#4A3B32]">
                             {{ $infoNotes }}
@@ -337,9 +325,9 @@
                         <div class="flex items-center justify-between mb-4 pb-3 border-b border-[#EAE5D9]">
                             <h4 class="font-heading font-bold text-sm text-[#2C3E2D] flex items-center gap-2">
                                 <i data-lucide="award" class="w-4 h-4 text-[#C86D51]"></i>
-                                <span>รายนามผู้ร่วมบริจาคล่าสุด</span>
+                                <span>{{ __('portal.donation_recent_donors') }}</span>
                             </h4>
-                            <span class="text-[10px] text-[#7B8D65] font-mono">Verified Donors</span>
+                            <span class="text-[10px] text-[#7B8D65] font-mono">{{ __('portal.donation_verified_badge') }}</span>
                         </div>
                         <div class="space-y-3">
                             @foreach($recentDonations as $rd)
@@ -351,7 +339,7 @@
                                         <div class="truncate">
                                             <div class="font-semibold text-[#2C3E2D] truncate">{{ $rd->donor_name }}</div>
                                             <div class="text-[10px] text-[#7B8D65]">
-                                                {{ $rd->transfer_date ? $rd->transfer_date->format('d/m/Y') : '' }} &bull; {{ $rd->purpose ?? 'บำรุงศูนย์ปฏิบัติธรรม' }}
+                                                {{ $rd->transfer_date ? $rd->transfer_date->format('d/m/Y') : '' }} &bull; {{ $rd->purpose ?? __('portal.donation_purpose_other') }}
                                             </div>
                                         </div>
                                     </div>
@@ -371,8 +359,8 @@
                 <div class="organic-card rounded-3xl p-6 md:p-8 border border-[#EAE5D9]">
                     <div class="flex items-center justify-between pb-4 mb-6 border-b border-[#EAE5D9]">
                         <div>
-                            <h2 class="font-heading font-bold text-xl text-[#2C3E2D]">แบบฟอร์มแจ้งการบริจาคเงิน</h2>
-                            <p class="text-xs text-[#7B8D65] mt-1">กรอกข้อมูลและแนบหลักฐานการโอนเงินเพื่อขอรับใบอนุโมทนาบัตร</p>
+                            <h2 class="font-heading font-bold text-xl text-[#2C3E2D]">{{ __('portal.donation_form_title') }}</h2>
+                            <p class="text-xs text-[#7B8D65] mt-1">{{ __('portal.donation_form_desc') }}</p>
                         </div>
                         <span class="p-3 rounded-2xl bg-[#C86D51]/15 text-[#C86D51]">
                             <i data-lucide="hand-heart" class="w-6 h-6"></i>
@@ -385,9 +373,9 @@
                         <!-- 1. ชื่อผู้บริจาค -->
                         <div>
                             <label class="block text-xs font-semibold text-[#4A3B32] mb-1.5">
-                                ชื่อ-นามสกุล / คณะศรัทธา / องค์กร <span class="text-[#C86D51]">*</span>
+                                {{ __('portal.donation_donor_name') }} <span class="text-[#C86D51]">*</span>
                             </label>
-                            <input type="text" name="donor_name" value="{{ old('donor_name') }}" required placeholder="ระบุชื่อ-นามสกุลที่ต้องการให้ออกใบอนุโมทนาบัตร" class="w-full px-3.5 py-2.5 bg-white border border-[#EAE5D9] rounded-xl text-xs text-[#2D2A26] focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
+                            <input type="text" name="donor_name" value="{{ old('donor_name') }}" required placeholder="{{ __('portal.donation_donor_name') }}" class="w-full px-3.5 py-2.5 bg-white border border-[#EAE5D9] rounded-xl text-xs text-[#2D2A26] focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
                         </div>
 
                         <!-- 2. เช็คบ็อกซ์ ลดหย่อนภาษี & เลขประจำตัวผู้เสียภาษี -->
@@ -395,16 +383,16 @@
                             <div class="flex items-center">
                                 <input type="checkbox" id="is_tax_deductible" name="is_tax_deductible" value="1" {{ old('is_tax_deductible') ? 'checked' : '' }} onchange="toggleTaxIdField(this)" class="w-4 h-4 text-[#5A6B47] border-[#D5CEBC] rounded focus:ring-[#5A6B47]">
                                 <label for="is_tax_deductible" class="ml-2.5 text-xs font-semibold text-[#2C3E2D] cursor-pointer">
-                                    ต้องการนำการบริจาคนี้ไป <strong class="text-[#5A6B47]">ลดหย่อนภาษี</strong> (e-Donation / ใบเสร็จรับเงิน)
+                                    {{ __('portal.donation_tax_check') }}
                                 </label>
                             </div>
 
                             <div id="tax-id-container" class="{{ old('is_tax_deductible') ? '' : 'hidden' }} pt-2 border-t border-[#EAE5D9]">
                                 <label class="block text-xs font-semibold text-[#4A3B32] mb-1.5">
-                                    เลขประจำตัวผู้เสียภาษีอากร / เลขบัตรประจำตัวประชาชน 13 หลัก <span class="text-[#C86D51]">*</span>
+                                    {{ __('portal.donation_tax_id_label') }} <span class="text-[#C86D51]">*</span>
                                 </label>
-                                <input type="text" id="tax_id" name="tax_id" value="{{ old('tax_id') }}" maxlength="20" placeholder="ระบุเลขบัตรประชาชน 13 หลัก หรือเลขผู้เสียภาษีนิติบุคคล" class="w-full px-3.5 py-2.5 bg-white border border-[#EAE5D9] rounded-xl text-xs text-[#2D2A26] focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
-                                <p class="text-[11px] text-[#7B8D65] mt-1">ใช้สำหรับการส่งข้อมูลไปยังระบบ e-Donation ของกรมสรรพากรเพื่อลดหย่อนภาษีอัตโนมัติ</p>
+                                <input type="text" id="tax_id" name="tax_id" value="{{ old('tax_id') }}" maxlength="20" placeholder="{{ __('portal.donation_tax_id_label') }}" class="w-full px-3.5 py-2.5 bg-white border border-[#EAE5D9] rounded-xl text-xs text-[#2D2A26] focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
+                                <p class="text-[11px] text-[#7B8D65] mt-1">{{ __('portal.donation_tax_id_hint') }}</p>
                             </div>
                         </div>
 
@@ -412,21 +400,21 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-semibold text-[#4A3B32] mb-1.5">
-                                    จำนวนเงินที่บริจาค (บาท) <span class="text-[#C86D51]">*</span>
+                                    {{ __('portal.donation_amount_label') }} <span class="text-[#C86D51]">*</span>
                                 </label>
                                 <div class="relative">
-                                    <input type="number" step="0.01" min="1" name="amount" value="{{ old('amount') }}" required placeholder="เช่น 1000.00" class="w-full px-3.5 py-2.5 bg-white border border-[#EAE5D9] rounded-xl text-xs font-mono font-bold text-[#2D2A26] focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47] pr-10">
-                                    <span class="absolute right-3 top-2.5 text-xs text-[#7B8D65]">บาท</span>
+                                    <input type="number" step="0.01" min="1" name="amount" value="{{ old('amount') }}" required placeholder="1000.00" class="w-full px-3.5 py-2.5 bg-white border border-[#EAE5D9] rounded-xl text-xs font-mono font-bold text-[#2D2A26] focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47] pr-10">
+                                    <span class="absolute right-3 top-2.5 text-xs text-[#7B8D65]">{{ __('portal.donation_baht') }}</span>
                                 </div>
                             </div>
 
                             <div>
                                 <label class="block text-xs font-semibold text-[#4A3B32] mb-1.5">
-                                    โอนเงินเข้าบัญชี <span class="text-[#C86D51]">*</span>
+                                    {{ __('portal.donation_dest_account') }} <span class="text-[#C86D51]">*</span>
                                 </label>
                                 <select name="bank_account" required class="w-full px-3.5 py-2.5 bg-white border border-[#EAE5D9] rounded-xl text-xs text-[#2D2A26] focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
                                     <option value="{{ $bankName }} ({{ $accNum }})" selected>{{ $bankName }} ({{ $accNum }})</option>
-                                    <option value="พร้อมเพย์ มจร ({{ $promptpay }})">พร้อมเพย์ มจร ({{ $promptpay }})</option>
+                                    <option value="{{ __('portal.donation_promptpay_option') }} ({{ $promptpay }})">{{ __('portal.donation_promptpay_option') }} ({{ $promptpay }})</option>
                                 </select>
                             </div>
                         </div>
@@ -435,14 +423,14 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-semibold text-[#4A3B32] mb-1.5">
-                                    วันที่โอนเงินตามสลิป <span class="text-[#C86D51]">*</span>
+                                    {{ __('portal.donation_slip_date') }} <span class="text-[#C86D51]">*</span>
                                 </label>
                                 <input type="date" name="transfer_date" value="{{ old('transfer_date', date('Y-m-d')) }}" required class="w-full px-3.5 py-2.5 bg-white border border-[#EAE5D9] rounded-xl text-xs text-[#2D2A26] focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
                             </div>
 
                             <div>
                                 <label class="block text-xs font-semibold text-[#4A3B32] mb-1.5">
-                                    เวลาที่โอนเงินตามสลิป <span class="text-[#C86D51]">*</span>
+                                    {{ __('portal.donation_slip_time') }} <span class="text-[#C86D51]">*</span>
                                 </label>
                                 <input type="time" name="transfer_time" value="{{ old('transfer_time', date('H:i')) }}" required class="w-full px-3.5 py-2.5 bg-white border border-[#EAE5D9] rounded-xl text-xs text-[#2D2A26] focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
                             </div>
@@ -451,7 +439,7 @@
                         <!-- 5. แนบสลิปหลักฐานการโอนเงิน -->
                         <div>
                             <label class="block text-xs font-semibold text-[#4A3B32] mb-1.5">
-                                แนบสลิปหลักฐานการโอนเงิน <span class="text-[#C86D51]">*</span>
+                                {{ __('portal.donation_slip_upload_label') }} <span class="text-[#C86D51]">*</span>
                             </label>
                             <div class="border-2 border-dashed border-[#D5CEBC] hover:border-[#5A6B47] rounded-2xl p-4 transition bg-white/60 text-center">
                                 <input type="file" name="slip" id="slip-file" required accept="image/jpeg,image/png,image/jpg,application/pdf" onchange="previewSlip(event)" class="hidden">
@@ -459,8 +447,8 @@
                                     <div class="w-12 h-12 rounded-xl bg-[#5A6B47]/10 text-[#5A6B47] flex items-center justify-center">
                                         <i data-lucide="upload-cloud" class="w-6 h-6"></i>
                                     </div>
-                                    <span class="text-xs font-semibold text-[#2C3E2D]" id="slip-file-label">คลิกเพื่อเลือกไฟล์รูปภาพสลิป หรือลากไฟล์มาวางที่นี่</span>
-                                    <span class="text-[10px] text-[#7B8D65]">รองรับไฟล์ JPG, PNG หรือ PDF (ขนาดไฟล์ไม่เกิน 10MB)</span>
+                                    <span class="text-xs font-semibold text-[#2C3E2D]" id="slip-file-label">{{ __('portal.donation_slip_select_file') }}</span>
+                                    <span class="text-[10px] text-[#7B8D65]">JPG, PNG, PDF (Max 10MB)</span>
                                 </label>
                             </div>
                             <!-- Image Preview Area -->
@@ -470,7 +458,7 @@
                                     <div id="slip-filename" class="font-semibold text-[#2C3E2D]"></div>
                                     <div class="text-[10px] text-[#5A6B47] flex items-center gap-1 mt-0.5">
                                         <i data-lucide="check" class="w-3.5 h-3.5"></i>
-                                        <span>พร้อมส่งเอกสารแนบ</span>
+                                        <span>{{ __('portal.donation_slip_ready') }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -480,14 +468,14 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-semibold text-[#4A3B32] mb-1.5">
-                                    เบอร์โทรศัพท์ติดต่อ
+                                    {{ __('portal.ug_phone') }}
                                 </label>
-                                <input type="tel" name="phone" value="{{ old('phone') }}" placeholder="เช่น 081-234-5678" class="w-full px-3.5 py-2.5 bg-white border border-[#EAE5D9] rounded-xl text-xs text-[#2D2A26] focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
+                                <input type="tel" name="phone" value="{{ old('phone') }}" placeholder="081-234-5678" class="w-full px-3.5 py-2.5 bg-white border border-[#EAE5D9] rounded-xl text-xs text-[#2D2A26] focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
                             </div>
 
                             <div>
                                 <label class="block text-xs font-semibold text-[#4A3B32] mb-1.5">
-                                    อีเมลสำหรับรับหลักฐาน/ใบเสร็จ
+                                    {{ __('portal.ug_email') }}
                                 </label>
                                 <input type="email" name="email" value="{{ old('email') }}" placeholder="example@email.com" class="w-full px-3.5 py-2.5 bg-white border border-[#EAE5D9] rounded-xl text-xs text-[#2D2A26] focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
                             </div>
@@ -496,41 +484,41 @@
                         <!-- 7. วัตถุประสงค์การบริจาค -->
                         <div>
                             <label class="block text-xs font-semibold text-[#4A3B32] mb-1.5">
-                                วัตถุประสงค์การบริจาค
+                                {{ __('portal.donation_purpose_label') }}
                             </label>
                             <select name="purpose" class="w-full px-3.5 py-2.5 bg-white border border-[#EAE5D9] rounded-xl text-xs text-[#2D2A26] focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
-                                <option value="ร่วมทำบุญสนับสนุนการศึกษาและปฏิบัติวิปัสสนากรรมฐานทั่วไป">ร่วมทำบุญสนับสนุนการศึกษาและปฏิบัติวิปัสสนากรรมฐานทั่วไป</option>
-                                <option value="ภัตตาหาร น้ำปานะ และของใช้จำเป็นสำหรับพระวิปัสสนาจารย์และนิสิต">ภัตตาหาร น้ำปานะ และของใช้จำเป็นสำหรับพระวิปัสสนาจารย์และนิสิต</option>
-                                <option value="กองทุนค่ายานพาหนะเดินทางไปปฏิบัติธรรมนิสิต ป.ตรี">กองทุนค่ายานพาหนะเดินทางไปปฏิบัติธรรมนิสิต ป.ตรี</option>
-                                <option value="บำรุงเสนาสนะ อาคารสถานที่ และระบบสาธารณูปโภคศูนย์ปฏิบัติธรรม">บำรุงเสนาสนะ อาคารสถานที่ และระบบสาธารณูปโภคศูนย์ปฏิบัติธรรม</option>
-                                <option value="กองทุนสนับสนุนคอร์สวิปัสสนากรรมฐานสำหรับประชาชน">กองทุนสนับสนุนคอร์สวิปัสสนากรรมฐานสำหรับประชาชน</option>
+                                <option value="{{ __('portal.donation_purpose_1') }}">{{ __('portal.donation_purpose_1') }}</option>
+                                <option value="{{ __('portal.donation_purpose_2') }}">{{ __('portal.donation_purpose_2') }}</option>
+                                <option value="{{ __('portal.donation_purpose_3') }}">{{ __('portal.donation_purpose_3') }}</option>
+                                <option value="{{ __('portal.donation_purpose_4') }}">{{ __('portal.donation_purpose_4') }}</option>
+                                <option value="{{ __('portal.donation_purpose_5') }}">{{ __('portal.donation_purpose_5') }}</option>
                             </select>
                         </div>
 
                         <!-- 8. ที่อยู่สำหรับจัดส่งใบอนุโมทนาบัตร (กรณีต้องการรับทางไปรษณีย์) -->
                         <div>
                             <label class="block text-xs font-semibold text-[#4A3B32] mb-1.5">
-                                ที่อยู่สำหรับออกและจัดส่งใบอนุโมทนาบัตร (ถ้ามี)
+                                {{ __('portal.donation_address_label') }}
                             </label>
-                            <textarea name="address" rows="2" placeholder="ระบุเลขที่ ถนน ตำบล อำเภอ จังหวัด รหัสไปรษณีย์ หากต้องการให้จัดส่งเอกสารทางไปรษณีย์..." class="w-full px-3.5 py-2.5 bg-white border border-[#EAE5D9] rounded-xl text-xs text-[#2D2A26] focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47] leading-relaxed">{{ old('address') }}</textarea>
+                            <textarea name="address" rows="2" placeholder="{{ __('portal.donation_address_placeholder') }}" class="w-full px-3.5 py-2.5 bg-white border border-[#EAE5D9] rounded-xl text-xs text-[#2D2A26] focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47] leading-relaxed">{{ old('address') }}</textarea>
                         </div>
 
                         <!-- 9. ข้อความคำอธิษฐานจิต / หมายเหตุ -->
                         <div>
                             <label class="block text-xs font-semibold text-[#4A3B32] mb-1.5">
-                                ข้อความคำอธิษฐานจิต / เจตจำนงในการทำบุญ (ถ้ามี)
+                                {{ __('portal.donation_note_label') }}
                             </label>
-                            <textarea name="note" rows="2" placeholder="เช่น ขออุทิศกุศลให้บรรพบุรุษ หรือคำอธิษฐานจิตเพื่อความเป็นสิริมงคล..." class="w-full px-3.5 py-2.5 bg-white border border-[#EAE5D9] rounded-xl text-xs text-[#2D2A26] focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47] leading-relaxed">{{ old('note') }}</textarea>
+                            <textarea name="note" rows="2" placeholder="{{ __('portal.donation_note_placeholder') }}" class="w-full px-3.5 py-2.5 bg-white border border-[#EAE5D9] rounded-xl text-xs text-[#2D2A26] focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47] leading-relaxed">{{ old('note') }}</textarea>
                         </div>
 
                         <!-- Submit Button -->
                         <div class="pt-4 border-t border-[#EAE5D9]">
                             <button type="submit" class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-[#5A6B47] to-[#435235] hover:from-[#435235] hover:to-[#2C3E2D] text-white font-semibold text-sm shadow-md shadow-[#5A6B47]/20 flex items-center justify-center gap-2 transition duration-200">
                                 <i data-lucide="check-circle-2" class="w-5 h-5 text-[#FAF8F2]"></i>
-                                <span>ยืนยันการแจ้งบริจาคและส่งข้อมูล</span>
+                                <span>{{ __('portal.donation_btn_submit') }}</span>
                             </button>
                             <p class="text-center text-[11px] text-[#7B8D65] mt-2">
-                                เมื่อส่งข้อมูลแล้ว ระบบจะออกรหัสใบแจ้งบริจาค (DON-XXXX) สำหรับใช้อ้างอิงการตรวจสอบ
+                                {{ __('portal.donation_submit_note') }}
                             </p>
                         </div>
                     </form>
@@ -548,14 +536,26 @@
                 <div>
                     <div class="flex items-center justify-center md:justify-start gap-3 mb-2">
                         <img src="{{ asset('images/mcu-logo.png') }}" alt="MCU Logo" class="w-8 h-8 object-contain">
-                        <span class="font-heading font-bold text-white text-base">มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย  • ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน (MCUVMS)</span>
+                        <span class="font-heading font-bold text-white text-base">{{ __('portal.footer_brand') }}</span>
                     </div>
-                    <p class="text-[#A3B88C]">{{ $contactSettings['contact_address'] ?? 'มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย 79 หมู่ 1 ต.ลำไทร อ.วังน้อย จ.พระนครศรีอยุธยา 13170' }}</p>
-                    <p class="text-[#8C8275] mt-1">สถาบันวิปัสสนาธุระ มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย &bull; โทรศัพท์ {{ $contactSettings['contact_phone'] ?? '035-248-000' }}</p>
+                    <p class="text-[#A3B88C]">{{ __('portal.footer_address') }}</p>
+                    <p class="text-[#8C8275] mt-1">{{ __('portal.institute_name') }} {{ __('portal.university_name') }} &bull; {{ $contactSettings['contact_phone'] ?? '035-248-000' }}</p>
                 </div>
-                <div class="text-[#8C8275] font-mono text-[11px]">
-                    <div>Architecture: Laravel 11.x &bull; Server: Apache/2.4 (FreeBSD)</div>
-                    <div>Database: MariaDB 10.6 &bull; MCU Vipassana Management System</div>
+                <div class="flex flex-col items-center md:items-end gap-2.5">
+                    @if (Session::has('admin_user'))
+                        <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-xs border border-white/15 transition shadow-sm">
+                            <i data-lucide="layout-dashboard" class="w-4 h-4 text-[#A3B88C]"></i>
+                            <span>{{ __('portal.nav_admin_panel') }}</span>
+                        </a>
+                    @else
+                        <a href="{{ route('login') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#2C3E2D] hover:bg-[#385039] text-[#EAE5D9] hover:text-white font-medium text-xs border border-[#3E5540] transition shadow-sm group">
+                            <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-[#A3B88C] group-hover:text-white transition"></i>
+                            <span>{{ __('portal.nav_admin_login') }}</span>
+                        </a>
+                    @endif
+                    <div class="text-[10px] text-[#7A7367] font-mono">
+                        {{ __('portal.university_name') }} &bull; VPSMCU
+                    </div>
                 </div>
             </div>
         </div>
@@ -606,7 +606,7 @@
             navigator.clipboard.writeText(text).then(() => {
                 const badge = document.getElementById(badgeId);
                 const originalText = badge.textContent;
-                badge.textContent = 'คัดลอกแล้ว!';
+                badge.textContent = '{{ __('portal.donation_copy_done') }}';
                 setTimeout(() => {
                     badge.textContent = originalText;
                 }, 2000);

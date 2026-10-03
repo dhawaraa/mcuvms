@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>รายชื่อส่วนงานภายใน มจร และรหัสย่อจังหวัด | MCUVMS Admin</title>
+    <title>รายชื่อส่วนงานภายใน มจร และรหัสย่อจังหวัด | VPSMCU Admin</title>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -81,42 +81,51 @@
             </div>
         </div>
 
-        <!-- 4 Summary Stat Mini-Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-            <div class="earth-admin-card p-5">
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-xs font-mono font-bold text-[#8C8275] uppercase">ส่วนงานทั้งหมด</span>
-                    <span class="p-2 rounded-xl bg-[#5A6B47]/10 text-[#5A6B47]"><i data-lucide="network" class="w-4 h-4"></i></span>
+        <!-- Summary Stat Mini-Cards -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+            <div class="earth-admin-card p-4">
+                <div class="flex justify-between items-center mb-1.5">
+                    <span class="text-[11px] font-mono font-bold text-[#8C8275] uppercase">ส่วนงานทั้งหมด</span>
+                    <span class="p-1.5 rounded-lg bg-[#5A6B47]/10 text-[#5A6B47]"><i data-lucide="network" class="w-4 h-4"></i></span>
                 </div>
                 <div class="text-2xl font-bold font-heading text-[#2C3E2D]">{{ $totalOrgs }}</div>
-                <div class="text-[11px] text-[#7B8D65] mt-0.5">ส่วนงานที่เปิดใช้งานในระบบ</div>
+                <div class="text-[11px] text-[#7B8D65] mt-0.5">เปิดใช้งานในระบบ</div>
             </div>
 
-            <div class="earth-admin-card p-5">
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-xs font-mono font-bold text-[#8C8275] uppercase">วิทยาเขต (Campuses)</span>
-                    <span class="p-2 rounded-xl bg-[#C86D51]/10 text-[#C86D51]"><i data-lucide="map-pin" class="w-4 h-4"></i></span>
+            <div class="earth-admin-card p-4">
+                <div class="flex justify-between items-center mb-1.5">
+                    <span class="text-[11px] font-mono font-bold text-[#8C8275] uppercase">วิทยาเขต</span>
+                    <span class="p-1.5 rounded-lg bg-[#C86D51]/10 text-[#C86D51]"><i data-lucide="map-pin" class="w-4 h-4"></i></span>
                 </div>
                 <div class="text-2xl font-bold font-heading text-[#2C3E2D]">{{ $totalCampuses }}</div>
                 <div class="text-[11px] text-[#7B8D65] mt-0.5">วิทยาเขตประจำภูมิภาค</div>
             </div>
 
-            <div class="earth-admin-card p-5">
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-xs font-mono font-bold text-[#8C8275] uppercase">วิทยาลัยสงฆ์ (Colleges)</span>
-                    <span class="p-2 rounded-xl bg-[#2C3E2D]/10 text-[#2C3E2D]"><i data-lucide="landmark" class="w-4 h-4"></i></span>
+            <div class="earth-admin-card p-4">
+                <div class="flex justify-between items-center mb-1.5">
+                    <span class="text-[11px] font-mono font-bold text-[#8C8275] uppercase">วิทยาลัยสงฆ์</span>
+                    <span class="p-1.5 rounded-lg bg-[#2C3E2D]/10 text-[#2C3E2D]"><i data-lucide="landmark" class="w-4 h-4"></i></span>
                 </div>
                 <div class="text-2xl font-bold font-heading text-[#2C3E2D]">{{ $totalColleges }}</div>
                 <div class="text-[11px] text-[#7B8D65] mt-0.5">วิทยาลัยสงฆ์ประจำจังหวัด</div>
             </div>
 
-            <div class="earth-admin-card p-5">
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-xs font-mono font-bold text-[#8C8275] uppercase">ส่วนกลาง / คณะวิชา</span>
-                    <span class="p-2 rounded-xl bg-[#7B8D65]/10 text-[#5A6B47]"><i data-lucide="building" class="w-4 h-4"></i></span>
+            <div class="earth-admin-card p-4">
+                <div class="flex justify-between items-center mb-1.5">
+                    <span class="text-[11px] font-mono font-bold text-[#8C8275] uppercase">หน่วยวิทยบริการ</span>
+                    <span class="p-1.5 rounded-lg bg-[#8C5E3C]/10 text-[#8C5E3C]"><i data-lucide="book-open" class="w-4 h-4"></i></span>
+                </div>
+                <div class="text-2xl font-bold font-heading text-[#2C3E2D]">{{ $totalAcademicUnits ?? 0 }}</div>
+                <div class="text-[11px] text-[#7B8D65] mt-0.5">หน่วยวิทยบริการ</div>
+            </div>
+
+            <div class="earth-admin-card p-4 col-span-2 sm:col-span-1">
+                <div class="flex justify-between items-center mb-1.5">
+                    <span class="text-[11px] font-mono font-bold text-[#8C8275] uppercase">ส่วนกลาง / คณะ</span>
+                    <span class="p-1.5 rounded-lg bg-[#7B8D65]/10 text-[#5A6B47]"><i data-lucide="building" class="w-4 h-4"></i></span>
                 </div>
                 <div class="text-2xl font-bold font-heading text-[#2C3E2D]">{{ $totalCentral }}</div>
-                <div class="text-[11px] text-[#7B8D65] mt-0.5">คณะ/วิทยาลัย/สถาบันส่วนกลาง</div>
+                <div class="text-[11px] text-[#7B8D65] mt-0.5">คณะ/วิทยาลัย/สถาบัน</div>
             </div>
         </div>
 
@@ -133,7 +142,8 @@
                         <option value="">-- ทุกประเภทส่วนงาน --</option>
                         <option value="CENTRAL" {{ request('type') == 'CENTRAL' ? 'selected' : '' }}>ส่วนกลาง (Central)</option>
                         <option value="CAMPUS" {{ request('type') == 'CAMPUS' ? 'selected' : '' }}>วิทยาเขต (Campus)</option>
-                        <option value="COLLEGE" {{ request('type') == 'COLLEGE' ? 'selected' : '' }}>วิทยาลัยสงฆ์ (College)</option>
+                        <option value="SANGHA_COLLEGE" {{ in_array(request('type'), ['SANGHA_COLLEGE', 'COLLEGE']) ? 'selected' : '' }}>วิทยาลัยสงฆ์ (Sangha College)</option>
+                        <option value="ACADEMIC_UNIT" {{ request('type') == 'ACADEMIC_UNIT' ? 'selected' : '' }}>หน่วยวิทยบริการ (Academic Unit)</option>
                     </select>
 
                     <button type="submit" class="px-4 py-2 bg-[#5A6B47] hover:bg-[#2C3E2D] text-white rounded-xl text-xs font-semibold transition">
@@ -192,9 +202,13 @@
                                         <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-[#C86D51]/15 text-[#C86D51] border border-[#C86D51]/30">
                                             วิทยาเขต
                                         </span>
-                                    @elseif ($org->type === 'COLLEGE')
+                                    @elseif (in_array($org->type, ['COLLEGE', 'SANGHA_COLLEGE']))
                                         <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-[#2C3E2D]/15 text-[#2C3E2D] border border-[#2C3E2D]/30">
                                             วิทยาลัยสงฆ์
+                                        </span>
+                                    @elseif ($org->type === 'ACADEMIC_UNIT')
+                                        <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-[#8C5E3C]/15 text-[#8C5E3C] border border-[#8C5E3C]/30">
+                                            หน่วยวิทยบริการ
                                         </span>
                                     @else
                                         <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-[#5A6B47]/15 text-[#5A6B47] border border-[#5A6B47]/30">

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ลงทะเบียนปฏิบัติวิปัสสนากรรมฐาน ระดับปริญญาตรี (10 วัน/ปี) - MCUVMS</title>
+    <title>{{ __('portal.ug_header_title') }} - VPSMCU</title>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -69,8 +69,8 @@
                 <a href="{{ route('home') }}" class="flex items-center space-x-3">
                     <img src="{{ asset('images/mcu-logo.png') }}" alt="MCU Logo" class="w-10 h-10 object-contain drop-shadow-sm">
                     <div>
-                        <div class="font-heading font-bold text-[#2C3E2D] leading-tight">MCUVMS</div>
-                        <div class="text-xs text-[#6B6357]">มหาจุฬาลงกรณราชวิทยาลัย</div>
+                        <div class="font-heading font-bold text-[#2C3E2D] leading-tight">VPSMCU</div>
+                        <div class="text-xs text-[#6B6357]">{{ __('portal.university_name') }}</div>
                     </div>
                 </a>
                 <div class="flex items-center space-x-3 sm:space-x-4">
@@ -88,10 +88,7 @@
                     </div>
 
                     <a href="{{ route('home') }}" class="text-[#4A3B32] hover:text-[#C86D51] font-semibold text-[15px] flex items-center gap-1.5 transition">
-                        <i data-lucide="arrow-left" class="w-4.5 h-4.5 text-[#5A6B47]"></i> <span class="hidden sm:inline">กลับหน้าหลัก</span>
-                    </a>
-                    <a href="{{ route('login') }}" class="text-[#2C3E2D] hover:text-[#C86D51] font-semibold text-sm border border-[#D5CEBC] px-4 py-2 rounded-xl bg-[#EAE5D9] hover:bg-[#DDD7C8] flex items-center gap-1.5 shadow-sm transition">
-                        <i data-lucide="lock" class="w-4 h-4 text-[#5A6B47]"></i> <span class="hidden sm:inline">เจ้าหน้าที่เข้าระบบ</span>
+                        <i data-lucide="arrow-left" class="w-4.5 h-4.5 text-[#5A6B47]"></i> <span class="hidden sm:inline">{{ __('portal.nav_back_home') }}</span>
                     </a>
                 </div>
             </div>
@@ -105,11 +102,11 @@
         <div class="bg-gradient-to-r from-[#2C3E2D] via-[#4A3B32] to-[#A85238] rounded-2xl p-6 md:p-8 text-white shadow-md mb-8 border border-[#3D523E]">
             <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/15 backdrop-blur-sm rounded-full text-xs font-semibold uppercase tracking-wider mb-2 border border-white/20">
                 <i data-lucide="graduation-cap" class="w-3.5 h-3.5 text-[#EAE5D9]"></i>
-                <span>โมดูลที่ 1 (Module 1: Undergraduate)</span>
+                <span>{{ __('portal.ug_header_badge') }}</span>
             </div>
-            <h1 class="text-2xl md:text-3xl font-heading font-bold mb-2">ระบบลงทะเบียนปฏิบัติวิปัสสนากรรมฐาน ระดับปริญญาตรี</h1>
+            <h1 class="text-2xl md:text-3xl font-heading font-bold mb-2">{{ __('portal.ug_header_title') }}</h1>
             <p class="text-[#EAE5D9] text-sm leading-relaxed">
-                เกณฑ์มาตรฐานหลักสูตร: ภาคปกติและภาคพิเศษ ปฏิบัติวิปัสสนากรรมฐาน <span class="text-[#F7F5EE] font-semibold underline">ปีละ 10 วัน ต่อเนื่อง 4 ปีการศึกษา รวม 40 วัน</span> เพื่อสำเร็จการศึกษา
+                {{ __('portal.ug_header_desc') }}
             </p>
         </div>
 
@@ -127,38 +124,38 @@
                 <div class="w-16 h-16 bg-[#FAF8F2] text-amber-700 rounded-full flex items-center justify-center mx-auto mb-4 border border-amber-300">
                     <i data-lucide="clock" class="w-8 h-8"></i>
                 </div>
-                <h2 class="text-2xl font-heading font-bold text-[#2C3E2D] mb-1">ส่งคำขอลงทะเบียนเรียบร้อยแล้ว</h2>
+                <h2 class="text-2xl font-heading font-bold text-[#2C3E2D] mb-1">{{ __('portal.ug_success_title') }}</h2>
                 <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 border border-amber-200 text-amber-800 rounded-full text-xs font-semibold mb-4">
                     <i data-lucide="info" class="w-3.5 h-3.5"></i>
-                    <span>สถานะ: รอเจ้าหน้าที่ส่วนงานตรวจสอบคุณสมบัติ (Pending Approval)</span>
+                    <span>{{ __('portal.ug_success_status') }}</span>
                 </div>
                 <p class="text-[#6B6357] text-xs max-w-lg mx-auto mb-6">
-                    เจ้าหน้าที่ส่วนงาน/วิทยาเขตของท่านจะทำการตรวจสอบความถูกต้องของข้อมูล เมื่อได้รับอนุมัติสิทธิ์ (APPROVED) แล้ว ท่านจึงจะสามารถใช้รหัสหรือ QR Code นี้ในการรายงานตัวเข้าปฏิบัติธรรม ณ วันเปิดโครงการ
+                    {{ __('portal.ug_success_desc') }}
                 </p>
                 
                 <div class="inline-block bg-[#F7F5EE] border border-[#D5CEBC] rounded-xl p-6 text-left max-w-sm w-full shadow-inner mb-6">
-                    <div class="text-xs text-[#8C8275] uppercase font-semibold">รหัสอ้างอิงการลงทะเบียน มจร</div>
+                    <div class="text-xs text-[#8C8275] uppercase font-semibold">{{ __('portal.ug_ref_code') }}</div>
                     <div class="text-lg font-heading font-bold text-[#C86D51] mt-1">{{ session('regSuccess') }}</div>
                     <div class="mt-4 pt-4 border-t border-[#E3DEC9] flex flex-col items-center">
                         <div class="bg-white p-3 border border-[#D5CEBC] rounded-lg shadow-sm text-center">
-                            <img id="qr-image" crossOrigin="anonymous" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=MCUVMS-{{ session('regSuccess') }}" alt="QR Check-in" class="w-40 h-40 mx-auto" />
+                            <img id="qr-image" crossOrigin="anonymous" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=VPSMCU-{{ session('regSuccess') }}" alt="QR Check-in" class="w-40 h-40 mx-auto" />
                             <div class="text-[10px] text-[#8C8275] mt-2 font-mono flex items-center justify-center gap-1">
-                                <i data-lucide="qr-code" class="w-3 h-3 text-[#5A6B47]"></i> รหัสตรวจสอบ: MCUVMS-{{ session('regSuccess') }}
+                                <i data-lucide="qr-code" class="w-3 h-3 text-[#5A6B47]"></i> {{ __('portal.ug_qr_verify_code') }}: VPSMCU-{{ session('regSuccess') }}
                             </div>
                         </div>
                         <button type="button" onclick="downloadQRCode('{{ session('regSuccess') }}')" class="mt-3.5 w-full bg-white hover:bg-[#FAF8F2] text-[#2C3E2D] border border-[#5A6B47]/40 hover:border-[#5A6B47] text-xs font-medium py-2 px-3 rounded-lg shadow-sm transition flex items-center justify-center gap-1.5">
                             <i data-lucide="download" class="w-3.5 h-3.5 text-[#5A6B47]"></i>
-                            <span>บันทึก/ดาวน์โหลดภาพ QR Code</span>
+                            <span>{{ __('portal.ug_download_qr') }}</span>
                         </button>
                     </div>
                 </div>
 
                 <div class="flex items-center justify-center gap-3">
                     <button onclick="window.print()" class="bg-[#2C3E2D] hover:bg-[#3D523E] text-[#F7F4EA] font-medium px-6 py-2.5 rounded-lg text-sm transition flex items-center gap-2 shadow-sm">
-                        <i data-lucide="printer" class="w-4 h-4"></i> พิมพ์บัตรลงทะเบียน
+                        <i data-lucide="printer" class="w-4 h-4"></i> {{ __('portal.ug_print_card') }}
                     </button>
                     <a href="{{ route('ug.register') }}" class="text-[#6B6357] hover:text-[#2C3E2D] text-sm font-medium py-2.5">
-                        ลงทะเบียนเพิ่ม
+                        {{ __('portal.ug_register_more') }}
                     </a>
                 </div>
             </div>
@@ -172,15 +169,15 @@
                     <h2 class="text-base font-heading font-bold text-[#2C3E2D] flex items-center justify-between border-b border-[#E3DEC9] pb-3 mb-4">
                         <span class="flex items-center">
                             <span class="w-6 h-6 rounded-full bg-[#5A6B47] text-white text-xs font-bold flex items-center justify-center mr-2">1</span>
-                            ตรวจสอบข้อมูลนิสิตด้วยรหัสนิสิต (Student Verification)
+                            {{ __('portal.ug_step1_title') }}
                         </span>
-                        <span class="text-xs text-[#7B8D65] font-normal">ระบบจะดึงข้อมูลสังกัดและกรองโครงการให้อัตโนมัติ</span>
+                        <span class="text-xs text-[#7B8D65] font-normal">{{ __('portal.ug_step1_subtitle') }}</span>
                     </h2>
 
                     <div class="flex flex-col md:flex-row gap-3 items-stretch md:items-end w-full">
                         <div class="flex-1 min-w-0">
                             <label class="block text-xs font-semibold text-[#4A3B32] mb-1">
-                                ป้อนรหัสนิสิต (Student Code) <span class="text-[#C86D51]">*</span>
+                                {{ __('portal.ug_student_code') }} <span class="text-[#C86D51]">*</span>
                             </label>
                             <div class="relative">
                                 <i data-lucide="search" class="w-4 h-4 text-[#8C8275] absolute left-3 top-3"></i>
@@ -190,11 +187,11 @@
                         <div class="flex items-center gap-2 shrink-0">
                             <button type="button" id="btn-lookup-student" onclick="lookupStudentCode()" class="bg-[#5A6B47] hover:bg-[#2C3E2D] text-white font-medium px-4 sm:px-5 py-2.5 rounded-xl text-xs shadow-sm transition flex items-center justify-center gap-1.5 h-[42px] whitespace-nowrap">
                                 <i data-lucide="user-check" class="w-4 h-4 shrink-0"></i>
-                                <span>ตรวจสอบข้อมูล</span>
+                                <span>{{ __('portal.ug_btn_verify') }}</span>
                             </button>
-                            <button type="button" id="btn-reset-student" onclick="resetForm()" title="ล้างค่าและเริ่มใหม่" class="border border-[#D5CEBC] bg-white hover:bg-[#EAE5D9] text-[#4A3B32] font-medium px-3.5 py-2.5 rounded-xl text-xs shadow-sm transition flex items-center justify-center gap-1.5 h-[42px] whitespace-nowrap">
+                            <button type="button" id="btn-reset-student" onclick="resetForm()" title="{{ __('portal.ug_btn_reset') }}" class="border border-[#D5CEBC] bg-white hover:bg-[#EAE5D9] text-[#4A3B32] font-medium px-3.5 py-2.5 rounded-xl text-xs shadow-sm transition flex items-center justify-center gap-1.5 h-[42px] whitespace-nowrap">
                                 <i data-lucide="rotate-ccw" class="w-4 h-4 text-[#C86D51] shrink-0"></i>
-                                <span>ล้างค่า</span>
+                                <span>{{ __('portal.ug_btn_reset') }}</span>
                             </button>
                         </div>
                     </div>
@@ -211,13 +208,13 @@
                                     <span id="disp-degree-level" class="px-2 py-0.5 rounded bg-white border border-[#5A6B47]/30 text-[#5A6B47] text-[11px] font-mono"></span>
                                 </div>
                                 <div class="text-xs text-[#7B8D65] mt-1 space-x-2">
-                                    <span>คณะ: <strong id="disp-faculty" class="text-[#4A3B32]"></strong></span>
-                                    <span>&bull; สาขา: <strong id="disp-major" class="text-[#4A3B32]"></strong></span>
-                                    <span>&bull; ชั้นปีที่: <strong id="disp-study-year" class="text-[#4A3B32]"></strong></span>
+                                    <span>{{ __('portal.ug_faculty') }}: <strong id="disp-faculty" class="text-[#4A3B32]"></strong></span>
+                                    <span>&bull; {{ __('portal.ug_major') }}: <strong id="disp-major" class="text-[#4A3B32]"></strong></span>
+                                    <span>&bull; {{ __('portal.ug_year') }}: <strong id="disp-study-year" class="text-[#4A3B32]"></strong></span>
                                 </div>
                             </div>
                             <div class="text-left md:text-right">
-                                <div class="text-[11px] text-[#7B8D65]">ส่วนจัดการศึกษาต้นสังกัด</div>
+                                <div class="text-[11px] text-[#7B8D65]">{{ __('portal.ug_org') }}</div>
                                 <div id="disp-org-name" class="text-xs font-bold text-[#C86D51]"></div>
                             </div>
                         </div>
@@ -237,18 +234,14 @@
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#E3DEC9] pb-3 mb-4 gap-2">
                         <h2 class="text-lg font-heading font-semibold text-[#2C3E2D] flex items-center">
                             <span class="w-6 h-6 rounded-full bg-[#EAE5D9] text-[#4A3B32] text-xs font-bold flex items-center justify-center mr-2">2</span>
-                            เลือกกำหนดการปฏิบัติธรรมประจำปีการศึกษา (สิทธิ์เฉพาะส่วนจัดการศึกษาต้นสังกัด)
+                            {{ __('portal.ug_step2_title') }}
                         </h2>
-                        <span class="text-[11px] text-[#7B8D65] flex items-center gap-1">
-                            <i data-lucide="mouse" class="w-3.5 h-3.5 text-[#5A6B47]"></i>
-                            <span>แสดง 3 รายการล่าสุด (เลื่อน Scroll เพื่อดูเพิ่มเติม)</span>
-                        </span>
                     </div>
 
                     <!-- Notice Banner -->
                     <div id="batch-filter-hint" class="bg-[#FAF8F2] border border-[#EAE5D9] text-[#4A3B32] px-4 py-2.5 rounded-xl text-xs mb-4 flex items-center gap-2">
                         <i data-lucide="info" class="w-4 h-4 text-[#5A6B47] shrink-0"></i>
-                        <span id="batch-hint-text">กรุณาตรวจสอบรหัสนิสิตในขั้นตอนที่ 1 ระบบจะแสดงกำหนดการปฏิบัติธรรมเฉพาะส่วนงานต้นสังกัดของท่านโดยอัตโนมัติ</span>
+                        <span id="batch-hint-text">{{ __('portal.ug_step2_hint') }}</span>
                     </div>
 
                     <div class="space-y-3 max-h-[385px] overflow-y-auto pr-1.5 custom-scrollbar" id="batch-list-container">
@@ -258,31 +251,31 @@
                                 <div class="ml-3 flex-grow">
                                     <div class="flex justify-between items-center">
                                         <div class="flex items-center gap-2">
-                                            <span class="px-2 py-0.5 text-xs bg-[#5A6B47]/15 text-[#5A6B47] rounded-md font-mono font-bold border border-[#5A6B47]/30">ปีการศึกษา {{ $batch->academic_year }}</span>
-                                            <span class="font-heading font-semibold text-[#2C3E2D] text-sm md:text-base">{{ $batch->title }}</span>
+                                            <span class="px-2 py-0.5 text-xs bg-[#5A6B47]/15 text-[#5A6B47] rounded-md font-mono font-bold border border-[#5A6B47]/30">{{ __('portal.ug_academic_year') }} {{ $batch->academic_year }}</span>
+                                            <span class="font-heading font-semibold text-[#2C3E2D] text-sm md:text-base">{{ $batch->localized_title }}</span>
                                         </div>
-                                        <span class="px-2 py-0.5 text-xs bg-[#E9EFE2] text-[#3D523E] rounded-full font-medium border border-[#CADBC0]">เปิดรับสมัคร</span>
+                                        <span class="px-2 py-0.5 text-xs bg-[#E9EFE2] text-[#3D523E] rounded-full font-medium border border-[#CADBC0]">{{ __('portal.ug_open_status') }}</span>
                                     </div>
                                     <div class="text-xs text-[#6B6357] mt-1.5 flex items-center gap-1.5">
                                         <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#C86D51] shrink-0"></i>
-                                        <span>สถานที่: {{ $batch->location }} (ส่วนจัดการศึกษา: <strong class="text-[#2C3E2D]">{{ $batch->organizationUnit->name_th ?? 'มจร' }}</strong>)</span>
+                                        <span>{{ __('portal.ug_venue') }}: {{ $batch->localized_location }} ({{ __('portal.ug_org') }}: <strong class="text-[#2C3E2D]">{{ app()->getLocale() === 'en' ? ($batch->organizationUnit->name_en ?? $batch->organizationUnit->name_th ?? __('portal.mcu_short')) : ($batch->organizationUnit->name_th ?? __('portal.mcu_short')) }}</strong>)</span>
                                     </div>
                                     <div class="text-xs text-[#5A6B47] font-medium mt-1 flex items-center gap-1.5">
                                         <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#5A6B47] shrink-0"></i>
-                                        <span>วันที่เข้าปฏิบัติ: {{ $batch->start_date }} ถึง {{ $batch->end_date }} (หลักสูตร 10 วัน)</span>
+                                        <span>{{ __('portal.ug_dates') }}: {{ $batch->start_date }} {{ app()->getLocale() === 'en' ? 'to' : 'ถึง' }} {{ $batch->end_date }} ({{ __('portal.ug_course_days') }})</span>
                                     </div>
                                 </div>
                             </label>
                         @empty
                             <div class="text-center py-6 text-[#8C8275] bg-[#F7F5EE] rounded-xl border border-dashed border-[#D5CEBC]">
-                                <div>ยังไม่มีกำหนดการเปิดรับสมัครในขณะนี้</div>
+                                <div>{{ __('portal.ug_no_batch_org') }}</div>
                             </div>
                         @endforelse
 
                         <div id="no-batch-alert" style="display:none;" class="text-center py-8 text-[#8C8275] bg-[#F7F5EE] rounded-xl border border-dashed border-[#D5CEBC]">
                             <i data-lucide="calendar-x" class="w-8 h-8 mx-auto mb-2 text-[#C86D51]"></i>
-                            <div class="font-semibold text-[#2C3E2D]">ไม่พบกำหนดการปฏิบัติธรรมที่เปิดรับสมัครของส่วนจัดการศึกษาต้นสังกัดนี้</div>
-                            <p class="text-xs text-[#7B8D65] mt-1">โปรดติดต่อเจ้าหน้าที่ผู้ประสานงานประจำวิทยาเขต/ส่วนงานของท่าน</p>
+                            <div class="font-semibold text-[#2C3E2D]">{{ __('portal.ug_no_batch_org') }}</div>
+                            <p class="text-xs text-[#7B8D65] mt-1">{{ __('portal.ug_contact_staff') }}</p>
                         </div>
                     </div>
                 </div>
@@ -291,25 +284,25 @@
                 <div>
                     <h2 class="text-lg font-heading font-semibold text-[#2C3E2D] flex items-center border-b border-[#E3DEC9] pb-3 mb-4">
                         <span class="w-6 h-6 rounded-full bg-[#EAE5D9] text-[#4A3B32] text-xs font-bold flex items-center justify-center mr-2">3</span>
-                        ข้อมูลติดต่อและสุขภาพ
+                        {{ __('portal.ug_step3_title') }}
                     </h2>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">เบอร์โทรศัพท์ติดต่อ</label>
+                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">{{ __('portal.ug_phone') }}</label>
                             <input type="tel" id="input_phone" name="phone" placeholder="08xxxxxxxx" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">อีเมล (ถ้ามี)</label>
+                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">{{ __('portal.ug_email') }}</label>
                             <input type="email" id="input_email" name="email" placeholder="student@mcu.ac.th" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
                         </div>
 
                         <div>
-                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">โรคประจำตัว / ข้อจำกัดด้านสุขภาพ (ถ้ามี)</label>
+                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">{{ __('portal.ug_health') }}</label>
                             <textarea name="health_conditions" rows="2" placeholder="เช่น หอบหืด, ความดัน, แพ้อาหาร..." class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]"></textarea>
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">ผู้ติดต่อฉุกเฉิน และเบอร์โทร</label>
+                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">{{ __('portal.ug_emergency') }}</label>
                             <textarea name="emergency_contact" rows="2" placeholder="เช่น บิดา/มารดา หรือ อาจารย์ที่ปรึกษา โทร. 08xxxxxxxx" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]"></textarea>
                         </div>
                     </div>
@@ -319,13 +312,13 @@
                 <div class="pt-4 border-t border-[#E3DEC9] flex flex-wrap items-center justify-between gap-3">
                     <button type="button" onclick="resetForm()" class="px-4 py-2.5 text-xs text-[#A85238] hover:text-white hover:bg-[#C86D51] border border-[#D5CEBC] rounded-lg font-medium transition flex items-center gap-1.5">
                         <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-                        <span>ล้างข้อมูลทั้งหมด (Reset Form)</span>
+                        <span>{{ __('portal.ug_btn_reset_all') }}</span>
                     </button>
                     <div class="flex items-center space-x-3">
-                        <a href="{{ route('home') }}" class="px-5 py-2.5 text-[#6B6357] hover:text-[#2C3E2D] text-sm font-medium">ยกเลิก</a>
+                        <a href="{{ route('home') }}" class="px-5 py-2.5 text-[#6B6357] hover:text-[#2C3E2D] text-sm font-medium">{{ __('portal.ug_btn_cancel') }}</a>
                         <button type="submit" id="btn-submit-reg" class="bg-[#2C3E2D] hover:bg-[#3D523E] text-[#F7F4EA] font-medium px-6 py-2.5 rounded-lg text-sm shadow-sm transition flex items-center gap-2">
                             <i data-lucide="check-circle" class="w-4 h-4 text-[#A3B88C]"></i>
-                            <span>ยืนยันการลงทะเบียน (Submit Registration)</span>
+                            <span>{{ __('portal.ug_btn_submit') }}</span>
                         </button>
                     </div>
                 </div>
@@ -337,7 +330,7 @@
 
     <!-- Footer -->
     <footer class="bg-[#FAF8F2] border-t border-[#E3DEC9] py-6 text-center text-xs text-[#8C8275]">
-        มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย  • ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน (MCUVMS)
+        {{ __('portal.footer_brand') }}
     </footer>
 
     <script>
@@ -526,7 +519,7 @@
                     const blobUrl = URL.createObjectURL(blob);
                     const link = document.createElement('a');
                     link.href = blobUrl;
-                    link.download = `QR-MCUVMS-${regNo}.png`;
+                    link.download = `QR-VPSMCU-${regNo}.png`;
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
@@ -537,7 +530,7 @@
                     const link = document.createElement('a');
                     link.href = qrImg.src;
                     link.target = '_blank';
-                    link.download = `QR-MCUVMS-${regNo}.png`;
+                    link.download = `QR-VPSMCU-${regNo}.png`;
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);

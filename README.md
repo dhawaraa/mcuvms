@@ -1,4 +1,4 @@
-# ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย (MCUVMS)
+# ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย (VPSMCU)
 **Mahachulalongkornrajavidyalaya University Vipassana Meditation Information System**
 
 ระบบบริหารจัดการและประมวลผลข้อมูลการปฏิบัติวิปัสสนากรรมฐานของมหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย ครอบคลุมส่วนงานทั่วประเทศ (วิทยาเขต, วิทยาลัยสงฆ์, และส่วนกลาง) พัฒนาบนพื้นฐานของ **Laravel 11, PHP 8.4, MariaDB 10.6, Apache 2.4, และ Tailwind CSS (Blade Views)** เพื่อรองรับการติดตั้งบนโครงสร้างพื้นฐานโฮสติ้งของมหาวิทยาลัยโดยเฉพาะ
@@ -93,10 +93,22 @@
  - 📰 **ข่าวสารและประกาศ**
    - จัดการข่าวสารและประกาศ
  - ⚙️ **การตั้งค่าระบบ**
-   - รายชื่อส่วนงานและรหัสย่อ (52 ส่วนงาน)
+   - รายชื่อส่วนงานและรหัสย่อ (51 ส่วนงาน: ส่วนกลาง 7, วิทยาเขต 13, วิทยาลัยสงฆ์ 28, หน่วยวิทยบริการ 3)
    - จัดการผู้ใช้งานและกำหนดสิทธิ์
    - ตั้งค่าระบบสำหรับติดต่อสอบถาม
  
+---
+
+## 📋 บันทึกการปรับปรุงระบบล่าสุด (Changelog & Updates)
+
+- **ปรับปรุงฐานข้อมูลและหน้าสารสนเทศส่วนงาน มจร (`/admin/org_units.php`):**
+  - **ลบรายการส่วนงานที่ไม่มีอยู่จริง:** ลบ "วิทยาเขตสงขลา" (`CAMPUS-SKA`) ออกจากฐานข้อมูลและ Master Data ทั้งหมด
+  - **ยกระดับสถานะส่วนงาน:** ปรับปรุง "หน่วยวิทยบริการ จังหวัดสงขลา" (`UNIT-SKA`) ให้เป็น **"วิทยาลัยสงฆ์สงขลา"** (`SANGHA-SKA`) ประเภทวิทยาลัยสงฆ์ (`SANGHA_COLLEGE`)
+  - **แก้ไขตัวกรองวิทยาลัยสงฆ์:** ปรับปรุงตัวกรองประเภทส่วนงานให้ค้นหาและกรอง `SANGHA_COLLEGE` / `COLLEGE` ได้สมบูรณ์ แสดงครบ 28 แห่ง พร้อมป้ายกำกับสีเขียวป่าลึก
+  - **เพิ่มตัวกรองและป้ายสถานะหน่วยวิทยบริการ:** รองรับการกรองประเภท `ACADEMIC_UNIT` (3 แห่ง) พร้อมป้ายกำกับสีดินเผา
+  - **การ์ดสรุปสถิติ 5 กลุ่มส่วนงาน:** เพิ่มสถิติหน่วยวิทยบริการในการ์ดสรุปด้านบน
+  - **ปรับปรุงประสิทธิภาพ (Performance):** เพิ่มความเร็วในการประมวลผลและการโหลดหน้า ป้องกันอาการค้าง/หน่วง
+
 ---
  
 ## 🛠️ คำสั่งสำคัญสำหรับนักพัฒนา (Developer Commands)
@@ -106,25 +118,25 @@
 podman-compose ps
  
 # ล้าง View Cache ของ Laravel เมื่อแก้ไขไฟล์ Blade
-podman exec MCUVMS php artisan view:clear
+podman exec VPSMCU php artisan view:clear
  
 # สั่ง Migrate ฐานข้อมูล
-podman exec MCUVMS php artisan migrate
+podman exec VPSMCU php artisan migrate
  
 # สั่ง Seed ข้อมูลเริ่มต้น
-podman exec MCUVMS php artisan db:seed
+podman exec VPSMCU php artisan db:seed
  
 # เข้าสู่ Terminal ภายใน Web Container
-podman exec -it MCUVMS bash
+podman exec -it VPSMCU bash
  
 # ดู Log ของ Web Server
-podman logs -f MCUVMS
+podman logs -f VPSMCU
 ```
 
 ---
 
 ## 📚 เอกสารประกอบระบบเพิ่มเติม
 
-- [HANDOFF.md](file:///Users/dhawara/Desktop/WebDEV/0-MCU/MCUVMS/HANDOFF.md) — บันทึกประวัติการพัฒนาและสถานะงานส่งมอบฉบับละเอียด
-- [AGENTS.md](file:///Users/dhawara/Desktop/WebDEV/0-MCU/MCUVMS/AGENTS.md) — กฎเหล็กและข้อกำหนดการเขียนโค้ด (Coding Guidelines & Earth Tones Standard)
-- [BLUEPRINT.md](file:///Users/dhawara/Desktop/WebDEV/0-MCU/MCUVMS/BLUEPRINT.md) — พิมพ์เขียวโครงสร้างข้อมูลและ Business Logic ของระบบ
+- [HANDOFF.md](file:///Users/dhawara/Desktop/WebDEV/0-MCU/VPSMCU/HANDOFF.md) — บันทึกประวัติการพัฒนาและสถานะงานส่งมอบฉบับละเอียด
+- [AGENTS.md](file:///Users/dhawara/Desktop/WebDEV/0-MCU/VPSMCU/AGENTS.md) — กฎเหล็กและข้อกำหนดการเขียนโค้ด (Coding Guidelines & Earth Tones Standard)
+- [BLUEPRINT.md](file:///Users/dhawara/Desktop/WebDEV/0-MCU/VPSMCU/BLUEPRINT.md) — พิมพ์เขียวโครงสร้างข้อมูลและ Business Logic ของระบบ

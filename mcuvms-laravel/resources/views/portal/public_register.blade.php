@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="th" data-palette="coral" data-theme="light">
+<html lang="{{ app()->getLocale() }}" data-palette="coral" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ลงทะเบียนปฏิบัติธรรมสำหรับประชาชนทั่วไป (Social Service) - MCUVMS Laravel</title>
+    <title>{{ __('portal.public_header_title') }} - VPSMCU</title>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -75,8 +75,8 @@
                 <a href="{{ route('home') }}" class="flex items-center space-x-3">
                     <img src="{{ asset('images/mcu-logo.png') }}" alt="MCU Logo" class="w-10 h-10 object-contain drop-shadow-sm">
                     <div>
-                        <div class="font-heading font-bold text-[#2C3E2D] leading-tight">MCUVMS</div>
-                        <div class="text-xs text-[#7B8D65]">มหาจุฬาลงกรณราชวิทยาลัย</div>
+                        <div class="font-heading font-bold text-[#2C3E2D] leading-tight">VPSMCU</div>
+                        <div class="text-xs text-[#7B8D65]">{{ __('portal.university_name') }}</div>
                     </div>
                 </a>
                 <div class="flex items-center space-x-3 sm:space-x-4">
@@ -94,10 +94,7 @@
                     </div>
 
                     <a href="{{ route('home') }}" class="text-[#4A3B32] hover:text-[#5A6B47] font-semibold text-[15px] flex items-center gap-1.5 transition">
-                        <i data-lucide="arrow-left" class="w-4.5 h-4.5 text-[#5A6B47]"></i> <span class="hidden sm:inline">กลับหน้าหลัก</span>
-                    </a>
-                    <a href="{{ route('login') }}" class="text-[#2C3E2D] hover:text-[#5A6B47] font-semibold text-sm border border-[#D5CEBC] px-4 py-2 rounded-xl bg-[#EAE5D9] hover:bg-[#DDD7C8] flex items-center gap-1.5 shadow-sm transition">
-                        <i data-lucide="lock" class="w-4 h-4 text-[#5A6B47]"></i> <span class="hidden sm:inline">เจ้าหน้าที่เข้าระบบ</span>
+                        <i data-lucide="arrow-left" class="w-4.5 h-4.5 text-[#5A6B47]"></i> <span class="hidden sm:inline">{{ __('portal.nav_back_home') }}</span>
                     </a>
                 </div>
             </div>
@@ -111,11 +108,11 @@
         <div class="bg-gradient-to-r from-[#2C3E2D] via-[#3A4F3C] to-[#5A6B47] rounded-3xl p-6 md:p-8 text-white shadow-lg shadow-[#2C3E2D]/15 mb-8 border border-[#2C3E2D]/20">
             <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/15 backdrop-blur-sm rounded-full text-xs font-semibold uppercase tracking-wider mb-2 border border-white/20 text-[#FAF8F2]">
                 <i data-lucide="heart-handshake" class="w-3.5 h-3.5 text-[#EAE5D9]"></i>
-                <span>โมดูลที่ 3 (Module 3: Public Meditation)</span>
+                <span>{{ __('portal.public_header_badge') }}</span>
             </div>
-            <h1 class="text-2xl md:text-3xl font-heading font-bold mb-2 text-[#FAF8F2]">คอร์สวิปัสสนากรรมฐานสำหรับประชาชน</h1>
+            <h1 class="text-2xl md:text-3xl font-heading font-bold mb-2 text-[#FAF8F2]">{{ __('portal.public_header_title') }}</h1>
             <p class="text-[#EAE5D9] text-sm leading-relaxed">
-                บริการวิชาการทางพระพุทธศาสนาแก่สังคม เพื่อพัฒนาจิตและสันติสุขในชีวิตประจำวัน (เปิดกว้างสำหรับสาธุชนและนิสิตทุกท่าน สะดวก ใช้งานง่าย)
+                {{ __('portal.public_header_desc') }}
             </p>
         </div>
 
@@ -134,27 +131,27 @@
                     <i data-lucide="clock" class="w-8 h-8"></i>
                 </div>
                 <div class="inline-block px-3 py-1 bg-amber-50 text-amber-800 text-xs font-semibold rounded-full border border-amber-200 mb-3">
-                    สถานะ: รอเจ้าหน้าที่ตรวจสอบคุณสมบัติ (Pending Review)
+                    {{ __('portal.public_success_status') }}
                 </div>
                 <h2 class="text-xl md:text-2xl font-heading font-bold text-[#2C3E2D] mb-2">{{ session('success') }}</h2>
-                <p class="text-[#4A3B32] text-sm mb-4">รหัสการลงทะเบียนของท่านคือ:</p>
+                <p class="text-[#4A3B32] text-sm mb-4">{{ __('portal.public_reg_code_is') }}</p>
                 <div class="inline-block bg-[#FAF8F2] border border-[#EAE5D9] font-mono font-bold text-xl px-6 py-3 rounded-xl text-[#2C3E2D] tracking-wider mb-6 shadow-inner">
                     {{ session('regSuccess') }}
                 </div>
                 <div class="max-w-md mx-auto bg-stone-50 border border-[#EAE5D9] rounded-2xl p-4 text-xs text-[#7B8D65] text-left mb-6 space-y-1.5">
                     <div class="font-semibold text-[#2C3E2D] flex items-center gap-1.5">
-                        <i data-lucide="info" class="w-4 h-4 text-[#5A6B47]"></i> ลำดับขั้นตอนถัดไป (Next Steps):
+                        <i data-lucide="info" class="w-4 h-4 text-[#5A6B47]"></i> {{ __('portal.public_next_steps') }}
                     </div>
-                    <div>1. เจ้าหน้าที่ส่วนงานจะตรวจสอบประวัติและข้อจำกัดทางสุขภาพ/อาหาร</div>
-                    <div>2. ตรวจสอบการจัดสรรห้องพัก/อาคารตามเพศสภาพและพรรษา</div>
-                    <div>3. เมื่อผ่านการอนุมัติ เจ้าหน้าที่จะปรับสถานะเป็น <strong class="text-[#5A6B47]">"อนุมัติสิทธิ์ (Confirmed)"</strong> เพื่อเตรียมเข้ารับการอบรม</div>
+                    <div>{{ __('portal.public_step_1') }}</div>
+                    <div>{{ __('portal.public_step_2') }}</div>
+                    <div>{{ __('portal.public_step_3') }}</div>
                 </div>
                 <div class="flex items-center justify-center gap-3">
                     <button onclick="window.print()" class="bg-[#5A6B47] hover:bg-[#2C3E2D] text-white font-medium px-6 py-2.5 rounded-xl text-sm transition flex items-center gap-2 shadow-sm">
-                        <i data-lucide="printer" class="w-4 h-4"></i> พิมพ์เอกสารยืนยัน
+                        <i data-lucide="printer" class="w-4 h-4"></i> {{ __('portal.public_print_confirm') }}
                     </button>
                     <a href="{{ route('public.register') }}" class="text-[#4A3B32] hover:text-[#5A6B47] text-sm font-medium py-2.5">
-                        ลงทะเบียนให้ท่านอื่น
+                        {{ __('portal.public_reg_another') }}
                     </a>
                 </div>
             </div>
@@ -168,7 +165,7 @@
                 <div>
                     <h2 class="text-lg font-heading font-semibold text-[#2C3E2D] flex items-center border-b border-[#EAE5D9] pb-3 mb-4">
                         <span class="w-7 h-7 rounded-xl bg-[#5A6B47] text-white text-xs font-bold flex items-center justify-center mr-2.5 shadow-sm">1</span>
-                        เลือกคอร์สปฏิบัติธรรมที่ประสงค์เข้าร่วม (Course Selection)
+                        {{ __('portal.public_sec1_title') }}
                     </h2>
 
                     <div class="space-y-3">
@@ -183,26 +180,26 @@
                                 <input type="radio" name="event_id" value="{{ $ev->id }}" required class="mt-1 text-[#5A6B47] focus:ring-[#5A6B47]">
                                 <div class="ml-3 flex-grow">
                                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-                                        <span class="font-heading font-semibold text-[#2C3E2D] text-base">{{ $ev->title }}</span>
+                                        <span class="font-heading font-semibold text-[#2C3E2D] text-base">{{ $ev->localized_title }}</span>
                                         @if ($isFull)
-                                            <span class="px-2.5 py-0.5 text-xs bg-[#C86D51]/15 text-[#C86D51] rounded-full font-medium border border-[#C86D51]/30">ที่นั่งเต็ม (รับรายชื่อสำรอง)</span>
+                                            <span class="px-2.5 py-0.5 text-xs bg-[#C86D51]/15 text-[#C86D51] rounded-full font-medium border border-[#C86D51]/30">{{ __('portal.public_full_badge') }}</span>
                                         @else
-                                            <span class="px-2.5 py-0.5 text-xs bg-[#5A6B47]/15 text-[#5A6B47] rounded-full font-medium border border-[#5A6B47]/30">ว่าง {{ $available }} จาก {{ $quota }} ที่นั่ง</span>
+                                            <span class="px-2.5 py-0.5 text-xs bg-[#5A6B47]/15 text-[#5A6B47] rounded-full font-medium border border-[#5A6B47]/30">{{ __('portal.public_available') }} {{ $available }} {{ __('portal.public_from') }} {{ $quota }} {{ __('portal.public_seats_unit') }}</span>
                                         @endif
                                     </div>
                                     <div class="text-xs text-[#7B8D65] mt-1 flex items-center gap-1.5">
                                         <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#5A6B47] shrink-0"></i>
-                                        <span>สถานที่: {{ $ev->location_name ?? '-' }} (จัดโดย: {{ $ev->organizationUnit->name_th ?? 'มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย' }})</span>
+                                        <span>{{ __('portal.ug_venue') }}: {{ $ev->localized_location }} ({{ __('portal.public_organized_by') }} {{ app()->getLocale() === 'en' ? ($ev->organizationUnit->name_en ?? $ev->organizationUnit->name_th ?? __('portal.university_name')) : ($ev->organizationUnit->name_th ?? __('portal.university_name')) }})</span>
                                     </div>
                                     <div class="text-xs text-[#C86D51] font-medium mt-1 flex items-center gap-1.5">
                                         <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#C86D51] shrink-0"></i>
-                                        <span>วันที่จัด: {{ \Carbon\Carbon::parse($ev->start_date)->locale('th')->translatedFormat('d M') }} - {{ \Carbon\Carbon::parse($ev->end_date)->locale('th')->translatedFormat('d M Y') }}</span>
+                                        <span>{{ __('portal.public_course_dates') }} {{ \Carbon\Carbon::parse($ev->start_date)->locale(app()->getLocale())->translatedFormat('d M') }} - {{ \Carbon\Carbon::parse($ev->end_date)->locale(app()->getLocale())->translatedFormat('d M Y') }}</span>
                                     </div>
                                 </div>
                             </label>
                         @empty
                             <div class="text-center py-6 text-[#7B8D65] bg-[#FAF8F2] rounded-2xl border border-dashed border-[#EAE5D9]">
-                                ยังไม่มีคอร์สปฏิบัติธรรมเปิดรับสมัครในขณะนี้
+                                {{ __('portal.public_no_courses') }}
                             </div>
                         @endforelse
                     </div>
@@ -212,37 +209,37 @@
                 <div>
                     <h2 class="text-lg font-heading font-semibold text-[#2C3E2D] flex items-center border-b border-[#EAE5D9] pb-3 mb-4">
                         <span class="w-7 h-7 rounded-xl bg-[#5A6B47] text-white text-xs font-bold flex items-center justify-center mr-2.5 shadow-sm">2</span>
-                        ข้อมูลผู้สมัครเข้าร่วมโครงการ (Personal Information)
+                        {{ __('portal.public_sec2_title') }}
                     </h2>
 
                     <!-- Status Selector (PEOPLE vs STUDENT) -->
                     <div class="mb-4 bg-[#FAF8F2] p-4 rounded-2xl border border-[#EAE5D9]">
-                        <label class="block text-xs font-semibold text-[#4A3B32] mb-2">สถานะผู้สมัคร (Applicant Status)</label>
+                        <label class="block text-xs font-semibold text-[#4A3B32] mb-2">{{ __('portal.public_applicant_status') }}</label>
                         <div class="flex flex-wrap gap-4">
                             <label class="inline-flex items-center text-sm cursor-pointer">
                                 <input type="radio" name="applicant_type" value="PEOPLE" checked class="text-[#5A6B47] focus:ring-[#5A6B47]" onchange="toggleStudentField(this.value)">
-                                <span class="ml-2 font-medium text-[#2C3E2D]">ประชาชนทั่วไป (General Public)</span>
+                                <span class="ml-2 font-medium text-[#2C3E2D]">{{ __('portal.public_status_people') }}</span>
                             </label>
                             <label class="inline-flex items-center text-sm cursor-pointer">
                                 <input type="radio" name="applicant_type" value="STUDENT" class="text-[#5A6B47] focus:ring-[#5A6B47]" onchange="toggleStudentField(this.value)">
-                                <span class="ml-2 font-medium text-[#2C3E2D]">นิสิต มจร (MCU Student)</span>
+                                <span class="ml-2 font-medium text-[#2C3E2D]">{{ __('portal.public_status_student') }}</span>
                             </label>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div id="studentIdContainer" class="hidden md:col-span-3 bg-amber-50/60 p-3.5 rounded-xl border border-amber-200">
-                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">รหัสนิสิต มจร (Student ID)</label>
+                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">{{ __('portal.public_student_id') }}</label>
                             <input type="text" name="student_id" id="txt_studentid" placeholder="เช่น 6401201001" class="w-full px-3.5 py-2.5 border border-[#EAE5D9] bg-white rounded-xl text-sm focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
                         </div>
 
                         <div>
-                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">เลขบัตร ปชช. / Passport <span class="text-[#C86D51]">*</span></label>
+                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">{{ __('portal.public_citizen_id') }} <span class="text-[#C86D51]">*</span></label>
                             <input type="text" name="citizen_id" minlength="8" maxlength="20" placeholder="13 หลัก หรือเลข Passport" required class="w-full px-3.5 py-2.5 border border-[#EAE5D9] bg-white rounded-xl text-sm focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
                         </div>
 
                         <div>
-                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">คำนำหน้าชื่อ <span class="text-[#C86D51]">*</span></label>
+                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">{{ __('portal.public_prefix') }} <span class="text-[#C86D51]">*</span></label>
                             <select name="prefix" id="prefix_select" class="w-full px-3.5 py-2.5 border border-[#EAE5D9] rounded-xl text-sm bg-white focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]" onchange="toggleMonkFields(this.value)">
                                 <option value="นาย">นาย</option>
                                 <option value="นาง">นาง</option>
@@ -256,52 +253,52 @@
                         </div>
 
                         <div>
-                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">ชื่อ <span class="text-[#C86D51]">*</span></label>
+                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">{{ __('portal.public_first_name') }} <span class="text-[#C86D51]">*</span></label>
                             <input type="text" name="first_name" required class="w-full px-3.5 py-2.5 border border-[#EAE5D9] bg-white rounded-xl text-sm focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
                         </div>
 
                         <div>
-                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">นามสกุล <span class="text-[#C86D51]">*</span></label>
+                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">{{ __('portal.public_last_name') }} <span class="text-[#C86D51]">*</span></label>
                             <input type="text" name="last_name" required class="w-full px-3.5 py-2.5 border border-[#EAE5D9] bg-white rounded-xl text-sm focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
                         </div>
 
                         <div>
-                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">ฉายาทางธรรม (ถ้ามี)</label>
+                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">{{ __('portal.public_buddhist_name') }}</label>
                             <input type="text" name="buddhist_name" placeholder="เช่น เขมธมฺโม หรือเว้นว่าง" class="w-full px-3.5 py-2.5 border border-[#EAE5D9] bg-white rounded-xl text-sm focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
                         </div>
 
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-xs font-medium text-[#4A3B32] mb-1">เพศ</label>
+                                <label class="block text-xs font-medium text-[#4A3B32] mb-1">{{ __('portal.public_gender') }}</label>
                                 <select name="gender" class="w-full px-3.5 py-2.5 border border-[#EAE5D9] rounded-xl text-sm bg-white focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
-                                    <option value="MALE">ชาย</option>
-                                    <option value="FEMALE">หญิง</option>
-                                    <option value="OTHER">ไม่ระบุ</option>
+                                    <option value="MALE">{{ __('portal.public_gender_male') }}</option>
+                                    <option value="FEMALE">{{ __('portal.public_gender_female') }}</option>
+                                    <option value="OTHER">{{ __('portal.public_gender_other') }}</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-[#4A3B32] mb-1">อายุ (ปี)</label>
+                                <label class="block text-xs font-medium text-[#4A3B32] mb-1">{{ __('portal.public_age') }}</label>
                                 <input type="number" name="age" min="6" max="120" placeholder="เช่น 45" class="w-full px-3.5 py-2.5 border border-[#EAE5D9] bg-white rounded-xl text-sm focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
                             </div>
                         </div>
 
                         <div id="vassaContainer" class="hidden">
-                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">พรรษา (สำหรับพระภิกษุ/สามเณร)</label>
+                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">{{ __('portal.public_vassa') }}</label>
                             <input type="number" name="vassa" value="0" min="0" max="100" class="w-full px-3.5 py-2.5 border border-[#EAE5D9] bg-white rounded-xl text-sm focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
                         </div>
 
                         <div>
-                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">เบอร์โทรศัพท์ติดต่อ <span class="text-[#C86D51]">*</span></label>
+                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">{{ __('portal.public_phone') }} <span class="text-[#C86D51]">*</span></label>
                             <input type="tel" name="phone" placeholder="08xxxxxxxx" required class="w-full px-3.5 py-2.5 border border-[#EAE5D9] bg-white rounded-xl text-sm focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
                         </div>
 
                         <div>
-                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">อีเมล (ถ้ามี)</label>
+                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">{{ __('portal.public_email') }}</label>
                             <input type="email" name="email" placeholder="example@gmail.com" class="w-full px-3.5 py-2.5 border border-[#EAE5D9] bg-white rounded-xl text-sm focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
                         </div>
 
                         <div>
-                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">ไลน์ (Line ID) (ถ้ามี)</label>
+                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">{{ __('portal.public_line') }}</label>
                             <input type="text" name="line_id" placeholder="Line ID หรือเบอร์ไลน์" class="w-full px-3.5 py-2.5 border border-[#EAE5D9] bg-white rounded-xl text-sm focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
                         </div>
                     </div>
@@ -311,13 +308,13 @@
                 <div>
                     <h2 class="text-lg font-heading font-semibold text-[#2C3E2D] flex items-center border-b border-[#EAE5D9] pb-3 mb-4">
                         <span class="w-7 h-7 rounded-xl bg-[#5A6B47] text-white text-xs font-bold flex items-center justify-center mr-2.5 shadow-sm">3</span>
-                        ที่อยู่สำหรับการติดต่อ (Contact Address)
+                        {{ __('portal.public_sec3_title') }}
                     </h2>
 
                     <div class="space-y-4">
                         <!-- แถวที่ 1: รายละเอียดที่อยู่ / วัดต้นสังกัด (เต็มแถว) -->
                         <div>
-                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">ที่อยู่ / วัดต้นสังกัด / บ้านเลขที่ หมู่ ซอย ถนน</label>
+                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">{{ __('portal.public_address') }}</label>
                             <input type="text" name="address" placeholder="เช่น 99/1 หมู่ 2 หรือ วัดมหาธาตุยุวราชรังสฤษฎิ์" class="w-full px-3.5 py-2.5 border border-[#EAE5D9] bg-white rounded-xl text-sm focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
                         </div>
 
@@ -325,7 +322,7 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                             <!-- 1. เลือกจังหวัด -->
                             <div>
-                                <label class="block text-xs font-medium text-[#4A3B32] mb-1">จังหวัด (Province) <span class="text-[#C86D51]">*</span></label>
+                                <label class="block text-xs font-medium text-[#4A3B32] mb-1">{{ __('portal.public_province') }} <span class="text-[#C86D51]">*</span></label>
                                 <select id="province_select" name="province" required onchange="onProvinceChange(this.value)" class="w-full px-3.5 py-2.5 border border-[#EAE5D9] bg-white rounded-xl text-sm focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
                                     <option value="">-- กำลังโหลดจังหวัด... --</option>
                                 </select>
@@ -333,7 +330,7 @@
 
                             <!-- 2. เลือกอำเภอ/เขต -->
                             <div>
-                                <label class="block text-xs font-medium text-[#4A3B32] mb-1">อำเภอ / เขต (District) <span class="text-[#C86D51]">*</span></label>
+                                <label class="block text-xs font-medium text-[#4A3B32] mb-1">{{ __('portal.public_district') }} <span class="text-[#C86D51]">*</span></label>
                                 <select id="district_select" name="district" required disabled onchange="onDistrictChange(this.value)" class="w-full px-3.5 py-2.5 border border-[#EAE5D9] bg-white rounded-xl text-sm focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47] disabled:bg-[#F4F1EA] disabled:text-[#8C8275]">
                                     <option value="">-- เลือกจังหวัดก่อน --</option>
                                 </select>
@@ -341,7 +338,7 @@
 
                             <!-- 3. เลือกตำบล/แขวง -->
                             <div>
-                                <label class="block text-xs font-medium text-[#4A3B32] mb-1">ตำบล / แขวง (Subdistrict) <span class="text-[#C86D51]">*</span></label>
+                                <label class="block text-xs font-medium text-[#4A3B32] mb-1">{{ __('portal.public_subdistrict') }} <span class="text-[#C86D51]">*</span></label>
                                 <select id="subdistrict_select" name="subdistrict" required disabled onchange="onSubdistrictChange(this.value)" class="w-full px-3.5 py-2.5 border border-[#EAE5D9] bg-white rounded-xl text-sm focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47] disabled:bg-[#F4F1EA] disabled:text-[#8C8275]">
                                     <option value="">-- เลือกอำเภอก่อน --</option>
                                 </select>
@@ -349,7 +346,7 @@
 
                             <!-- 4. รหัสไปรษณีย์ -->
                             <div>
-                                <label class="block text-xs font-medium text-[#4A3B32] mb-1">รหัสไปรษณีย์ (Postal Code) <span class="text-[#5A6B47] text-[10px] font-normal">(อัตโนมัติ)</span></label>
+                                <label class="block text-xs font-medium text-[#4A3B32] mb-1">{{ __('portal.public_postal_code') }}</label>
                                 <input type="text" id="postal_code_input" name="postal_code" maxlength="5" placeholder="เช่น 13170" class="w-full px-3.5 py-2.5 border border-[#EAE5D9] bg-[#FAF8F2] rounded-xl text-sm font-mono focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
                             </div>
                         </div>
@@ -360,29 +357,29 @@
                 <div>
                     <h2 class="text-lg font-heading font-semibold text-[#2C3E2D] flex items-center border-b border-[#EAE5D9] pb-3 mb-4">
                         <span class="w-7 h-7 rounded-xl bg-[#5A6B47] text-white text-xs font-bold flex items-center justify-center mr-2.5 shadow-sm">4</span>
-                        ข้อมูลห้องพัก ยานพาหนะ และอาหาร (Accommodations & Preferences)
+                        {{ __('portal.public_sec4_title') }}
                     </h2>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">ข้อมูลห้องพัก / อาคารที่ต้องการ (Room / Building Request)</label>
+                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">{{ __('portal.public_room') }}</label>
                             <input type="text" name="room_info" placeholder="เช่น อาคาร 72 พรรษา หรือพักเดี่ยว/พักรวม" class="w-full px-3.5 py-2.5 border border-[#EAE5D9] bg-white rounded-xl text-sm focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">ยานพาหนะ / หมายเลขทะเบียนรถ (Vehicle / License Plate)</label>
+                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">{{ __('portal.public_vehicle') }}</label>
                             <input type="text" name="vehicle_info" placeholder="เช่น รถยนต์ กข 1234 กทม. หรือ เดินทางโดยรถตู้" class="w-full px-3.5 py-2.5 border border-[#EAE5D9] bg-white rounded-xl text-sm focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">ประเภทอาหาร</label>
+                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">{{ __('portal.public_food') }}</label>
                             <select name="food_type" class="w-full px-3.5 py-2.5 border border-[#EAE5D9] rounded-xl text-sm bg-white focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
-                                <option value="NORMAL">อาหารทั่วไป</option>
-                                <option value="VEGETARIAN">มังสวิรัติ (Vegetarian)</option>
-                                <option value="JAY">อาหารเจ</option>
-                                <option value="HALAL">ฮาลาล / มุสลิม</option>
+                                <option value="NORMAL">{{ __('portal.public_food_normal') }}</option>
+                                <option value="VEGETARIAN">{{ __('portal.public_food_veg') }}</option>
+                                <option value="JAY">{{ __('portal.public_food_jay') }}</option>
+                                <option value="HALAL">{{ __('portal.public_food_halal') }}</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">ความต้องการพิเศษ / ข้อจำกัดทางร่างกาย (ถ้ามี)</label>
+                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">{{ __('portal.public_special_needs') }}</label>
                             <input type="text" name="special_needs" placeholder="เช่น ขอห้องพักชั้นล่างเนื่องจากหัวเข่า, แพ้อาหาร..." class="w-full px-3.5 py-2.5 border border-[#EAE5D9] bg-white rounded-xl text-sm focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
                         </div>
                     </div>
@@ -390,10 +387,10 @@
 
                 <!-- Submit Button -->
                 <div class="pt-4 border-t border-[#EAE5D9] flex items-center justify-end space-x-3">
-                    <a href="{{ route('home') }}" class="px-5 py-2.5 text-[#4A3B32] hover:text-[#2C3E2D] text-sm font-medium">ยกเลิก</a>
+                    <a href="{{ route('home') }}" class="px-5 py-2.5 text-[#4A3B32] hover:text-[#2C3E2D] text-sm font-medium">{{ __('portal.public_btn_cancel') }}</a>
                     <button type="submit" class="bg-[#5A6B47] hover:bg-[#2C3E2D] text-white font-medium px-6 py-2.5 rounded-xl text-sm shadow-md transition flex items-center gap-2">
                         <i data-lucide="check" class="w-4 h-4"></i>
-                        <span>ยืนยันการลงทะเบียน (Confirm Registration)</span>
+                        <span>{{ __('portal.public_btn_submit') }}</span>
                     </button>
                 </div>
             </form>
@@ -542,7 +539,7 @@
 
     <!-- Footer -->
     <footer class="bg-[#FAF8F2] border-t border-[#EAE5D9] py-6 text-center text-xs text-[#7B8D65]">
-        มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย  • ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน (MCUVMS)
+        {{ __('portal.footer_brand') }}
     </footer>
 
     <script>

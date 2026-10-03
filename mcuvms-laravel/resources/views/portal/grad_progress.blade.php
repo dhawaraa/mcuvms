@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบสะสมวันและรายงานผลการปฏิบัติธรรม ระดับบัณฑิตศึกษา - MCUVMS</title>
+    <title>{{ __('portal.grad_header_title') }} - VPSMCU</title>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,8 +53,8 @@
                 <a href="{{ route('home') }}" class="flex items-center space-x-3">
                     <img src="{{ asset('images/mcu-logo.png') }}" alt="MCU Logo" class="w-10 h-10 object-contain drop-shadow-sm">
                     <div>
-                        <div class="font-heading font-bold text-[#2C3E2D] leading-tight">MCUVMS</div>
-                        <div class="text-xs text-[#6B6357]">มหาจุฬาลงกรณราชวิทยาลัย</div>
+                        <div class="font-heading font-bold text-[#2C3E2D] leading-tight">VPSMCU</div>
+                        <div class="text-xs text-[#6B6357]">{{ __('portal.university_name') }}</div>
                     </div>
                 </a>
                 <div class="flex items-center space-x-3 sm:space-x-4">
@@ -72,10 +72,7 @@
                     </div>
 
                     <a href="{{ route('home') }}" class="text-[#4A3B32] hover:text-[#C86D51] font-semibold text-[15px] flex items-center gap-1.5 transition">
-                        <i data-lucide="arrow-left" class="w-4.5 h-4.5 text-[#5A6B47]"></i> <span class="hidden sm:inline">กลับหน้าหลัก</span>
-                    </a>
-                    <a href="{{ route('login') }}" class="text-[#2C3E2D] hover:text-[#C86D51] font-semibold text-sm border border-[#D5CEBC] px-4 py-2 rounded-xl bg-[#EAE5D9] hover:bg-[#DDD7C8] flex items-center gap-1.5 shadow-sm transition">
-                        <i data-lucide="lock" class="w-4 h-4 text-[#5A6B47]"></i> <span class="hidden sm:inline">เจ้าหน้าที่เข้าระบบ</span>
+                        <i data-lucide="arrow-left" class="w-4.5 h-4.5 text-[#5A6B47]"></i> <span class="hidden sm:inline">{{ __('portal.nav_back_home') }}</span>
                     </a>
                 </div>
             </div>
@@ -89,11 +86,11 @@
         <div class="bg-gradient-to-r from-[#243325] via-[#4A3B32] to-[#2C3E2D] rounded-2xl p-6 md:p-8 text-white shadow-md mb-8 border border-[#3D523E]">
             <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/15 backdrop-blur-sm rounded-full text-xs font-semibold uppercase tracking-wider mb-2 border border-white/20">
                 <i data-lucide="scroll-text" class="w-3.5 h-3.5 text-[#EAE5D9]"></i>
-                <span>โมดูลที่ 2 (Module 2: Graduate Studies)</span>
+                <span>{{ __('portal.grad_header_badge') }}</span>
             </div>
-            <h1 class="text-2xl md:text-3xl font-heading font-bold mb-2">ระบบตรวจสอบและสะสมวันปฏิบัติธรรม ระดับบัณฑิตศึกษา</h1>
+            <h1 class="text-2xl md:text-3xl font-heading font-bold mb-2">{{ __('portal.grad_header_title') }}</h1>
             <p class="text-[#EAE5D9] text-sm leading-relaxed">
-                เกณฑ์มาตรฐานหลักสูตรระดับบัณฑิตศึกษา: <span class="font-semibold text-white">ปริญญาโท สะสมครบ 30 วัน</span> / <span class="font-semibold text-white">ปริญญาเอก สะสมครบ 45 วัน</span> ก่อนยื่นขอสอบวิทยานิพนธ์
+                {{ __('portal.grad_header_desc') }}
             </p>
         </div>
 
@@ -101,16 +98,16 @@
         <div class="bg-white border border-[#E3DEC9] rounded-2xl p-6 shadow-sm mb-8">
             <form action="{{ route('grad.progress') }}" method="GET" class="flex flex-col sm:flex-row gap-3">
                 <div class="relative flex-grow">
-                    <input type="text" name="student_code" value="{{ $searchCode }}" placeholder="กรอกรหัสนิสิตระดับ ป.โท / ป.เอก เช่น 6501102001" class="w-full px-4 py-2.5 border border-[#D5CEBC] rounded-lg text-sm focus:ring-2 focus:ring-[#5A6B47] font-mono bg-[#FAF8F2]">
+                    <input type="text" name="student_code" value="{{ $searchCode }}" placeholder="{{ __('portal.grad_search_placeholder') }}" class="w-full px-4 py-2.5 border border-[#D5CEBC] rounded-lg text-sm focus:ring-2 focus:ring-[#5A6B47] font-mono bg-[#FAF8F2]">
                 </div>
                 <button type="submit" class="bg-[#2C3E2D] hover:bg-[#3D523E] text-white font-medium px-6 py-2.5 rounded-lg text-sm transition flex items-center justify-center gap-2 shadow-sm">
                     <i data-lucide="search" class="w-4 h-4 text-[#A3B88C]"></i>
-                    <span>ตรวจสอบประวัติสะสมวัน</span>
+                    <span>{{ __('portal.grad_search_btn') }}</span>
                 </button>
             </form>
             <div class="text-xs text-[#8C8275] mt-2 flex items-center gap-1.5">
                 <i data-lucide="lightbulb" class="w-3.5 h-3.5 text-[#C86D51]"></i>
-                <span>ตัวอย่างรหัสนิสิตทดสอบในฐานข้อมูล: <a href="{{ route('grad.progress', ['student_code' => '6501102001']) }}" class="text-[#C86D51] underline font-mono">6501102001</a> (พระมหาบุญช่วย - ป.โท สังคมศาสตร์)</span>
+                <span>{{ __('portal.grad_sample_hint') }} <a href="{{ route('grad.progress', ['student_code' => '6501102001']) }}" class="text-[#C86D51] underline font-mono">6501102001</a></span>
             </div>
         </div>
 
@@ -118,7 +115,7 @@
             <div class="bg-[#E9EFE2] border border-[#CADBC0] rounded-xl p-4 text-[#3D523E] text-sm mb-6 flex items-center gap-3">
                 <i data-lucide="lock" class="w-6 h-6 text-[#5A6B47] shrink-0"></i>
                 <div>
-                    <strong>ยื่นคำขออนุมัติผลเรียบร้อยแล้ว (Locked)</strong> ระบบได้ทำการล็อกข้อมูลของท่านเพื่อให้อาจารย์ที่ปรึกษาและเจ้าหน้าที่บัณฑิตวิทยาลัยตรวจสอบ
+                    {{ __('portal.grad_submitted_alert') }}
                 </div>
             </div>
         @endif
@@ -137,16 +134,16 @@
                     <div>
                         <div class="flex items-center space-x-2">
                             <span class="px-2.5 py-0.5 rounded text-xs font-semibold {{ $student->degree_level === 'DOCTORAL' ? 'bg-[#F3E7E3] text-[#A85238] border border-[#E8D1CB]' : 'bg-[#EAE5D9] text-[#4A3B32] border border-[#D5CEBC]' }}">
-                                {{ $student->degree_level === 'DOCTORAL' ? 'ระดับปริญญาเอก' : 'ระดับปริญญาโท' }}
+                                {{ $student->degree_level === 'DOCTORAL' ? __('portal.grad_doctoral') : __('portal.grad_master') }}
                             </span>
-                            <span class="text-xs text-[#8C8275] font-mono">รหัส: {{ $student->student_code }}</span>
+                            <span class="text-xs text-[#8C8275] font-mono">{{ __('portal.grad_student_code') }}: {{ $student->student_code }}</span>
                         </div>
                         <h2 class="text-xl font-heading font-bold text-[#2C3E2D] mt-1">
                             {{ $student->prefix . $student->first_name . ' ' . $student->last_name }}
                         </h2>
                         <div class="text-sm text-[#6B6357] mt-1 flex items-center gap-1.5">
                             <i data-lucide="book-open" class="w-3.5 h-3.5 text-[#5A6B47]"></i>
-                            <span>สาขาวิชา: {{ $student->program_name }} • สังกัด: {{ $student->organizationUnit->name_th ?? 'มจร' }}</span>
+                            <span>{{ __('portal.grad_program') }}: {{ $student->program_name }} • {{ __('portal.grad_affiliation') }}: {{ $student->organizationUnit->name_th ?? __('portal.mcu_short') }}</span>
                         </div>
                     </div>
 
@@ -154,19 +151,19 @@
                     <div class="text-left sm:text-right flex flex-col sm:items-end gap-2">
                         @if ($student->submission_status === 'APPROVED')
                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#E9EFE2] text-[#3D523E] border border-[#CADBC0]">
-                                <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> อนุมัติผ่านเกณฑ์แล้ว
+                                <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> {{ __('portal.grad_status_approved') }}
                             </span>
                             <a href="{{ route('grad.certificate', ['code' => $student->student_code ?? $student->student_id]) }}" target="_blank" class="mt-1 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-[#2C3E2D] hover:bg-[#3D523E] text-white shadow-sm transition">
                                 <i data-lucide="file-check-2" class="w-4 h-4 text-[#A3B88C]"></i>
-                                <span>ดาวน์โหลดหนังสือรับรอง (e-Certificate)</span>
+                                <span>{{ __('portal.grad_download_cert') }}</span>
                             </a>
                         @elseif ($student->submission_status === 'SUBMITTED')
                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#F7F0E3] text-[#9E692D] border border-[#ECD9BF]">
-                                <i data-lucide="clock" class="w-3.5 h-3.5 animate-spin"></i> อยู่ระหว่างการตรวจผล (Locked)
+                                <i data-lucide="clock" class="w-3.5 h-3.5 animate-spin"></i> {{ __('portal.grad_status_submitted') }}
                             </span>
                         @else
                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#EAE5D9] text-[#4A3B32] border border-[#D5CEBC]">
-                                <i data-lucide="file-edit" class="w-3.5 h-3.5"></i> กำลังบันทึกสะสม (Draft)
+                                <i data-lucide="file-edit" class="w-3.5 h-3.5"></i> {{ __('portal.grad_status_draft') }}
                             </span>
                         @endif
                     </div>
@@ -176,9 +173,9 @@
                 <div class="bg-[#F7F5EE] rounded-xl p-5 border border-[#E3DEC9] mb-6">
                     <div class="flex justify-between items-end mb-2">
                         <div>
-                            <div class="text-xs text-[#8C8275] uppercase font-medium">ความคืบหน้าการสะสมวันปฏิบัติธรรม</div>
+                            <div class="text-xs text-[#8C8275] uppercase font-medium">{{ __('portal.grad_progress_title') }}</div>
                             <div class="text-2xl font-heading font-bold text-[#2C3E2D]">
-                                {{ $accumulated }} <span class="text-sm font-normal text-[#6B6357]">/ {{ $target }} วัน</span>
+                                {{ $accumulated }} <span class="text-sm font-normal text-[#6B6357]">/ {{ $target }} {{ __('portal.grad_days_unit') }}</span>
                             </div>
                         </div>
                         <div class="text-right">
@@ -189,8 +186,8 @@
                         <div class="h-3 rounded-full transition-all duration-500 {{ $isCompleted ? 'bg-[#5A6B47]' : 'bg-[#C86D51]' }}" style="width: {{ $percent }}%"></div>
                     </div>
                     <div class="flex justify-between text-[11px] text-[#8C8275] mt-2">
-                        <span>เริ่มต้น 0 วัน</span>
-                        <span>เกณฑ์ขั้นต่ำ: {{ $target }} วัน</span>
+                        <span>{{ __('portal.grad_start_days') }}</span>
+                        <span>{{ __('portal.grad_min_criteria') }} {{ $target }} {{ __('portal.grad_days_unit') }}</span>
                     </div>
                 </div>
 
@@ -198,20 +195,20 @@
                 <h3 class="font-heading font-semibold text-[#2C3E2D] text-base mb-3 flex items-center justify-between">
                     <span class="flex items-center gap-2">
                         <i data-lucide="clipboard-list" class="w-4 h-4 text-[#5A6B47]"></i>
-                        <span>บันทึกประวัติแต่ละรอบ (Accredited Records)</span>
+                        <span>{{ __('portal.grad_history_title') }}</span>
                     </span>
-                    <span class="text-xs text-[#8C8275] font-normal">ทั้งหมด {{ count($credits) }} รายการ</span>
+                    <span class="text-xs text-[#8C8275] font-normal">{{ __('portal.grad_total_records') }} {{ count($credits) }} {{ __('portal.grad_records_unit') }}</span>
                 </h3>
 
                 <div class="overflow-x-auto border border-[#E3DEC9] rounded-xl">
                     <table class="w-full text-left text-xs text-[#5A544A]">
                         <thead class="bg-[#FAF8F2] text-[#2C3E2D] font-heading border-b border-[#E3DEC9]">
                             <tr>
-                                <th class="p-3">สถานที่ / สำนักปฏิบัติธรรม</th>
-                                <th class="p-3">ช่วงเวลา</th>
-                                <th class="p-3 text-center">จำนวนวัน</th>
-                                <th class="p-3">อาจารย์ผู้สอบอารมณ์ / พระวิปัสสนาจารย์</th>
-                                <th class="p-3 text-center">สถานะ</th>
+                                <th class="p-3">{{ __('portal.grad_th_venue') }}</th>
+                                <th class="p-3">{{ __('portal.grad_th_period') }}</th>
+                                <th class="p-3 text-center">{{ __('portal.grad_th_days') }}</th>
+                                <th class="p-3">{{ __('portal.grad_th_master') }}</th>
+                                <th class="p-3 text-center">{{ __('portal.grad_th_status') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-[#EAE5D9]">
@@ -219,17 +216,17 @@
                                 <tr class="hover:bg-[#F7F5EE]">
                                     <td class="p-3 font-medium text-[#2C3E2D]">{{ $c->venue_name }}</td>
                                     <td class="p-3">{{ $c->start_date }} - {{ $c->end_date }}</td>
-                                    <td class="p-3 text-center font-bold text-[#C86D51]">{{ $c->days_count }} วัน</td>
+                                    <td class="p-3 text-center font-bold text-[#C86D51]">{{ $c->days_count }} {{ __('portal.grad_days_unit') }}</td>
                                     <td class="p-3">{{ $c->master_name }}</td>
                                     <td class="p-3 text-center">
                                         <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#E9EFE2] text-[#3D523E] border border-[#CADBC0] inline-flex items-center gap-1">
-                                            <i data-lucide="check" class="w-3 h-3 text-[#5A6B47]"></i> ตรวจสอบแล้ว
+                                            <i data-lucide="check" class="w-3 h-3 text-[#5A6B47]"></i> {{ __('portal.grad_verified') }}
                                         </span>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="p-4 text-center text-[#8C8275]">ยังไม่มีรายการบันทึกสะสมวัน</td>
+                                    <td colspan="5" class="p-4 text-center text-[#8C8275]">{{ __('portal.grad_no_records') }}</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -242,7 +239,7 @@
                         <div class="bg-[#F7F5EE] border border-[#D5CEBC] rounded-xl p-4 mb-4 flex items-start space-x-3">
                             <i data-lucide="shield-alert" class="w-5 h-5 text-[#C86D51] shrink-0 mt-0.5"></i>
                             <div class="text-xs text-[#5A544A] leading-relaxed">
-                                <strong>ระบบยื่นขออนุมัติขั้นสุดท้าย (Final Submission Lock):</strong> เมื่อท่านสะสมวันครบตามเกณฑ์ ({{ $target }} วัน) และกดยื่นคำขอ ระบบจะทำการล็อกแฟ้มข้อมูลทันทีเพื่อให้อาจารย์ผู้ควบคุมตรวจสอบ และออกใบรับรองสำหรับยื่นสอบวิทยานิพนธ์
+                                <strong>{{ __('portal.grad_final_notice_title') }}</strong> {{ __('portal.grad_final_notice_desc') }}
                             </div>
                         </div>
 
@@ -251,7 +248,7 @@
                             <input type="hidden" name="student_id" value="{{ $student->id }}">
                             <button type="submit" {{ !$isCompleted ? 'disabled' : '' }} class="w-full py-3 rounded-xl font-medium text-sm transition shadow-sm flex items-center justify-center gap-2 {{ $isCompleted ? 'bg-[#2C3E2D] hover:bg-[#3D523E] text-white cursor-pointer' : 'bg-[#EAE5D9] text-[#8C8275] cursor-not-allowed' }}">
                                 <i data-lucide="lock" class="w-4 h-4"></i>
-                                <span>{{ $isCompleted ? 'ยื่นขออนุมัติผลสะสมวันปฏิบัติธรรม (Lock & Submit)' : 'ยังสะสมวันไม่ครบเกณฑ์ ' . $target . ' วัน (สะสมแล้ว ' . $accumulated . ' วัน)' }}</span>
+                                <span>{{ $isCompleted ? __('portal.grad_btn_submit_final') : __('portal.grad_btn_not_ready') . ' ' . $target . ' ' . __('portal.grad_days_unit') . ' (' . __('portal.grad_days_accumulated') . ' ' . $accumulated . ' ' . __('portal.grad_days_unit') . ')' }}</span>
                             </button>
                         </form>
                     </div>
@@ -264,7 +261,7 @@
 
     <!-- Footer -->
     <footer class="bg-[#FAF8F2] border-t border-[#E3DEC9] py-6 text-center text-xs text-[#8C8275]">
-        มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย  • ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน (MCUVMS)
+        {{ __('portal.footer_brand') }}
     </footer>
 
     <script>

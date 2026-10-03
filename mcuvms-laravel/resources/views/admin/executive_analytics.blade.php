@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>สถิติและวิเคราะห์เปรียบเทียบสำหรับผู้บริหาร - MCUVMS Admin</title>
+    <title>สถิติและวิเคราะห์เปรียบเทียบสำหรับผู้บริหาร - VPSMCU Admin</title>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -424,7 +424,7 @@
                 </div>
                 <div class="mt-6 pt-4 border-t border-[#EAE5D9] text-[11px] text-[#7B8D65] flex items-center justify-between font-mono">
                     <span>ข้อมูลอัปเดต: {{ date('d/m/Y H:i') }}</span>
-                    <span class="text-[#2C3E2D] font-bold">มจร MCUVMS</span>
+                    <span class="text-[#2C3E2D] font-bold">มจร VPSMCU</span>
                 </div>
             </div>
 

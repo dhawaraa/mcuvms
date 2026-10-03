@@ -35,7 +35,7 @@
                 <img src="{{ asset('images/mcu-logo.png') }}" alt="MCU Logo" class="w-full h-full object-contain">
             </div>
             <div class="sidebar-text transition-opacity duration-200">
-                <div class="font-heading font-bold text-white text-base tracking-tight leading-tight whitespace-nowrap">MCUVMS Admin</div>
+                <div class="font-heading font-bold text-white text-base tracking-tight leading-tight whitespace-nowrap">VPSMCU Admin</div>
                 <div class="text-[10px] text-[#A3B88C] font-mono tracking-wider uppercase font-semibold whitespace-nowrap">มจร ส่วนกลาง & วิทยาเขต</div>
             </div>
         </div>
@@ -101,51 +101,51 @@
             <div class="sidebar-text pt-3 px-3 py-1.5 text-xs font-bold text-[#8C9B80] uppercase tracking-widest font-mono">ระบบงานสารสนเทศ</div>
 
             <!-- 2. เมนูแม่: ปริญญาตรี (ย่อ/ขยาย Dropdown เมนูย่อย 5 เมนู) -->
-            <div class="rounded-xl overflow-hidden {{ $isUgActive ? 'bg-[#1C281D] border border-[#2C3E2D]' : '' }}">
+            <div class="rounded-xl overflow-hidden transition-all duration-200 {{ $isUgActive ? 'bg-[#182319] border border-[#2F4430] shadow-inner' : 'hover:bg-[#1E2B1F]' }}">
                 <button type="button" 
                     title="ปฏิบัติธรรม ป.ตรี (40 วัน)"
                     onclick="toggleSubmenu('submenu-ug', 'chevron-ug')" 
-                    class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition gap-3 {{ $isUgActive ? 'text-white font-semibold' : 'text-[#B8B1A2] hover:text-white hover:bg-[#2C3E2D]' }}">
+                    class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition gap-3 {{ $isUgActive ? 'text-white font-semibold bg-[#223324]' : 'text-[#B8B1A2] hover:text-white' }}">
                     <span class="flex items-center gap-3">
-                        <i data-lucide="graduation-cap" class="w-4.5 h-4.5 text-[#A3B88C] shrink-0"></i>
+                        <i data-lucide="graduation-cap" class="w-4.5 h-4.5 {{ $isUgActive ? 'text-[#C5D7AF]' : 'text-[#A3B88C]' }} shrink-0"></i>
                         <span class="sidebar-text text-left whitespace-nowrap">
                             <div class="leading-tight text-sm">ปฏิบัติธรรม ป.ตรี (40 วัน)</div>
                             <div class="text-[11px] text-[#8C9B80] font-mono font-normal">Undergraduate Module</div>
                         </span>
                     </span>
-                    <i id="chevron-ug" data-lucide="chevron-down" class="sidebar-text w-4 h-4 text-[#8C9B80] transition-transform duration-200 {{ $isUgActive ? 'rotate-180 text-white' : '' }}"></i>
+                    <i id="chevron-ug" data-lucide="chevron-down" class="sidebar-text w-4 h-4 text-[#8C9B80] transition-transform duration-200 {{ $isUgActive ? 'rotate-180 text-[#C5D7AF]' : '' }}"></i>
                 </button>
 
-                <!-- รายการเมนูย่อยของ ป.ตรี -->
-                <div id="submenu-ug" class="space-y-1 px-2.5 pb-2.5 pt-1 border-t border-[#263727] {{ $isUgActive ? '' : 'hidden' }}">
+                <!-- รายการเมนูย่อยของ ป.ตรี (โทนสีแยกชั้นระดับชัดเจน มีเส้นนำสายตา) -->
+                <div id="submenu-ug" class="space-y-1 px-2.5 pb-2.5 pt-2 bg-[#141E15]/90 border-t border-[#263727] {{ $isUgActive ? '' : 'hidden' }}">
                     
                     <!-- ย่อย 1: กำหนดการประจำปี -->
-                    <a href="{{ route('admin.ug.batches') }}" title="กำหนดการโครงการ" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 {{ $currentRoute === 'admin.ug.batches' ? 'bg-[#5A6B47] text-white font-medium shadow-sm' : 'text-[#A8A190] hover:text-white hover:bg-[#2C3E2D]/80' }}">
-                        <i data-lucide="calendar" class="w-4 h-4 shrink-0 {{ $currentRoute === 'admin.ug.batches' ? 'text-white' : 'text-[#8C9B80]' }}"></i>
+                    <a href="{{ route('admin.ug.batches') }}" title="กำหนดการโครงการ" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 relative {{ $currentRoute === 'admin.ug.batches' ? 'bg-[#5A6B47] text-white font-semibold shadow-sm ring-1 ring-[#7B8D65]/40 pl-3.5' : 'text-[#D0C9BA] hover:text-white hover:bg-[#253726] border-l-2 border-transparent hover:border-[#7B8D65]' }}">
+                        <i data-lucide="calendar" class="w-4 h-4 shrink-0 {{ $currentRoute === 'admin.ug.batches' ? 'text-white' : 'text-[#A3B88C]' }}"></i>
                         <span class="sidebar-text whitespace-nowrap">กำหนดการโครงการ</span>
                     </a>
 
                     <!-- ย่อย 2: ทะเบียนนิสิตลงทะเบียน -->
-                    <a href="{{ route('admin.ug.students') }}" title="ทะเบียนนิสิตลงทะเบียน" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 {{ $currentRoute === 'admin.ug.students' ? 'bg-[#5A6B47] text-white font-medium shadow-sm' : 'text-[#A8A190] hover:text-white hover:bg-[#2C3E2D]/80' }}">
-                        <i data-lucide="users" class="w-4 h-4 shrink-0 {{ $currentRoute === 'admin.ug.students' ? 'text-white' : 'text-[#8C9B80]' }}"></i>
+                    <a href="{{ route('admin.ug.students') }}" title="ทะเบียนนิสิตลงทะเบียน" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 relative {{ $currentRoute === 'admin.ug.students' ? 'bg-[#5A6B47] text-white font-semibold shadow-sm ring-1 ring-[#7B8D65]/40 pl-3.5' : 'text-[#D0C9BA] hover:text-white hover:bg-[#253726] border-l-2 border-transparent hover:border-[#7B8D65]' }}">
+                        <i data-lucide="users" class="w-4 h-4 shrink-0 {{ $currentRoute === 'admin.ug.students' ? 'text-white' : 'text-[#A3B88C]' }}"></i>
                         <span class="sidebar-text whitespace-nowrap">ทะเบียนนิสิตลงทะเบียน</span>
                     </a>
 
                     <!-- ย่อย 3: สแกน QR เช็คชื่อ -->
-                    <a href="{{ route('admin.ug.scanner') }}" title="สแกน QR เช็คชื่อ" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 {{ $currentRoute === 'admin.ug.scanner' ? 'bg-[#5A6B47] text-white font-medium shadow-sm' : 'text-[#A8A190] hover:text-white hover:bg-[#2C3E2D]/80' }}">
-                        <i data-lucide="qr-code" class="w-4 h-4 shrink-0 {{ $currentRoute === 'admin.ug.scanner' ? 'text-white' : 'text-[#8C9B80]' }}"></i>
+                    <a href="{{ route('admin.ug.scanner') }}" title="สแกน QR เช็คชื่อ" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 relative {{ $currentRoute === 'admin.ug.scanner' ? 'bg-[#5A6B47] text-white font-semibold shadow-sm ring-1 ring-[#7B8D65]/40 pl-3.5' : 'text-[#D0C9BA] hover:text-white hover:bg-[#253726] border-l-2 border-transparent hover:border-[#7B8D65]' }}">
+                        <i data-lucide="qr-code" class="w-4 h-4 shrink-0 {{ $currentRoute === 'admin.ug.scanner' ? 'text-white' : 'text-[#A3B88C]' }}"></i>
                         <span class="sidebar-text whitespace-nowrap">สแกน QR เช็คชื่อ</span>
                     </a>
 
                     <!-- ย่อย 4: พิมพ์ใบเซ็นชื่อ -->
-                    <a href="{{ route('admin.ug.attendance') }}" title="พิมพ์ใบเซ็นชื่อ (10 วัน)" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 {{ $currentRoute === 'admin.ug.attendance' ? 'bg-[#5A6B47] text-white font-medium shadow-sm' : 'text-[#A8A190] hover:text-white hover:bg-[#2C3E2D]/80' }}">
-                        <i data-lucide="printer" class="w-4 h-4 shrink-0 {{ $currentRoute === 'admin.ug.attendance' ? 'text-white' : 'text-[#8C9B80]' }}"></i>
+                    <a href="{{ route('admin.ug.attendance') }}" title="พิมพ์ใบเซ็นชื่อ (10 วัน)" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 relative {{ $currentRoute === 'admin.ug.attendance' ? 'bg-[#5A6B47] text-white font-semibold shadow-sm ring-1 ring-[#7B8D65]/40 pl-3.5' : 'text-[#D0C9BA] hover:text-white hover:bg-[#253726] border-l-2 border-transparent hover:border-[#7B8D65]' }}">
+                        <i data-lucide="printer" class="w-4 h-4 shrink-0 {{ $currentRoute === 'admin.ug.attendance' ? 'text-white' : 'text-[#A3B88C]' }}"></i>
                         <span class="sidebar-text whitespace-nowrap">พิมพ์ใบเซ็นชื่อ (10 วัน)</span>
                     </a>
 
                     <!-- ย่อย 5: รายงานสถิติปฏิบัติธรรม ป.ตรี -->
-                    <a href="{{ route('admin.ug.sar') }}" title="รายงานสถิติปฏิบัติธรรม" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 {{ $currentRoute === 'admin.ug.sar' ? 'bg-[#5A6B47] text-white font-medium shadow-sm' : 'text-[#A8A190] hover:text-white hover:bg-[#2C3E2D]/80' }}">
-                        <i data-lucide="bar-chart-2" class="w-4 h-4 shrink-0 {{ $currentRoute === 'admin.ug.sar' ? 'text-white' : 'text-[#8C9B80]' }}"></i>
+                    <a href="{{ route('admin.ug.sar') }}" title="รายงานสถิติปฏิบัติธรรม" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 relative {{ $currentRoute === 'admin.ug.sar' ? 'bg-[#5A6B47] text-white font-semibold shadow-sm ring-1 ring-[#7B8D65]/40 pl-3.5' : 'text-[#D0C9BA] hover:text-white hover:bg-[#253726] border-l-2 border-transparent hover:border-[#7B8D65]' }}">
+                        <i data-lucide="bar-chart-2" class="w-4 h-4 shrink-0 {{ $currentRoute === 'admin.ug.sar' ? 'text-white' : 'text-[#A3B88C]' }}"></i>
                         <span class="sidebar-text whitespace-nowrap">รายงานสถิติปฏิบัติธรรม</span>
                     </a>
 
@@ -175,39 +175,39 @@
             @endif
 
             <!-- 4. เมนูแม่: คอร์สวิปัสสนากรรมฐานสำหรับประชาชน ย่อ/ขยาย Dropdown เมนูย่อย 3 เมนู -->
-            <div class="rounded-xl overflow-hidden {{ $isPublicActive ? 'bg-[#1C281D] border border-[#2C3E2D]' : '' }}">
+            <div class="rounded-xl overflow-hidden transition-all duration-200 {{ $isPublicActive ? 'bg-[#182319] border border-[#2F4430] shadow-inner' : 'hover:bg-[#1E2B1F]' }}">
                 <button type="button" 
                     title="คอร์สวิปัสสนากรรมฐานสำหรับประชาชน (โมดูล 3)"
                     onclick="toggleSubmenu('submenu-public', 'chevron-public')" 
-                    class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition gap-3 {{ $isPublicActive ? 'text-white font-semibold' : 'text-[#B8B1A2] hover:text-white hover:bg-[#2C3E2D]' }}">
+                    class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition gap-3 {{ $isPublicActive ? 'text-white font-semibold bg-[#223324]' : 'text-[#B8B1A2] hover:text-white' }}">
                     <span class="flex items-center gap-3">
-                        <i data-lucide="heart-handshake" class="w-4.5 h-4.5 text-[#A3B88C] shrink-0"></i>
+                        <i data-lucide="heart-handshake" class="w-4.5 h-4.5 {{ $isPublicActive ? 'text-[#C5D7AF]' : 'text-[#A3B88C]' }} shrink-0"></i>
                         <span class="sidebar-text text-left whitespace-nowrap">
                             <div class="leading-tight text-sm">วิปัสสนาสำหรับประชาชน</div>
                             <div class="text-[11px] text-[#8C9B80] font-mono font-normal">Public Meditation</div>
                         </span>
                     </span>
-                    <i id="chevron-public" data-lucide="chevron-down" class="sidebar-text w-4 h-4 text-[#8C9B80] transition-transform duration-200 {{ $isPublicActive ? 'rotate-180 text-white' : '' }}"></i>
+                    <i id="chevron-public" data-lucide="chevron-down" class="sidebar-text w-4 h-4 text-[#8C9B80] transition-transform duration-200 {{ $isPublicActive ? 'rotate-180 text-[#C5D7AF]' : '' }}"></i>
                 </button>
 
                 <!-- รายการเมนูย่อยของ โมดูล 3 -->
-                <div id="submenu-public" class="space-y-1 px-2.5 pb-2.5 pt-1 border-t border-[#263727] {{ $isPublicActive ? '' : 'hidden' }}">
+                <div id="submenu-public" class="space-y-1 px-2.5 pb-2.5 pt-2 bg-[#141E15]/90 border-t border-[#263727] {{ $isPublicActive ? '' : 'hidden' }}">
                     
                     <!-- ย่อย 1: จัดการคอร์ส/โครงการ -->
-                    <a href="{{ route('admin.public.events') }}" title="จัดการคอร์ส/โครงการ" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 {{ $currentRoute === 'admin.public.events' ? 'bg-[#5A6B47] text-white font-medium shadow-sm' : 'text-[#A8A190] hover:text-white hover:bg-[#2C3E2D]/80' }}">
-                        <i data-lucide="calendar" class="w-4 h-4 shrink-0 {{ $currentRoute === 'admin.public.events' ? 'text-white' : 'text-[#8C9B80]' }}"></i>
+                    <a href="{{ route('admin.public.events') }}" title="จัดการคอร์ส/โครงการ" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 relative {{ $currentRoute === 'admin.public.events' ? 'bg-[#5A6B47] text-white font-semibold shadow-sm ring-1 ring-[#7B8D65]/40 pl-3.5' : 'text-[#D0C9BA] hover:text-white hover:bg-[#253726] border-l-2 border-transparent hover:border-[#7B8D65]' }}">
+                        <i data-lucide="calendar" class="w-4 h-4 shrink-0 {{ $currentRoute === 'admin.public.events' ? 'text-white' : 'text-[#A3B88C]' }}"></i>
                         <span class="sidebar-text whitespace-nowrap">จัดการคอร์ส/โครงการ</span>
                     </a>
 
                     <!-- ย่อย 2: ทะเบียนรายชื่อผู้สมัคร -->
-                    <a href="{{ route('admin.public.students') }}" title="ทะเบียนรายชื่อผู้สมัคร" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 {{ $currentRoute === 'admin.public.students' ? 'bg-[#5A6B47] text-white font-medium shadow-sm' : 'text-[#A8A190] hover:text-white hover:bg-[#2C3E2D]/80' }}">
-                        <i data-lucide="users" class="w-4 h-4 shrink-0 {{ $currentRoute === 'admin.public.students' ? 'text-white' : 'text-[#8C9B80]' }}"></i>
+                    <a href="{{ route('admin.public.students') }}" title="ทะเบียนรายชื่อผู้สมัคร" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 relative {{ $currentRoute === 'admin.public.students' ? 'bg-[#5A6B47] text-white font-semibold shadow-sm ring-1 ring-[#7B8D65]/40 pl-3.5' : 'text-[#D0C9BA] hover:text-white hover:bg-[#253726] border-l-2 border-transparent hover:border-[#7B8D65]' }}">
+                        <i data-lucide="users" class="w-4 h-4 shrink-0 {{ $currentRoute === 'admin.public.students' ? 'text-white' : 'text-[#A3B88C]' }}"></i>
                         <span class="sidebar-text whitespace-nowrap">ทะเบียนรายชื่อผู้สมัคร</span>
                     </a>
 
                     <!-- ย่อย 3: รายงานสถิติวิปัสสนา -->
-                    <a href="{{ route('admin.public.sar') }}" title="รายงานสถิติวิปัสสนา" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 {{ $currentRoute === 'admin.public.sar' ? 'bg-[#5A6B47] text-white font-medium shadow-sm' : 'text-[#A8A190] hover:text-white hover:bg-[#2C3E2D]/80' }}">
-                        <i data-lucide="bar-chart-2" class="w-4 h-4 shrink-0 {{ $currentRoute === 'admin.public.sar' ? 'text-white' : 'text-[#8C9B80]' }}"></i>
+                    <a href="{{ route('admin.public.sar') }}" title="รายงานสถิติวิปัสสนา" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 relative {{ $currentRoute === 'admin.public.sar' ? 'bg-[#5A6B47] text-white font-semibold shadow-sm ring-1 ring-[#7B8D65]/40 pl-3.5' : 'text-[#D0C9BA] hover:text-white hover:bg-[#253726] border-l-2 border-transparent hover:border-[#7B8D65]' }}">
+                        <i data-lucide="bar-chart-2" class="w-4 h-4 shrink-0 {{ $currentRoute === 'admin.public.sar' ? 'text-white' : 'text-[#A3B88C]' }}"></i>
                         <span class="sidebar-text whitespace-nowrap">รายงานสถิติวิปัสสนา</span>
                     </a>
 
@@ -264,47 +264,47 @@
             @endphp
 
             <!-- 6. เมนูแม่: การตั้งค่าระบบ (Settings Group with Dropdown Submenus) -->
-            <div class="rounded-xl overflow-hidden {{ $isSettingsActive ? 'bg-[#1C281D] border border-[#2C3E2D]' : '' }}">
+            <div class="rounded-xl overflow-hidden transition-all duration-200 {{ $isSettingsActive ? 'bg-[#182319] border border-[#2F4430] shadow-inner' : 'hover:bg-[#1E2B1F]' }}">
                 <button type="button" 
                     title="การตั้งค่าระบบ (System Settings)"
                     onclick="toggleSubmenu('submenu-settings', 'chevron-settings')" 
-                    class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition gap-3 {{ $isSettingsActive ? 'text-white font-semibold' : 'text-[#B8B1A2] hover:text-white hover:bg-[#2C3E2D]' }}">
+                    class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition gap-3 {{ $isSettingsActive ? 'text-white font-semibold bg-[#223324]' : 'text-[#B8B1A2] hover:text-white' }}">
                     <span class="flex items-center gap-3">
-                        <i data-lucide="settings" class="w-4.5 h-4.5 text-[#A3B88C] shrink-0"></i>
+                        <i data-lucide="settings" class="w-4.5 h-4.5 {{ $isSettingsActive ? 'text-[#C5D7AF]' : 'text-[#A3B88C]' }} shrink-0"></i>
                         <span class="sidebar-text text-left whitespace-nowrap">
                             <div class="leading-tight text-sm">การตั้งค่าระบบ</div>
                             <div class="text-[11px] text-[#8C9B80] font-mono font-normal">System Settings</div>
                         </span>
                     </span>
-                    <i id="chevron-settings" data-lucide="chevron-down" class="sidebar-text w-4 h-4 text-[#8C9B80] transition-transform duration-200 {{ $isSettingsActive ? 'rotate-180 text-white' : '' }}"></i>
+                    <i id="chevron-settings" data-lucide="chevron-down" class="sidebar-text w-4 h-4 text-[#8C9B80] transition-transform duration-200 {{ $isSettingsActive ? 'rotate-180 text-[#C5D7AF]' : '' }}"></i>
                 </button>
 
-                <!-- รายการเมนูย่อยของกลุ่ม การตั้งค่า -->
-                <div id="submenu-settings" class="space-y-1 px-2.5 pb-2.5 pt-1 border-t border-[#263727] {{ $isSettingsActive ? '' : 'hidden' }}">
+                <!-- รายการเมนูย่อยของกลุ่ม การตั้งค่า (โทนสีแยกชั้นระดับชัดเจน มีเส้นนำสายตา) -->
+                <div id="submenu-settings" class="space-y-1 px-2.5 pb-2.5 pt-2 bg-[#141E15]/90 border-t border-[#263727] {{ $isSettingsActive ? '' : 'hidden' }}">
                     
                     <!-- เมนูย่อย 1: รายชื่อส่วนงานภายใน มจร และรหัสย่อจังหวัด -->
-                    <a href="{{ route('admin.org_units.index') }}" title="รายชื่อส่วนงานภายใน มจร" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 {{ $currentRoute === 'admin.org_units.index' ? 'bg-[#5A6B47] text-white font-medium shadow-sm' : 'text-[#A8A190] hover:text-white hover:bg-[#2C3E2D]/80' }}">
-                        <i data-lucide="network" class="w-4 h-4 shrink-0 {{ $currentRoute === 'admin.org_units.index' ? 'text-white' : 'text-[#8C9B80]' }}"></i>
+                    <a href="{{ route('admin.org_units.index') }}" title="รายชื่อส่วนงานภายใน มจร" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 relative {{ $currentRoute === 'admin.org_units.index' ? 'bg-[#5A6B47] text-white font-semibold shadow-sm ring-1 ring-[#7B8D65]/40 pl-3.5' : 'text-[#D0C9BA] hover:text-white hover:bg-[#253726] border-l-2 border-transparent hover:border-[#7B8D65]' }}">
+                        <i data-lucide="network" class="w-4 h-4 shrink-0 {{ $currentRoute === 'admin.org_units.index' ? 'text-white' : 'text-[#A3B88C]' }}"></i>
                         <span class="sidebar-text whitespace-nowrap">รายชื่อส่วนงานภายใน มจร</span>
                     </a>
 
                     @if ($canManageUsers)
                         <!-- เมนูย่อย 2: จัดการผู้ใช้งานและกำหนดสิทธิ์ -->
-                        <a href="{{ route('admin.users.index') }}" title="ผู้ใช้งานและกำหนดสิทธิ์" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 {{ $currentRoute === 'admin.users.index' ? 'bg-[#5A6B47] text-white font-medium shadow-sm' : 'text-[#A8A190] hover:text-white hover:bg-[#2C3E2D]/80' }}">
-                            <i data-lucide="shield-alert" class="w-4 h-4 shrink-0 {{ $currentRoute === 'admin.users.index' ? 'text-white' : 'text-[#8C9B80]' }}"></i>
+                        <a href="{{ route('admin.users.index') }}" title="ผู้ใช้งานและกำหนดสิทธิ์" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 relative {{ $currentRoute === 'admin.users.index' ? 'bg-[#5A6B47] text-white font-semibold shadow-sm ring-1 ring-[#7B8D65]/40 pl-3.5' : 'text-[#D0C9BA] hover:text-white hover:bg-[#253726] border-l-2 border-transparent hover:border-[#7B8D65]' }}">
+                            <i data-lucide="shield-alert" class="w-4 h-4 shrink-0 {{ $currentRoute === 'admin.users.index' ? 'text-white' : 'text-[#A3B88C]' }}"></i>
                             <span class="sidebar-text whitespace-nowrap">ผู้ใช้งานและกำหนดสิทธิ์</span>
                         </a>
                     @endif
 
                     <!-- เมนูย่อย 3: นำเข้าข้อมูลนิสิต CSV -->
-                    <a href="{{ route('admin.ug.import') }}" title="นำเข้าข้อมูลนิสิต (CSV)" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 {{ $currentRoute === 'admin.ug.import' ? 'bg-[#5A6B47] text-white font-medium shadow-sm' : 'text-[#A8A190] hover:text-white hover:bg-[#2C3E2D]/80' }}">
-                        <i data-lucide="file-up" class="w-4 h-4 shrink-0 {{ $currentRoute === 'admin.ug.import' ? 'text-white' : 'text-[#8C9B80]' }}"></i>
+                    <a href="{{ route('admin.ug.import') }}" title="นำเข้าข้อมูลนิสิต (CSV)" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 relative {{ $currentRoute === 'admin.ug.import' ? 'bg-[#5A6B47] text-white font-semibold shadow-sm ring-1 ring-[#7B8D65]/40 pl-3.5' : 'text-[#D0C9BA] hover:text-white hover:bg-[#253726] border-l-2 border-transparent hover:border-[#7B8D65]' }}">
+                        <i data-lucide="file-up" class="w-4 h-4 shrink-0 {{ $currentRoute === 'admin.ug.import' ? 'text-white' : 'text-[#A3B88C]' }}"></i>
                         <span class="sidebar-text whitespace-nowrap">นำเข้าข้อมูลนิสิต (CSV)</span>
                     </a>
 
                     <!-- เมนูย่อย 4: ตั้งค่าระบบสำหรับติดต่อสอบถาม -->
-                    <a href="{{ route('admin.contact.settings') }}" title="ตั้งค่าระบบติดต่อสอบถาม" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 {{ $currentRoute === 'admin.contact.settings' ? 'bg-[#5A6B47] text-white font-medium shadow-sm' : 'text-[#A8A190] hover:text-white hover:bg-[#2C3E2D]/80' }}">
-                        <i data-lucide="phone-call" class="w-4 h-4 shrink-0 {{ $currentRoute === 'admin.contact.settings' ? 'text-white' : 'text-[#8C9B80]' }}"></i>
+                    <a href="{{ route('admin.contact.settings') }}" title="ตั้งค่าระบบติดต่อสอบถาม" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 relative {{ $currentRoute === 'admin.contact.settings' ? 'bg-[#5A6B47] text-white font-semibold shadow-sm ring-1 ring-[#7B8D65]/40 pl-3.5' : 'text-[#D0C9BA] hover:text-white hover:bg-[#253726] border-l-2 border-transparent hover:border-[#7B8D65]' }}">
+                        <i data-lucide="phone-call" class="w-4 h-4 shrink-0 {{ $currentRoute === 'admin.contact.settings' ? 'text-white' : 'text-[#A3B88C]' }}"></i>
                         <span class="sidebar-text whitespace-nowrap">ตั้งค่าระบบติดต่อสอบถาม</span>
                     </a>
 
@@ -454,6 +454,30 @@
 
         const menu = document.getElementById(menuId);
         const chevron = document.getElementById(chevronId);
+        const willOpen = menu && menu.classList.contains('hidden');
+
+        // Accordion Behavior: หากกำลังจะเปิดกลุ่มใหม่ ให้ปิดกลุ่มอื่นทั้งหมดเพื่อคืนพื้นที่หน้าจอ
+        if (willOpen) {
+            const allSubmenus = [
+                { menu: 'submenu-ug', chevron: 'chevron-ug' },
+                { menu: 'submenu-public', chevron: 'chevron-public' },
+                { menu: 'submenu-settings', chevron: 'chevron-settings' }
+            ];
+
+            allSubmenus.forEach(item => {
+                if (item.menu !== menuId) {
+                    const otherMenu = document.getElementById(item.menu);
+                    const otherChevron = document.getElementById(item.chevron);
+                    if (otherMenu && !otherMenu.classList.contains('hidden')) {
+                        otherMenu.classList.add('hidden');
+                    }
+                    if (otherChevron && otherChevron.classList.contains('rotate-180')) {
+                        otherChevron.classList.remove('rotate-180');
+                    }
+                }
+            });
+        }
+
         if (menu) {
             menu.classList.toggle('hidden');
         }

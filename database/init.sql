@@ -217,7 +217,6 @@ INSERT INTO `organization_units` (`code`, `name_th`, `type`, `province_th`, `pro
 ('CAMPUS-NPT-BP', 'วิทยาเขตบาฬีศึกษาพุทธโฆส', 'CAMPUS', 'นครปฐม', 'NPT'),
 ('CAMPUS-NSN', 'วิทยาเขตนครสวรรค์', 'CAMPUS', 'นครสวรรค์', 'NSN'),
 ('CAMPUS-NAN', 'วิทยาเขตนครน่าน เฉลิมพระเกียรติฯ', 'CAMPUS', 'น่าน', 'NAN'),
-('CAMPUS-SKA', 'วิทยาเขตสงขลา', 'CAMPUS', 'สงขลา', 'SKA'),
 ('CAMPUS-NPT-MVBR', 'มหาวชิราลงกรณบาลีเถรวาทราชวิทยาลัย', 'CAMPUS', 'นครปฐม', 'NPT'),
 ('SANGHA-LEI', 'วิทยาลัยสงฆ์เลย', 'SANGHA_COLLEGE', 'เลย', 'LEI'),
 ('SANGHA-NPM', 'วิทยาลัยสงฆ์นครพนม', 'SANGHA_COLLEGE', 'นครพนม', 'NPM'),
@@ -245,8 +244,8 @@ INSERT INTO `organization_units` (`code`, `name_th`, `type`, `province_th`, `pro
 ('SANGHA-CTI', 'วิทยาลัยสงฆ์จันทบุรี', 'SANGHA_COLLEGE', 'จันทบุรี', 'CTI'),
 ('SANGHA-CRI', 'วิทยาลัยสงฆ์เชียงราย', 'SANGHA_COLLEGE', 'เชียงราย', 'CRI'),
 ('SANGHA-SNI', 'วิทยาลัยสงฆ์สุราษฎร์ธานี', 'SANGHA_COLLEGE', 'สุราษฎร์ธานี', 'SNI'),
-('SANGHA-KPT', 'วิทยาลัยสงฆ์กำแพงเพชร', 'SANGHA_COLLEGE', 'กำแพงเพชร', 'KPT'),
-('UNIT-SKA', 'หน่วยวิทยบริการ จังหวัดสงขลา', 'ACADEMIC_UNIT', 'สงขลา', 'SKA'),
+('SANGHA-KPT', 'วิทยาลัยสงฆ์กำแพเพชร', 'SANGHA_COLLEGE', 'กำแพงเพชร', 'KPT'),
+('SANGHA-SKA', 'วิทยาลัยสงฆ์สงขลา', 'SANGHA_COLLEGE', 'สงขลา', 'SKA'),
 ('UNIT-UTT', 'หน่วยวิทยบริการ จังหวัดอุตรดิตถ์', 'ACADEMIC_UNIT', 'อุตรดิตถ์', 'UTT'),
 ('UNIT-KSN', 'หน่วยวิทยบริการ จังหวัดกาฬสินธุ์', 'ACADEMIC_UNIT', 'กาฬสินธุ์', 'KSN'),
 ('UNIT-SKM', 'หน่วยวิทยบริการ จังหวัดสมุทรสงคราม', 'ACADEMIC_UNIT', 'สมุทรสงคราม', 'SKM');

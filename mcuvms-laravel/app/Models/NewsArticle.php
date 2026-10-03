@@ -14,4 +14,20 @@ class NewsArticle extends Model
     {
         return $this->belongsTo(OrganizationUnit::class, 'org_unit_id');
     }
+
+    public function getLocalizedTitleAttribute()
+    {
+        if (app()->getLocale() === 'en' && !empty($this->title_en)) {
+            return $this->title_en;
+        }
+        return $this->title;
+    }
+
+    public function getLocalizedContentAttribute()
+    {
+        if (app()->getLocale() === 'en' && !empty($this->content_en)) {
+            return $this->content_en;
+        }
+        return $this->content;
+    }
 }

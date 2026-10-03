@@ -4,11 +4,11 @@
     $currentRoute = Route::currentRouteName();
 @endphp
 <!DOCTYPE html>
-<html lang="th" class="scroll-smooth">
+<html lang="{{ app()->getLocale() }}" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ติดต่อสอบถาม | MCUVMS ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน มจร</title>
+    <title>{{ __('portal.nav_contact') }} | VPSMCU {{ __('portal.system_title') }} {{ __('portal.mcu_short') }}</title>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -71,10 +71,10 @@
         <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-1 font-medium">
             <div class="flex items-center space-x-2">
                 <span class="inline-block w-2 h-2 rounded-full bg-[#7B8D65] animate-pulse"></span>
-                <span>มหาจุฬาลงกรณราชวิทยาลัย — ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน (MCUVMS)</span>
+                <span>{{ __('portal.top_announcement') }}</span>
             </div>
             <div class="flex items-center space-x-4 text-[#D8D2C2] text-[11px]">
-                <span class="flex items-center gap-1.5"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#A3B88C]"></i> สถาบันวิปัสสนาธุระ</span>
+                <span class="flex items-center gap-1.5"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#A3B88C]"></i> {{ __('portal.institute_name') }}</span>
             </div>
         </div>
     </div>
@@ -91,10 +91,10 @@
                     </a>
                     <div>
                         <a href="{{ route('home') }}" class="font-heading font-extrabold text-xl text-[#2C3E2D] tracking-tight leading-tight flex items-center gap-2">
-                            MCUVMS
-                            <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-[#EAE5D9] text-[#4A3B32] border border-[#D5CEBC]">มจร</span>
+                            VPSMCU
+                            <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-[#EAE5D9] text-[#4A3B32] border border-[#D5CEBC]">{{ __('portal.mcu_short') }}</span>
                         </a>
-                        <p class="text-xs text-[#6B6357] font-medium">ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน</p>
+                        <p class="text-xs text-[#6B6357] font-medium">{{ __('portal.system_title') }}</p>
                     </div>
                 </div>
 
@@ -102,27 +102,27 @@
                 <nav class="hidden xl:flex items-center space-x-6 text-[15px] font-semibold text-[#4A3B32]">
                     <a href="{{ route('home') }}#calendar" class="hover:text-[#C86D51] transition flex items-center gap-1.5 whitespace-nowrap py-1">
                         <i data-lucide="calendar" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
-                        <span>ปฏิทิน</span>
+                        <span>{{ __('portal.nav_calendar') }}</span>
                     </a>
                     <a href="{{ route('ug.register') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5 whitespace-nowrap py-1">
                         <i data-lucide="graduation-cap" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
-                        <span>ปริญญาตรี</span>
+                        <span>{{ __('portal.nav_ug') }}</span>
                     </a>
                     <a href="{{ route('grad.progress') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5 whitespace-nowrap py-1">
                         <i data-lucide="scroll" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
-                        <span>บัณฑิตศึกษา</span>
+                        <span>{{ __('portal.nav_grad') }}</span>
                     </a>
                     <a href="{{ route('public.register') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5 whitespace-nowrap py-1">
                         <i data-lucide="users" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
-                        <span>ประชาชนทั่วไป</span>
+                        <span>{{ __('portal.nav_public') }}</span>
                     </a>
                     <a href="{{ route('contact') }}" class="text-[#C86D51] font-bold transition flex items-center gap-1.5 whitespace-nowrap py-1">
                         <i data-lucide="phone-call" class="w-4.5 h-4.5 text-[#C86D51]"></i>
-                        <span>ติดต่อ</span>
+                        <span>{{ __('portal.nav_contact') }}</span>
                     </a>
                     <a href="{{ route('donation') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5 whitespace-nowrap py-1">
                         <i data-lucide="gift" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
-                        <span>ร่วมบริจาค</span>
+                        <span>{{ __('portal.nav_donation') }}</span>
                     </a>
                 </nav>
 
@@ -140,18 +140,6 @@
                             EN
                         </a>
                     </div>
-
-                    @if (Session::has('admin_user'))
-                        <a href="{{ route('admin.dashboard') }}" title="แผงควบคุมแอดมิน" class="bg-[#2C3E2D] hover:bg-[#3D523E] text-[#F7F4EA] px-3.5 py-2 rounded-xl text-sm font-semibold flex items-center gap-1.5 shadow-sm transition whitespace-nowrap">
-                            <i data-lucide="layout-dashboard" class="w-4 h-4 text-[#A3B88C]"></i>
-                            <span class="hidden sm:inline">แผงควบคุม</span>
-                        </a>
-                    @else
-                        <a href="{{ route('login') }}" title="เข้าสู่ระบบเจ้าหน้าที่" class="p-2 sm:px-3.5 sm:py-2 text-sm font-semibold text-[#4A3B32] hover:text-[#2C3E2D] bg-[#EAE5D9] hover:bg-[#DDD7C8] rounded-xl transition border border-[#D5CEBC] shadow-sm flex items-center gap-1.5 whitespace-nowrap">
-                            <i data-lucide="lock" class="w-4 h-4 text-[#5A6B47]"></i>
-                            <span class="hidden sm:inline">เข้าสู่ระบบ</span>
-                        </a>
-                    @endif
                 </div>
             </div>
         </div>
@@ -164,11 +152,11 @@
         <div class="bg-gradient-to-r from-[#2C3E2D] via-[#3A4F3C] to-[#5A6B47] rounded-3xl p-6 md:p-10 text-white shadow-lg shadow-[#2C3E2D]/15 mb-8 border border-[#2C3E2D]/20">
             <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/15 backdrop-blur-sm rounded-full text-xs font-semibold uppercase tracking-wider mb-3 border border-white/20 text-[#FAF8F2]">
                 <i data-lucide="headphones" class="w-3.5 h-3.5 text-[#EAE5D9]"></i>
-                <span>Helpdesk & Contact Center</span>
+                <span>{{ __('portal.contact_header_badge') }}</span>
             </div>
-            <h1 class="text-2xl md:text-4xl font-heading font-bold mb-3 text-[#FAF8F2]">ติดต่อสอบถาม & บริการสารสนเทศ</h1>
+            <h1 class="text-2xl md:text-4xl font-heading font-bold mb-3 text-[#FAF8F2]">{{ __('portal.contact_header_title') }}</h1>
             <p class="text-[#EAE5D9] text-sm md:text-base max-w-3xl leading-relaxed">
-                มีข้อสงสัยเกี่ยวกับการปฏิบัติธรรม การลงทะเบียนนิสิต การสะสมหน่วยกิตบัณฑิตศึกษา หรือคอร์สประชาชนทั่วไป สามารถติดต่อสถาบันวิปัสสนาธุระ มจร ได้ทุกช่องทาง
+                {{ __('portal.contact_header_desc') }}
             </p>
         </div>
 
@@ -214,7 +202,7 @@
                             <i data-lucide="building" class="w-6 h-6"></i>
                         </div>
                         <div>
-                            <span class="text-[11px] font-mono uppercase text-[#7B8D65] font-semibold">สถานที่ตั้งส่วนกลาง</span>
+                            <span class="text-[11px] font-mono uppercase text-[#7B8D65] font-semibold">{{ __('portal.contact_office_title') }}</span>
                             <h3 class="font-heading font-bold text-base text-[#2C3E2D] leading-tight">
                                 {{ $contactSettings['contact_org_name'] ?? 'สถาบันวิปัสสนาธุระ มจร' }}
                             </h3>
@@ -232,7 +220,7 @@
                         <div class="flex items-start gap-3">
                             <i data-lucide="clock" class="w-4 h-4 text-[#5A6B47] shrink-0 mt-0.5"></i>
                             <p class="leading-relaxed">
-                                <strong class="text-[#2C3E2D]">เวลาทำการ:</strong> {{ $contactSettings['contact_office_hours'] ?? 'วันจันทร์ - ศุกร์ 08.30 - 16.30 น.' }}
+                                <strong class="text-[#2C3E2D]">{{ __('portal.contact_office_hours_label') }}</strong> {{ $contactSettings['contact_office_hours'] ?? 'วันจันทร์ - ศุกร์ 08.30 - 16.30 น.' }}
                             </p>
                         </div>
                     </div>
@@ -242,7 +230,7 @@
                 <div class="organic-card rounded-3xl p-6 md:p-7 border border-[#EAE5D9]">
                     <h3 class="font-heading font-bold text-base text-[#2C3E2D] mb-4 flex items-center gap-2">
                         <i data-lucide="phone-forwarded" class="w-4 h-4 text-[#5A6B47]"></i>
-                        <span>ช่องทางติดต่อด่วน</span>
+                        <span>{{ __('portal.contact_fast_methods') }}</span>
                     </h3>
 
                     <div class="space-y-3.5">
@@ -254,12 +242,12 @@
                                     <i data-lucide="phone" class="w-4 h-4"></i>
                                 </div>
                                 <div>
-                                    <div class="text-[10px] text-[#7B8D65]">เบอร์โทรศัพท์กลาง</div>
+                                    <div class="text-[10px] text-[#7B8D65]">{{ __('portal.contact_phone_main') }}</div>
                                     <div class="font-semibold text-xs text-[#2C3E2D] font-mono">{{ $contactSettings['contact_phone'] ?? '035-248-000' }}</div>
                                 </div>
                             </div>
                             <a href="tel:{{ preg_replace('/[^0-9]/', '', $contactSettings['contact_phone'] ?? '') }}" class="px-2.5 py-1 bg-white hover:bg-[#5A6B47] hover:text-white border border-[#D5CEBC] rounded-lg text-[11px] font-semibold text-[#4A3B32] transition">
-                                โทร
+                                {{ __('portal.contact_call_btn') }}
                             </a>
                         </div>
 
@@ -270,12 +258,12 @@
                                     <i data-lucide="smartphone" class="w-4 h-4"></i>
                                 </div>
                                 <div>
-                                    <div class="text-[10px] text-[#C86D51]">สายด่วนวิปัสสนาธุระ</div>
+                                    <div class="text-[10px] text-[#C86D51]">{{ __('portal.contact_hotline') }}</div>
                                     <div class="font-semibold text-xs text-[#2C3E2D] font-mono">{{ $contactSettings['contact_hotline'] ?? '084-456-4554' }}</div>
                                 </div>
                             </div>
                             <a href="tel:{{ preg_replace('/[^0-9]/', '', $contactSettings['contact_hotline'] ?? '') }}" class="px-2.5 py-1 bg-white hover:bg-[#C86D51] hover:text-white border border-[#D5CEBC] rounded-lg text-[11px] font-semibold text-[#4A3B32] transition">
-                                โทร
+                                {{ __('portal.contact_call_btn') }}
                             </a>
                         </div>
 
@@ -286,12 +274,12 @@
                                     <i data-lucide="mail" class="w-4 h-4"></i>
                                 </div>
                                 <div>
-                                    <div class="text-[10px] text-[#7B8D65]">อีเมลประสานงาน</div>
+                                    <div class="text-[10px] text-[#7B8D65]">{{ __('portal.contact_email_coord') }}</div>
                                     <div class="font-semibold text-xs text-[#2C3E2D] font-mono">{{ $contactSettings['contact_email'] ?? 'vipassana@mcu.ac.th' }}</div>
                                 </div>
                             </div>
                             <a href="mailto:{{ $contactSettings['contact_email'] ?? 'vipassana@mcu.ac.th' }}" class="px-2.5 py-1 bg-white hover:bg-[#2C3E2D] hover:text-white border border-[#D5CEBC] rounded-lg text-[11px] font-semibold text-[#4A3B32] transition">
-                                ส่งอีเมล
+                                {{ __('portal.contact_email_btn') }}
                             </a>
                         </div>
 
@@ -308,7 +296,7 @@
                                 <i data-lucide="facebook" class="w-4 h-4 text-[#1877F2]"></i>
                                 <div>
                                     <div class="text-[9px] text-[#4A3B32]">Facebook</div>
-                                    <div class="font-bold text-[11px] text-[#2C3E2D] truncate">เพจวิปัสสนา มจร</div>
+                                    <div class="font-bold text-[11px] text-[#2C3E2D] truncate">{{ __('portal.contact_fb_page') }}</div>
                                 </div>
                             </a>
                         </div>
@@ -323,8 +311,8 @@
                 <div class="organic-card rounded-3xl p-6 md:p-8 border border-[#EAE5D9]">
                     <div class="flex items-center justify-between pb-4 mb-6 border-b border-[#EAE5D9]">
                         <div>
-                            <h2 class="font-heading font-bold text-xl text-[#2C3E2D]">แบบฟอร์มส่งข้อความสอบถามออนไลน์</h2>
-                            <p class="text-xs text-[#7B8D65] mt-1">กรอกข้อมูลเพื่อส่งเรื่องถึงเจ้าหน้าที่ผู้รับผิดชอบโดยตรง</p>
+                            <h2 class="font-heading font-bold text-xl text-[#2C3E2D]">{{ __('portal.contact_form_title') }}</h2>
+                            <p class="text-xs text-[#7B8D65] mt-1">{{ __('portal.contact_form_desc') }}</p>
                         </div>
                         <span class="p-3 rounded-2xl bg-[#5A6B47]/15 text-[#5A6B47]">
                             <i data-lucide="send" class="w-6 h-6"></i>
@@ -337,64 +325,64 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-semibold text-[#4A3B32] mb-1.5">
-                                    ชื่อ-นามสกุล / ฉายา / พระนาม <span class="text-[#C86D51]">*</span>
+                                    {{ __('portal.contact_sender_name') }} <span class="text-[#C86D51]">*</span>
                                 </label>
-                                <input type="text" name="sender_name" value="{{ old('sender_name') }}" required placeholder="ระบุชื่อผู้ติดต่อ" class="w-full px-3.5 py-2.5 bg-white border border-[#EAE5D9] rounded-xl text-xs text-[#2D2A26] focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
+                                <input type="text" name="sender_name" value="{{ old('sender_name') }}" required placeholder="{{ __('portal.contact_sender_name') }}" class="w-full px-3.5 py-2.5 bg-white border border-[#EAE5D9] rounded-xl text-xs text-[#2D2A26] focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
                             </div>
 
                             <div>
                                 <label class="block text-xs font-semibold text-[#4A3B32] mb-1.5">
-                                    เบอร์โทรศัพท์ติดต่อกลับ <span class="text-[#C86D51]">*</span>
+                                    {{ __('portal.contact_sender_phone') }} <span class="text-[#C86D51]">*</span>
                                 </label>
-                                <input type="tel" name="phone" value="{{ old('phone') }}" required placeholder="เช่น 081-234-5678" class="w-full px-3.5 py-2.5 bg-white border border-[#EAE5D9] rounded-xl text-xs text-[#2D2A26] focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
+                                <input type="tel" name="phone" value="{{ old('phone') }}" required placeholder="081-234-5678" class="w-full px-3.5 py-2.5 bg-white border border-[#EAE5D9] rounded-xl text-xs text-[#2D2A26] focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-semibold text-[#4A3B32] mb-1.5">
-                                    อีเมลสำหรับรับการตอบกลับ
+                                    {{ __('portal.contact_sender_email') }}
                                 </label>
                                 <input type="email" name="email" value="{{ old('email') }}" placeholder="example@mcu.ac.th" class="w-full px-3.5 py-2.5 bg-white border border-[#EAE5D9] rounded-xl text-xs text-[#2D2A26] focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
                             </div>
 
                             <div>
                                 <label class="block text-xs font-semibold text-[#4A3B32] mb-1.5">
-                                    หมวดหมู่เรื่องที่ติดต่อ <span class="text-[#C86D51]">*</span>
+                                    {{ __('portal.contact_category') }} <span class="text-[#C86D51]">*</span>
                                 </label>
                                 <select name="category" required class="w-full px-3.5 py-2.5 bg-white border border-[#EAE5D9] rounded-xl text-xs text-[#2D2A26] focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
-                                    <option value="ทั่วไป">สอบถามข้อมูลทั่วไป</option>
-                                    <option value="ปริญญาตรี">การปฏิบัติธรรมระดับปริญญาตรี (40 วัน)</option>
-                                    <option value="บัณฑิตศึกษา">การสะสมวันบัณฑิตศึกษา ป.โท/ป.เอก (30/45 วัน)</option>
-                                    <option value="ประชาชนทั่วไป">คอร์สปฏิบัติธรรมสำหรับประชาชนทั่วไป</option>
-                                    <option value="วุฒิบัตร">การออกใบรับรอง / ตรวจสอบวุฒิบัตร (QR)</option>
-                                    <option value="ปัญหาการใช้งาน">แจ้งปัญหาการใช้งานระบบ MCUVMS</option>
+                                    <option value="ทั่วไป">{{ __('portal.contact_cat_general') }}</option>
+                                    <option value="ปริญญาตรี">{{ __('portal.contact_cat_ug') }}</option>
+                                    <option value="บัณฑิตศึกษา">{{ __('portal.contact_cat_grad') }}</option>
+                                    <option value="ประชาชนทั่วไป">{{ __('portal.contact_cat_public') }}</option>
+                                    <option value="วุฒิบัตร">{{ __('portal.contact_cat_cert') }}</option>
+                                    <option value="ปัญหาการใช้งาน">{{ __('portal.contact_cat_system') }}</option>
                                 </select>
                             </div>
                         </div>
 
                         <div>
                             <label class="block text-xs font-semibold text-[#4A3B32] mb-1.5">
-                                หัวข้อเรื่อง <span class="text-[#C86D51]">*</span>
+                                {{ __('portal.contact_subject') }} <span class="text-[#C86D51]">*</span>
                             </label>
-                            <input type="text" name="subject" value="{{ old('subject') }}" required placeholder="ระบุหัวข้อที่ต้องการสอบถามหรือแจ้งเรื่อง" class="w-full px-3.5 py-2.5 bg-white border border-[#EAE5D9] rounded-xl text-xs text-[#2D2A26] focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
+                            <input type="text" name="subject" value="{{ old('subject') }}" required placeholder="{{ __('portal.contact_subject') }}" class="w-full px-3.5 py-2.5 bg-white border border-[#EAE5D9] rounded-xl text-xs text-[#2D2A26] focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
                         </div>
 
                         <div>
                             <label class="block text-xs font-semibold text-[#4A3B32] mb-1.5">
-                                รายละเอียดข้อความ <span class="text-[#C86D51]">*</span>
+                                {{ __('portal.contact_message') }} <span class="text-[#C86D51]">*</span>
                             </label>
-                            <textarea name="message" rows="5" required placeholder="พิมพ์ข้อความและรายละเอียดที่ต้องการสอบถามให้ครบถ้วน..." class="w-full px-3.5 py-2.5 bg-white border border-[#EAE5D9] rounded-xl text-xs text-[#2D2A26] focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47] leading-relaxed">{{ old('message') }}</textarea>
+                            <textarea name="message" rows="5" required placeholder="{{ __('portal.contact_message') }}..." class="w-full px-3.5 py-2.5 bg-white border border-[#EAE5D9] rounded-xl text-xs text-[#2D2A26] focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47] leading-relaxed">{{ old('message') }}</textarea>
                         </div>
 
                         <div class="pt-3 border-t border-[#EAE5D9] flex items-center justify-between">
                             <span class="text-[11px] text-[#7B8D65] flex items-center gap-1">
                                 <i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#5A6B47]"></i>
-                                ข้อมูลของท่านจะถูกส่งถึงเจ้าหน้าที่โดยตรง
+                                {{ __('portal.contact_direct_notice') }}
                             </span>
                             <button type="submit" class="bg-[#5A6B47] hover:bg-[#2C3E2D] text-white font-medium px-6 py-2.5 rounded-xl text-xs shadow-md transition flex items-center gap-2">
                                 <i data-lucide="send" class="w-4 h-4"></i>
-                                <span>ส่งข้อความติดต่อสอบถาม</span>
+                                <span>{{ __('portal.contact_btn_send') }}</span>
                             </button>
                         </div>
                     </form>
@@ -409,10 +397,10 @@
                 <div class="flex items-center justify-between pb-4 mb-5 border-b border-[#EAE5D9]">
                     <div class="flex items-center gap-2.5">
                         <i data-lucide="map" class="w-5 h-5 text-[#5A6B47]"></i>
-                        <h3 class="font-heading font-bold text-lg text-[#2C3E2D]">แผนที่ตั้ง สถาบันวิปัสสนาธุระ มจร วังน้อย อยุธยา</h3>
+                        <h3 class="font-heading font-bold text-lg text-[#2C3E2D]">{{ __('portal.contact_map_title') }}</h3>
                     </div>
                     <a href="https://maps.google.com/?q=มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย+วังน้อย" target="_blank" class="text-xs text-[#5A6B47] hover:text-[#2C3E2D] font-semibold flex items-center gap-1 transition">
-                        <span>เปิดใน Google Maps</span>
+                        <span>{{ __('portal.contact_open_gmaps') }}</span>
                         <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
                     </a>
                 </div>
@@ -431,14 +419,26 @@
                 <div>
                     <div class="flex items-center justify-center md:justify-start gap-3 mb-2">
                         <img src="{{ asset('images/mcu-logo.png') }}" alt="MCU Logo" class="w-8 h-8 object-contain">
-                        <span class="font-heading font-bold text-white text-base">มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย  • ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน (MCUVMS)</span>
+                        <span class="font-heading font-bold text-white text-base">{{ __('portal.footer_brand') }}</span>
                     </div>
-                    <p class="text-[#A3B88C]">{{ $contactSettings['contact_address'] ?? 'มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย 79 หมู่ 1 ต.ลำไทร อ.วังน้อย จ.พระนครศรีอยุธยา 13170' }}</p>
-                    <p class="text-[#8C8275] mt-1">{{ $contactSettings['contact_org_name'] ?? 'สถาบันวิปัสสนาธุระ มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย' }} &bull; โทรศัพท์ {{ $contactSettings['contact_phone'] ?? '035-248-000' }}</p>
+                    <p class="text-[#A3B88C]">{{ __('portal.footer_address') }}</p>
+                    <p class="text-[#8C8275] mt-1">{{ __('portal.institute_name') }} {{ __('portal.university_name') }} &bull; {{ $contactSettings['contact_phone'] ?? '035-248-000' }}</p>
                 </div>
-                <div class="text-[#8C8275] font-mono text-[11px]">
-                    <div>Architecture: Laravel 11.x &bull; Server: Apache/2.4 (FreeBSD)</div>
-                    <div>Database: MariaDB 10.6 &bull; MCU Vipassana Management System</div>
+                <div class="flex flex-col items-center md:items-end gap-2.5">
+                    @if (Session::has('admin_user'))
+                        <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-xs border border-white/15 transition shadow-sm">
+                            <i data-lucide="layout-dashboard" class="w-4 h-4 text-[#A3B88C]"></i>
+                            <span>{{ __('portal.nav_admin_panel') }}</span>
+                        </a>
+                    @else
+                        <a href="{{ route('login') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#2C3E2D] hover:bg-[#385039] text-[#EAE5D9] hover:text-white font-medium text-xs border border-[#3E5540] transition shadow-sm group">
+                            <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-[#A3B88C] group-hover:text-white transition"></i>
+                            <span>{{ __('portal.nav_admin_login') }}</span>
+                        </a>
+                    @endif
+                    <div class="text-[10px] text-[#7A7367] font-mono">
+                        {{ __('portal.university_name') }} &bull; VPSMCU
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MCUVMS - ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน มจร</title>
+    <title>VPSMCU - {{ __('portal.system_title') }} {{ __('portal.mcu_short') }}</title>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -81,10 +81,10 @@
         <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-1 font-medium">
             <div class="flex items-center space-x-2">
                 <span class="inline-block w-2 h-2 rounded-full bg-[#7B8D65] animate-pulse"></span>
-                <span>มหาจุฬาลงกรณราชวิทยาลัย — ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน (MCUVMS)</span>
+                <span>{{ __('portal.top_announcement') }}</span>
             </div>
             <div class="flex items-center space-x-4 text-[#D8D2C2] text-[11px]">
-                <span class="flex items-center gap-1.5"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#A3B88C]"></i> สถาบันวิปัสสนาธุระ</span>
+                <span class="flex items-center gap-1.5"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#A3B88C]"></i> {{ __('portal.institute_name') }}</span>
             </div>
         </div>
     </div>
@@ -101,7 +101,7 @@
                     </a>
                     <div>
                         <a href="{{ route('home') }}" class="font-heading font-extrabold text-xl text-[#2C3E2D] tracking-tight leading-tight flex items-center gap-2">
-                            MCUVMS
+                            VPSMCU
                             <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-[#EAE5D9] text-[#4A3B32] border border-[#D5CEBC]">{{ __('portal.mcu_short') }}</span>
                         </a>
                         <p class="text-xs text-[#6B6357] font-medium">{{ __('portal.system_title') }}</p>
@@ -173,7 +173,7 @@
                     </a>
                 </nav>
 
-                <!-- Actions: Language Switcher & Auth / Admin Button -->
+                <!-- Actions: Language Switcher & Admin Panel Shortcut (if logged in) -->
                 <div class="flex items-center space-x-2.5">
                     @php
                         $currentLang = session('locale', 'th');
@@ -187,18 +187,6 @@
                             EN
                         </a>
                     </div>
-
-                    @if (Session::has('admin_user'))
-                        <a href="{{ route('admin.dashboard') }}" title="แผงควบคุมแอดมิน" class="bg-[#2C3E2D] hover:bg-[#3D523E] text-[#F7F4EA] px-3.5 py-2 rounded-xl text-sm font-semibold flex items-center gap-1.5 shadow-sm transition whitespace-nowrap">
-                            <i data-lucide="layout-dashboard" class="w-4 h-4 text-[#A3B88C]"></i>
-                            <span class="hidden sm:inline">{{ __('portal.nav_admin_panel') }}</span>
-                        </a>
-                    @else
-                        <a href="{{ route('login') }}" title="เข้าสู่ระบบเจ้าหน้าที่" class="p-2 sm:px-3.5 sm:py-2 text-sm font-semibold text-[#4A3B32] hover:text-[#2C3E2D] bg-[#EAE5D9] hover:bg-[#DDD7C8] rounded-xl transition border border-[#D5CEBC] shadow-sm flex items-center gap-1.5 whitespace-nowrap">
-                            <i data-lucide="lock" class="w-4 h-4 text-[#5A6B47]"></i>
-                            <span class="hidden sm:inline">{{ __('portal.nav_admin_login') }}</span>
-                        </a>
-                    @endif
                 </div>
             </div>
         </div>
@@ -296,18 +284,18 @@
             <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 pb-6 border-b border-[#D5CEBC] gap-4">
                 <div>
                     <span class="text-xs font-bold text-[#5A6B47] uppercase tracking-widest font-mono flex items-center gap-1.5">
-                        <i data-lucide="network" class="w-4 h-4"></i> MCU Meditation Network
+                        <i data-lucide="network" class="w-4 h-4"></i> {{ __('portal.calendar_network') }}
                     </span>
-                    <h2 class="text-2xl sm:text-3xl font-heading font-bold text-[#2C3E2D] mt-1">ปฏิทินปฏิบัติธรรมและกำหนดการเปิดรับสมัคร</h2>
-                    <p class="text-xs text-[#6B6357] mt-1">กำหนดการปฏิบัติวิปัสสนากรรมฐาน ทั้งระดับปริญญาตรี (10 วัน/ปี) และภาคประชาชน ทั่วประเทศ</p>
+                    <h2 class="text-2xl sm:text-3xl font-heading font-bold text-[#2C3E2D] mt-1">{{ __('portal.calendar_title') }}</h2>
+                    <p class="text-xs text-[#6B6357] mt-1">{{ __('portal.calendar_desc') }}</p>
                 </div>
                 <div class="w-full md:w-auto">
                     <form method="GET" action="{{ route('home') }}#calendar">
                         <select name="filter_org" onchange="this.form.submit()" class="w-full md:w-80 text-xs bg-white border border-[#D5CEBC] rounded-xl px-4 py-3 text-[#4A3B32] focus:outline-none focus:ring-2 focus:ring-[#5A6B47] font-medium shadow-sm">
-                            <option value="">-- แสดงทั้งหมด (ทุกส่วนงาน) --</option>
+                            <option value="">{{ __('portal.calendar_filter_all') }}</option>
                             @foreach ($orgUnits as $org)
                                 <option value="{{ $org->id }}" {{ request('filter_org') == $org->id ? 'selected' : '' }}>
-                                    [{{ $org->code_provincial ?: $org->code }}] {{ $org->name_th }}
+                                    [{{ $org->code_provincial ?: $org->code }}] {{ $currentLang === 'en' && !empty($org->name_en) ? $org->name_en : $org->name_th }}
                                 </option>
                             @endforeach
                         </select>
@@ -320,26 +308,26 @@
                 <div class="inline-flex p-1.5 rounded-2xl bg-white border border-[#D5CEBC] shadow-xs gap-1.5" id="category-tabs">
                     <button type="button" onclick="switchCategory('ALL')" id="tab-cat-ALL" class="px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 bg-[#2C3E2D] text-white shadow-xs">
                         <i data-lucide="layers" class="w-3.5 h-3.5"></i>
-                        <span>ทั้งหมด (All)</span>
+                        <span>{{ __('portal.calendar_tab_all') }}</span>
                         <span id="badge-count-all" class="px-1.5 py-0.2 rounded-full text-[10px] bg-white/20 font-mono">0</span>
                     </button>
                     <button type="button" onclick="switchCategory('UG')" id="tab-cat-UG" class="px-4 py-2 rounded-xl text-xs font-semibold text-[#4A3B32] hover:text-[#2C3E2D] hover:bg-[#FAF8F2] transition flex items-center gap-1.5">
                         <i data-lucide="graduation-cap" class="w-3.5 h-3.5 text-[#5A6B47]"></i>
-                        <span>ปริญญาตรี (10 วัน/ปี)</span>
+                        <span>{{ __('portal.calendar_tab_ug') }}</span>
                         <span id="badge-count-ug" class="px-1.5 py-0.2 rounded-full text-[10px] bg-[#5A6B47]/15 text-[#5A6B47] font-mono font-bold">0</span>
                     </button>
                     <button type="button" onclick="switchCategory('PUBLIC')" id="tab-cat-PUBLIC" class="px-4 py-2 rounded-xl text-xs font-semibold text-[#4A3B32] hover:text-[#2C3E2D] hover:bg-[#FAF8F2] transition flex items-center gap-1.5">
                         <i data-lucide="users" class="w-3.5 h-3.5 text-[#C86D51]"></i>
-                        <span>ภาคประชาชน</span>
+                        <span>{{ __('portal.calendar_tab_public') }}</span>
                         <span id="badge-count-public" class="px-1.5 py-0.2 rounded-full text-[10px] bg-[#C86D51]/15 text-[#C86D51] font-mono font-bold">0</span>
                     </button>
                 </div>
 
                 <div class="text-xs text-[#7B8D65] flex items-center gap-2">
                     <span class="inline-block w-2 h-2 rounded-full bg-[#5A6B47]"></span>
-                    <span>สีเขียว = ป.ตรี</span>
+                    <span>{{ __('portal.calendar_legend_ug') }}</span>
                     <span class="inline-block w-2 h-2 rounded-full bg-[#C86D51] ml-2"></span>
-                    <span>สีส้มอิฐ = ประชาชน</span>
+                    <span>{{ __('portal.calendar_legend_public') }}</span>
                 </div>
             </div>
 
@@ -359,17 +347,17 @@
                                     <h3 id="calendar-month-year" class="font-heading font-bold text-lg text-[#2C3E2D]">
                                         <!-- Dynamic: e.g. ธันวาคม 2569 -->
                                     </h3>
-                                    <p class="text-[11px] text-[#7B8D65]">คลิกวันที่เพื่อดูโครงการในวันนั้นๆ</p>
+                                    <p class="text-[11px] text-[#7B8D65]">{{ __('portal.calendar_hint_click') }}</p>
                                 </div>
                             </div>
                             <div class="flex items-center gap-1.5">
-                                <button onclick="changeMonth(-1)" class="p-2 rounded-xl border border-[#D5CEBC] hover:bg-[#FAF8F2] text-[#4A3B32] hover:text-[#2C3E2D] transition shadow-2xs" title="เดือนก่อนหน้า">
+                                <button onclick="changeMonth(-1)" class="p-2 rounded-xl border border-[#D5CEBC] hover:bg-[#FAF8F2] text-[#4A3B32] hover:text-[#2C3E2D] transition shadow-2xs" title="{{ __('portal.calendar_prev_month') }}">
                                     <i data-lucide="chevron-left" class="w-4 h-4"></i>
                                 </button>
                                 <button onclick="goToCurrentMonth()" class="px-3 py-1.5 rounded-xl border border-[#D5CEBC] text-xs font-semibold text-[#5A6B47] hover:bg-[#5A6B47] hover:text-white transition shadow-2xs">
-                                    เดือนนี้
+                                    {{ __('portal.calendar_this_month') }}
                                 </button>
-                                <button onclick="changeMonth(1)" class="p-2 rounded-xl border border-[#D5CEBC] hover:bg-[#FAF8F2] text-[#4A3B32] hover:text-[#2C3E2D] transition shadow-2xs" title="เดือนถัดไป">
+                                <button onclick="changeMonth(1)" class="p-2 rounded-xl border border-[#D5CEBC] hover:bg-[#FAF8F2] text-[#4A3B32] hover:text-[#2C3E2D] transition shadow-2xs" title="{{ __('portal.calendar_next_month') }}">
                                     <i data-lucide="chevron-right" class="w-4 h-4"></i>
                                 </button>
                             </div>
@@ -377,13 +365,13 @@
 
                         <!-- Days of Week Header -->
                         <div class="grid grid-cols-7 gap-1 text-center font-heading text-xs font-semibold mb-2">
-                            <span class="text-[#C86D51] py-1.5">อา.</span>
-                            <span class="text-[#4A3B32] py-1.5">จ.</span>
-                            <span class="text-[#4A3B32] py-1.5">อ.</span>
-                            <span class="text-[#4A3B32] py-1.5">พ.</span>
-                            <span class="text-[#4A3B32] py-1.5">พฤ.</span>
-                            <span class="text-[#4A3B32] py-1.5">ศ.</span>
-                            <span class="text-[#5A6B47] py-1.5">ส.</span>
+                            <span class="text-[#C86D51] py-1.5">{{ $currentLang === 'en' ? 'Sun' : 'อา.' }}</span>
+                            <span class="text-[#4A3B32] py-1.5">{{ $currentLang === 'en' ? 'Mon' : 'จ.' }}</span>
+                            <span class="text-[#4A3B32] py-1.5">{{ $currentLang === 'en' ? 'Tue' : 'อ.' }}</span>
+                            <span class="text-[#4A3B32] py-1.5">{{ $currentLang === 'en' ? 'Wed' : 'พ.' }}</span>
+                            <span class="text-[#4A3B32] py-1.5">{{ $currentLang === 'en' ? 'Thu' : 'พฤ.' }}</span>
+                            <span class="text-[#4A3B32] py-1.5">{{ $currentLang === 'en' ? 'Fri' : 'ศ.' }}</span>
+                            <span class="text-[#5A6B47] py-1.5">{{ $currentLang === 'en' ? 'Sat' : 'ส.' }}</span>
                         </div>
 
                         <!-- Calendar Grid Cells -->
@@ -396,19 +384,19 @@
                             <div class="flex flex-wrap items-center gap-3">
                                 <span class="flex items-center gap-1.5">
                                     <span class="w-2.5 h-2.5 rounded-full bg-[#5A6B47]"></span>
-                                    <span>ป.ตรี (10 วัน)</span>
+                                    <span>{{ __('portal.calendar_legend_ug') }}</span>
                                 </span>
                                 <span class="flex items-center gap-1.5">
                                     <span class="w-2.5 h-2.5 rounded-full bg-[#C86D51]"></span>
-                                    <span>ภาคประชาชน</span>
+                                    <span>{{ __('portal.calendar_legend_public') }}</span>
                                 </span>
                                 <span class="flex items-center gap-1.5">
                                     <span class="w-2.5 h-2.5 rounded-full border-2 border-[#2C3E2D]"></span>
-                                    <span>วันนี้</span>
+                                    <span>{{ __('portal.calendar_legend_today') }}</span>
                                 </span>
                             </div>
                             <span id="calendar-month-event-count" class="font-mono text-[#5A6B47] font-semibold">
-                                <!-- e.g. 5 โครงการในเดือนนี้ -->
+                                <!-- e.g. 5 projects this month -->
                             </span>
                         </div>
                     </div>
@@ -421,14 +409,14 @@
                         <div class="flex items-center justify-between pb-4 mb-4 border-b border-[#EAE5D9]">
                             <div>
                                 <h3 id="events-list-title" class="font-heading font-bold text-base text-[#2C3E2D]">
-                                    รายการโครงการในเดือนนี้
+                                    {{ __('portal.calendar_side_title') }}
                                 </h3>
                                 <p id="events-list-subtitle" class="text-[11px] text-[#7B8D65]">
-                                    เลื่อนดูรายละเอียดและกดสมัครเข้าร่วมได้ทันที
+                                    {{ __('portal.calendar_side_desc') }}
                                 </p>
                             </div>
                             <button id="reset-filter-btn" onclick="filterBySelectedDay(null)" class="hidden text-[11px] text-[#C86D51] hover:underline font-medium flex items-center gap-1">
-                                <i data-lucide="rotate-ccw" class="w-3 h-3"></i> ดูทั้งเดือน
+                                <i data-lucide="rotate-ccw" class="w-3 h-3"></i> {{ __('portal.calendar_view_all_month') }}
                             </button>
                         </div>
 
@@ -439,9 +427,9 @@
 
                         <!-- Footer Link -->
                         <div class="pt-4 mt-2 border-t border-[#EAE5D9] flex justify-between items-center text-xs">
-                            <span class="text-[#8C8275]">สอบถามข้อมูลเพิ่มเติม สถาบันวิปัสสนาธุระ</span>
+                            <span class="text-[#8C8275]">{{ __('portal.calendar_contact_info') }}</span>
                             <a href="{{ route('ug.register') }}" class="font-semibold text-[#5A6B47] hover:text-[#2C3E2D] flex items-center gap-1">
-                                <span>หน้าลงทะเบียน</span>
+                                <span>{{ __('portal.calendar_reg_page') }}</span>
                                 <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                             </a>
                         </div>
@@ -459,12 +447,12 @@
             <div class="flex justify-between items-center mb-8">
                 <div>
                     <span class="text-xs font-bold text-[#5A6B47] uppercase tracking-widest font-mono flex items-center gap-1.5">
-                        <i data-lucide="bell" class="w-4 h-4"></i> Announcements & News
+                        <i data-lucide="bell" class="w-4 h-4"></i> {{ __('portal.news_badge') }}
                     </span>
-                    <h2 class="text-2xl font-heading font-bold text-[#2C3E2D] mt-1">ข่าวสารประชาสัมพันธ์</h2>
+                    <h2 class="text-2xl font-heading font-bold text-[#2C3E2D] mt-1">{{ __('portal.news_title') }}</h2>
                 </div>
                 <a href="{{ route('news.index') }}" class="text-xs font-semibold text-[#5A6B47] hover:text-[#2C3E2D] flex items-center gap-1 group bg-white border border-[#D5CEBC] px-3.5 py-2 rounded-xl shadow-sm hover:border-[#5A6B47] transition">
-                    <span>ดูข่าวทั้งหมด</span>
+                    <span>{{ __('portal.news_view_all') }}</span>
                     <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition"></i>
                 </a>
             </div>
@@ -486,7 +474,7 @@
                                 <div class="flex items-center justify-between text-xs text-[#8C8275] mb-2 font-mono">
                                     <span class="flex items-center gap-1 truncate max-w-[65%]">
                                         <i data-lucide="building" class="w-3 h-3 text-[#5A6B47] shrink-0"></i> 
-                                        <span class="truncate">{{ $news->organizationUnit->name_th ?? 'มหาจุฬาลงกรณราชวิทยาลัย' }}</span>
+                                        <span class="truncate">{{ $currentLang === 'en' && !empty($news->organizationUnit->name_en) ? $news->organizationUnit->name_en : ($news->organizationUnit->name_th ?? __('portal.university_name')) }}</span>
                                     </span>
                                     <span class="flex items-center gap-1 shrink-0">
                                         <i data-lucide="calendar" class="w-3 h-3"></i> 
@@ -495,20 +483,20 @@
                                 </div>
                                 <h3 class="font-heading font-bold text-[#2C3E2D] text-base mb-2 group-hover:text-[#C86D51] transition line-clamp-2">
                                     <a href="{{ route('news.detail', $news->id) }}">
-                                        {{ $news->title }}
+                                        {{ $news->localized_title }}
                                     </a>
                                 </h3>
                                 <p class="text-xs text-[#6B6357] line-clamp-3 leading-relaxed mb-4">
-                                    {{ strip_tags($news->content) }}
+                                    {{ strip_tags($news->localized_content) }}
                                 </p>
                             </div>
                             <div class="pt-3 border-t border-[#F2EFE7] flex items-center justify-between text-xs">
                                 <span class="text-[11px] font-semibold text-[#8C8275] flex items-center gap-1 font-mono">
                                     <i data-lucide="eye" class="w-3 h-3 text-[#A3B88C]"></i>
-                                    {{ number_format($news->views) }} เข้าชม
+                                    {{ number_format($news->views) }} {{ __('portal.news_views') }}
                                 </span>
                                 <a href="{{ route('news.detail', $news->id) }}" class="text-[#5A6B47] font-semibold flex items-center gap-1 group-hover:text-[#C86D51] transition">
-                                    <span>อ่านต่อ</span>
+                                    <span>{{ __('portal.news_read_more') }}</span>
                                     <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
                                 </a>
                             </div>
@@ -516,7 +504,7 @@
                     </div>
                 @empty
                     <div class="col-span-full py-12 text-center text-[#8C8275] bg-white rounded-2xl border border-dashed border-[#D5CEBC]">
-                        <p class="text-xs">ยังไม่มีข่าวประชาสัมพันธ์ในขณะนี้</p>
+                        <p class="text-xs">{{ __('portal.news_empty') }}</p>
                     </div>
                 @endforelse
             </div>
@@ -538,9 +526,21 @@
                         <a href="{{ route('contact') }}" class="text-[#A3B88C] hover:text-white underline">ดูช่องทางติดต่อสอบถาม & แผนที่</a>
                     </p>
                 </div>
-                <div class="text-[#8C8275] font-mono text-[11px]">
-                    <div>Architecture: Laravel 11.x &bull; Server: Apache/2.4 (FreeBSD)</div>
-                    <div>Database: MariaDB 10.6 &bull; MCU Vipassana Management System</div>
+                <div class="flex flex-col items-center md:items-end gap-2.5">
+                    @if (Session::has('admin_user'))
+                        <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-xs border border-white/15 transition shadow-sm">
+                            <i data-lucide="layout-dashboard" class="w-4 h-4 text-[#A3B88C]"></i>
+                            <span>{{ __('portal.nav_admin_panel') }}</span>
+                        </a>
+                    @else
+                        <a href="{{ route('login') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#2C3E2D] hover:bg-[#385039] text-[#EAE5D9] hover:text-white font-medium text-xs border border-[#3E5540] transition shadow-sm group">
+                            <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-[#A3B88C] group-hover:text-white transition"></i>
+                            <span>{{ __('portal.nav_admin_login') }}</span>
+                        </a>
+                    @endif
+                    <div class="text-[10px] text-[#7A7367] font-mono">
+                        {{ __('portal.university_name') }} &bull; VPSMCU
+                    </div>
                 </div>
             </div>
         </div>
@@ -548,6 +548,8 @@
 
     <script>
         lucide.createIcons();
+
+        const currentLocale = '{{ app()->getLocale() }}';
 
         // Raw Data from Controller
         const rawBatches = @json($openBatches);
@@ -558,15 +560,15 @@
             id: 'ug-' + b.id,
             raw_id: b.id,
             type: 'UG',
-            type_label: 'ปริญญาตรี (10 วัน)',
-            title: b.title,
+            type_label: currentLocale === 'en' ? 'Undergraduate (10 Days)' : 'ปริญญาตรี (10 วัน)',
+            title: (currentLocale === 'en' && b.title_en) ? b.title_en : b.title,
             start_date: b.start_date,
             end_date: b.end_date || b.start_date,
-            location: b.location || 'ศูนย์วิปัสสนากรรมฐาน มจร',
+            location: (currentLocale === 'en' && b.location_en) ? b.location_en : (b.location || (currentLocale === 'en' ? 'MCU Meditation Center' : 'ศูนย์วิปัสสนากรรมฐาน มจร')),
             max_quota: b.max_quota,
             reg_count: b.registrations ? b.registrations.length : 0,
             academic_year: b.academic_year,
-            org_name: b.organization_unit ? b.organization_unit.name_th : 'ส่วนงาน มจร',
+            org_name: b.organization_unit ? ((currentLocale === 'en' && b.organization_unit.name_en) ? b.organization_unit.name_en : b.organization_unit.name_th) : (currentLocale === 'en' ? 'MCU Campus' : 'ส่วนงาน มจร'),
             org_code: b.organization_unit ? (b.organization_unit.code_provincial || b.organization_unit.code) : 'MCU',
             register_url: "{{ route('ug.register') }}"
         }));
@@ -575,15 +577,15 @@
             id: 'pub-' + p.id,
             raw_id: p.id,
             type: 'PUBLIC',
-            type_label: 'ภาคประชาชน',
-            title: p.title,
+            type_label: currentLocale === 'en' ? 'General Public' : 'ภาคประชาชน',
+            title: (currentLocale === 'en' && p.title_en) ? p.title_en : p.title,
             start_date: p.start_date,
             end_date: p.end_date || p.start_date,
-            location: p.location_name || 'ศูนย์วิปัสสนากรรมฐาน มจร',
+            location: (currentLocale === 'en' && p.location_name_en) ? p.location_name_en : (p.location_name || (currentLocale === 'en' ? 'MCU Meditation Center' : 'ศูนย์วิปัสสนากรรมฐาน มจร')),
             max_quota: p.max_quota,
             reg_count: p.registrations ? p.registrations.length : (p.confirmed_count || 0),
             academic_year: null,
-            org_name: p.organization_unit ? p.organization_unit.name_th : 'มจร',
+            org_name: p.organization_unit ? ((currentLocale === 'en' && p.organization_unit.name_en) ? p.organization_unit.name_en : p.organization_unit.name_th) : (currentLocale === 'en' ? 'MCU' : 'มจร'),
             org_code: p.organization_unit ? (p.organization_unit.code_provincial || p.organization_unit.code) : 'MCU',
             register_url: "{{ route('public.register') }}?event_id=" + p.id
         }));
@@ -600,6 +602,10 @@
         const thaiMonths = [
             'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
             'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+        ];
+        const engMonths = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
         ];
 
         // Determine initial month: if any event exists, default to month of first event, else today
@@ -667,9 +673,12 @@
             const year = currentDate.getFullYear();
             const month = currentDate.getMonth();
 
-            // Thai Year
-            const thaiYear = year + 543;
-            document.getElementById('calendar-month-year').textContent = `${thaiMonths[month]} ${thaiYear}`;
+            if (currentLocale === 'en') {
+                document.getElementById('calendar-month-year').textContent = `${engMonths[month]} ${year}`;
+            } else {
+                const thaiYear = year + 543;
+                document.getElementById('calendar-month-year').textContent = `${thaiMonths[month]} ${thaiYear}`;
+            }
 
             const firstDayIndex = new Date(year, month, 1).getDay();
             const totalDays = new Date(year, month + 1, 0).getDate();
@@ -780,7 +789,9 @@
             }
 
             // Update month event counter
-            document.getElementById('calendar-month-event-count').textContent = `${monthEvents.length} โครงการในเดือนนี้`;
+            document.getElementById('calendar-month-event-count').textContent = currentLocale === 'en' 
+                ? `${monthEvents.length} {{ __('portal.calendar_month_projects') }}`
+                : `${monthEvents.length} โครงการในเดือนนี้`;
 
             // Render Events in right list
             renderEventsList(monthEvents);
@@ -798,19 +809,29 @@
             if (selectedDay) {
                 resetBtn.classList.remove('hidden');
                 const [y, m, d] = selectedDay.split('-');
-                const thDay = `${parseInt(d)} ${thaiMonths[parseInt(m) - 1]} ${parseInt(y) + 543}`;
-                title.textContent = `โครงการวันที่ ${thDay}`;
+                let dateDisplay = '';
+                if (currentLocale === 'en') {
+                    dateDisplay = `${engMonths[parseInt(m) - 1]} ${parseInt(d)}, ${parseInt(y)}`;
+                    title.textContent = `Projects on ${dateDisplay}`;
+                } else {
+                    dateDisplay = `${parseInt(d)} ${thaiMonths[parseInt(m) - 1]} ${parseInt(y) + 543}`;
+                    title.textContent = `โครงการวันที่ ${dateDisplay}`;
+                }
                 
                 displayEvents = activeEvents.filter(e => {
                     const start = e.start_date.substring(0, 10);
                     const end = (e.end_date || e.start_date).substring(0, 10);
                     return selectedDay >= start && selectedDay <= end;
                 });
-                subtitle.textContent = `พบ ${displayEvents.length} โครงการที่กำลังดำเนินการในวันนี้`;
+                subtitle.textContent = currentLocale === 'en'
+                    ? `Found ${displayEvents.length} retreats on this date`
+                    : `พบ ${displayEvents.length} โครงการที่กำลังดำเนินการในวันนี้`;
             } else {
                 resetBtn.classList.add('hidden');
-                title.textContent = `รายการโครงการในเดือนนี้`;
-                subtitle.textContent = `มีทั้งหมด ${monthEvents.length} โครงการ เลื่อนเพื่อดูรายละเอียด`;
+                title.textContent = currentLocale === 'en' ? `{{ __('portal.calendar_side_title') }}` : `รายการโครงการในเดือนนี้`;
+                subtitle.textContent = currentLocale === 'en'
+                    ? `Total ${monthEvents.length} retreats this month`
+                    : `มีทั้งหมด ${monthEvents.length} โครงการ เลื่อนเพื่อดูรายละเอียด`;
                 displayEvents = monthEvents;
             }
 
@@ -818,8 +839,8 @@
                 container.innerHTML = `
                     <div class="py-12 text-center text-[#8C8275]">
                         <i data-lucide="calendar-x" class="w-10 h-10 mx-auto mb-2 text-[#D5CEBC]"></i>
-                        <p class="font-medium text-xs text-[#4A3B32]">ไม่พบโครงการปฏิบัติธรรมในวันที่เลือก</p>
-                        <p class="text-[11px] text-[#8C8275] mt-1">คลิกเลือกวันที่มีจุดสี หรือกดปุ่ม "ดูทั้งเดือน"</p>
+                        <p class="font-medium text-xs text-[#4A3B32]">${currentLocale === 'en' ? '{{ __('portal.calendar_empty_day') }}' : 'ไม่พบโครงการปฏิบัติธรรมในวันที่เลือก'}</p>
+                        <p class="text-[11px] text-[#8C8275] mt-1">${currentLocale === 'en' ? '{{ __('portal.calendar_empty_day_sub') }}' : 'คลิกเลือกวันที่มีจุดสี หรือกดปุ่ม "ดูทั้งเดือน"'}</p>
                     </div>
                 `;
                 lucide.createIcons();
@@ -835,6 +856,15 @@
                 const badgeBg = isUg ? 'bg-[#5A6B47]/15 text-[#3D523E] border-[#5A6B47]/30' : 'bg-[#C86D51]/15 text-[#A85238] border-[#C86D51]/30';
                 const typeIcon = isUg ? 'graduation-cap' : 'users';
 
+                let btnLabel = '';
+                if (isFull) {
+                    btnLabel = currentLocale === 'en' ? '{{ __('portal.calendar_full_badge') }}' : 'ดูรายละเอียด (ที่นั่งเต็ม)';
+                } else if (isUg) {
+                    btnLabel = currentLocale === 'en' ? '{{ __('portal.calendar_ug_register_btn') }}' : 'ลงทะเบียนนิสิต ป.ตรี';
+                } else {
+                    btnLabel = currentLocale === 'en' ? '{{ __('portal.calendar_public_register_btn') }}' : 'สมัครเข้าร่วม (ประชาชน)';
+                }
+
                 html += `
                     <div class="pt-3.5 first:pt-0 group">
                         <div class="p-3.5 rounded-2xl bg-[#FAF8F2]/70 hover:bg-[#FAF8F2] border border-[#EAE5D9] hover:border-[#5A6B47] transition">
@@ -849,7 +879,7 @@
                                     </span>
                                 </div>
                                 <span class="text-[10px] font-mono ${isFull ? 'text-[#C86D51] font-bold' : 'text-[#7B8D65]'}">
-                                    ${regCount} / ${e.max_quota} ที่นั่ง
+                                    ${regCount} / ${e.max_quota} ${currentLocale === 'en' ? '{{ __('portal.calendar_seats') }}' : 'ที่นั่ง'}
                                 </span>
                             </div>
                             <h4 class="font-heading font-bold text-xs text-[#2C3E2D] mb-1.5 leading-snug group-hover:text-[#C86D51] transition line-clamp-2">
@@ -871,7 +901,7 @@
                             </div>
                             <div class="pt-2 border-t border-[#EAE5D9]/80 flex items-center justify-end">
                                 <a href="${e.register_url}" class="px-3 py-1.5 rounded-lg text-[11px] font-semibold transition inline-flex items-center gap-1 ${isFull ? 'bg-[#C86D51] text-white' : (isUg ? 'bg-[#2C3E2D] hover:bg-[#5A6B47]' : 'bg-[#C86D51] hover:bg-[#A85238]')} text-white shadow-xs">
-                                    <span>${isFull ? 'ดูรายละเอียด (ที่นั่งเต็ม)' : (isUg ? 'ลงทะเบียนนิสิต ป.ตรี' : 'สมัครเข้าร่วม (ประชาชน)')}</span>
+                                    <span>${btnLabel}</span>
                                     <i data-lucide="chevron-right" class="w-3 h-3"></i>
                                 </a>
                             </div>

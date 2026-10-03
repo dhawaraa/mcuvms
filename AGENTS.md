@@ -1,7 +1,7 @@
-# Guidelines for AI Coding Assistants (MCUVMS Laravel Edition)
+# Guidelines for AI Coding Assistants (VPSMCU Laravel Edition)
 
-ระบบนี้คือ **ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย (MCUVMS)**  
-ครอบคลุม 52 ส่วนงานทั่วประเทศ พัฒนาบนพื้นฐานของ **Laravel 11, PHP 8.4, MariaDB 10.6, Apache 2.4, และ Tailwind CSS (Blade Views)**  
+ระบบนี้คือ **ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย (VPSMCU)**  
+ครอบคลุม 51 ส่วนงานทั่วประเทศ พัฒนาบนพื้นฐานของ **Laravel 11, PHP 8.4, MariaDB 10.6, Apache 2.4, และ Tailwind CSS (Blade Views)**  
 รองรับการนำไปติดตั้งใช้งานจริงบนโครงสร้างพื้นฐานโฮสติ้งของมหาวิทยาลัย (`Apache/2.4.63 (FreeBSD) PHP/8.4.8 MariaDB`)
 
 ---
@@ -94,13 +94,13 @@
 1. **เมื่อแก้ไขไฟล์ Blade Template:**
    - ต้องล้าง Compiled Views เสมอเพื่อให้การเปลี่ยนแปลงแสดงผลทันที:
      ```bash
-     podman exec MCUVMS php artisan view:clear
+     podman exec VPSMCU php artisan view:clear
      ```
 2. **การอัปเดตโครงสร้างฐานข้อมูล:**
    - รัน Migration และ Seeder ผ่าน Podman Container:
      ```bash
-     podman exec MCUVMS php artisan migrate
-     podman exec MCUVMS php artisan db:seed
+     podman exec VPSMCU php artisan migrate
+     podman exec VPSMCU php artisan db:seed
      ```
 3. **การสั่งเปิด/ปิดระบบ:**
    - สั่งเปิดระบบ: `podman-compose up -d`

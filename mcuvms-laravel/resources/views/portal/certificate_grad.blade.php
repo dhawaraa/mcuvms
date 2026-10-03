@@ -208,7 +208,7 @@
 
                     <div class="text-right font-mono">
                         <div>อนุมัติสมบูรณ์เมื่อ: {{ $student->approved_at ? \Carbon\Carbon::parse($student->approved_at)->format('d/m/Y H:i') : \Carbon\Carbon::now()->format('d/m/Y H:i') }}</div>
-                        <div class="text-[9px] text-[#8C8275]">MCUVMS Lock Engine & Security Certification</div>
+                        <div class="text-[9px] text-[#8C8275]">VPSMCU Lock Engine & Security Certification</div>
                     </div>
                 </div>
 
@@ -218,7 +218,7 @@
 
     <!-- Footer Note (No Print) -->
     <footer class="no-print mt-6 text-center text-xs text-[#8C8275]">
-        มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย  • ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน (MCUVMS)
+        มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย  • ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน (VPSMCU)
     </footer>
 
     <script>

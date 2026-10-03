@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เข้าสู่ระบบเจ้าหน้าที่ - MCUVMS Admin (Laravel)</title>
+    <title>เข้าสู่ระบบเจ้าหน้าที่ - VPSMCU Admin (Laravel)</title>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -73,7 +73,7 @@
             <div class="w-20 h-20 mx-auto mb-4 flex items-center justify-center p-2 rounded-3xl bg-white shadow-xl shadow-[#2C3E2D]/10 border border-[#EAE5D9]">
                 <img src="{{ asset('images/mcu-logo.png') }}" alt="MCU Logo" class="w-full h-full object-contain">
             </div>
-            <h1 class="text-2xl font-heading font-bold text-[#2C3E2D]">MCUVMS Admin Console</h1>
+            <h1 class="text-2xl font-heading font-bold text-[#2C3E2D]">VPSMCU Admin Console</h1>
             <p class="text-xs text-[#7B8D65] mt-1 font-medium">ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน มจร</p>
         </div>
 

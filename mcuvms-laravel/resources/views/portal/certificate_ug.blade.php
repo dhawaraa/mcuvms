@@ -212,7 +212,7 @@
 
                     <div class="text-right font-mono">
                         <div>ออกเอกสารเมื่อ: {{ \Carbon\Carbon::now()->format('d/m/Y H:i') }}</div>
-                        <div class="text-[9px] text-[#8C8275]">MCUVMS e-Certificate Security Engine</div>
+                        <div class="text-[9px] text-[#8C8275]">VPSMCU e-Certificate Security Engine</div>
                     </div>
                 </div>
 
@@ -222,7 +222,7 @@
 
     <!-- Footer Note (No Print) -->
     <footer class="no-print mt-6 text-center text-xs text-[#8C8275]">
-        มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย  • ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน (MCUVMS)
+        มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย  • ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน (VPSMCU)
     </footer>
 
     <script>

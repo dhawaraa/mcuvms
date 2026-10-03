@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Models\SiteSetting;
 use App\Models\ContactInquiry;
 use App\Models\Donation;
+use App\Services\TranslationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
@@ -167,19 +168,25 @@ class AdminController extends Controller
             ? $validated['org_unit_id']
             : ($admin['org_unit_id'] ?? 1);
 
+        // Auto-translate to English
+        $titleEn = TranslationService::translateToEnglish($validated['title']);
+        $locationEn = TranslationService::translateToEnglish($validated['location']);
+
         UgBatch::create([
             'org_unit_id' => $org_id,
             'academic_year' => $validated['academic_year'],
             'batch_no' => $validated['batch_no'] ?? 1,
             'title' => $validated['title'],
+            'title_en' => $titleEn,
             'location' => $validated['location'],
+            'location_en' => $locationEn,
             'start_date' => $validated['start_date'],
             'end_date' => $validated['end_date'],
             'max_quota' => $validated['max_quota'],
             'status' => $validated['status'],
         ]);
 
-        return back()->with('success', 'บันทึกกำหนดการปฏิบัติวิปัสสนากรรมฐาน ประจำปีการศึกษา ' . $validated['academic_year'] . ' สำเร็จเรียบร้อยแล้ว');
+        return back()->with('success', 'บันทึกกำหนดการปฏิบัติวิปัสสนากรรมฐาน ประจำปีการศึกษา ' . $validated['academic_year'] . ' สำเร็จเรียบร้อยแล้ว (พร้อมแปลภาษาอังกฤษอัตโนมัติ)');
     }
 
     public function ugBatchUpdate(Request $request, $id)
@@ -206,10 +213,20 @@ class AdminController extends Controller
             'org_unit_id' => 'nullable|integer',
         ]);
 
+        $titleEn = ($batch->title !== $validated['title'] || empty($batch->title_en))
+            ? TranslationService::translateToEnglish($validated['title'])
+            : $batch->title_en;
+
+        $locationEn = ($batch->location !== $validated['location'] || empty($batch->location_en))
+            ? TranslationService::translateToEnglish($validated['location'])
+            : $batch->location_en;
+
         $updateData = [
             'academic_year' => $validated['academic_year'],
             'title' => $validated['title'],
+            'title_en' => $titleEn,
             'location' => $validated['location'],
+            'location_en' => $locationEn,
             'start_date' => $validated['start_date'],
             'end_date' => $validated['end_date'],
             'max_quota' => $validated['max_quota'],
@@ -832,8 +849,8 @@ class AdminController extends Controller
             ]);
         }
 
-        // คลีนค่า code เผื่อส่งมาในรูปแบบ MCUVMS-UG-xxx หรือ URL
-        $cleanCode = preg_replace('/^MCUVMS-/', '', $code);
+        // คลีนค่า code เผื่อส่งมาในรูปแบบ VPSMCU-UG-xxx, MCUVMS-UG-xxx หรือ URL
+        $cleanCode = preg_replace('/^(VPSMCU|MCUVMS)-/', '', $code);
 
         $query = UgRegistration::with(['batch', 'organizationUnit'])
             ->where(function ($q) use ($cleanCode) {
@@ -1636,10 +1653,16 @@ class AdminController extends Controller
             ? $validated['org_unit_id']
             : ($admin['org_unit_id'] ?? 1);
 
+        // Auto-translate to English
+        $titleEn = TranslationService::translateToEnglish($validated['title']);
+        $locationEn = TranslationService::translateToEnglish($validated['location_name']);
+
         PublicEvent::create([
             'org_unit_id' => $orgUnitId,
             'title' => $validated['title'],
+            'title_en' => $titleEn,
             'location_name' => $validated['location_name'],
+            'location_name_en' => $locationEn,
             'start_date' => $validated['start_date'],
             'end_date' => $validated['end_date'],
             'max_quota' => $validated['max_quota'],
@@ -1648,7 +1671,7 @@ class AdminController extends Controller
             'waiting_count' => 0,
         ]);
 
-        return back()->with('success', 'สร้างคอร์ส/โครงการปฏิบัติธรรมใหม่สำเร็จเรียบร้อยแล้ว');
+        return back()->with('success', 'สร้างคอร์ส/โครงการปฏิบัติธรรมใหม่สำเร็จเรียบร้อยแล้ว (พร้อมแปลภาษาอังกฤษอัตโนมัติ)');
     }
 
     public function publicEventUpdate(Request $request, $id)
@@ -1675,6 +1698,14 @@ class AdminController extends Controller
 
         if ($isCentralOrSuper && !empty($validated['org_unit_id'])) {
             $event->org_unit_id = $validated['org_unit_id'];
+        }
+
+        // Auto-translate if changed
+        if ($event->title !== $validated['title'] || empty($event->title_en)) {
+            $event->title_en = TranslationService::translateToEnglish($validated['title']);
+        }
+        if ($event->location_name !== $validated['location_name'] || empty($event->location_name_en)) {
+            $event->location_name_en = TranslationService::translateToEnglish($validated['location_name']);
         }
 
         $event->title = $validated['title'];
@@ -1934,10 +1965,16 @@ class AdminController extends Controller
 
         $orgUnitId = $isCentralOrSuper ? (!empty($validated['org_unit_id']) ? $validated['org_unit_id'] : null) : ($admin['org_unit_id'] ?? null);
 
+        // Auto-translate to English
+        $titleEn = TranslationService::translateToEnglish($validated['title']);
+        $contentEn = TranslationService::translateToEnglish($validated['content']);
+
         NewsArticle::create([
             'org_unit_id' => $orgUnitId,
             'title' => $validated['title'],
+            'title_en' => $titleEn,
             'content' => $validated['content'],
+            'content_en' => $contentEn,
             'cover_image' => $coverImageUrl,
             'category' => $validated['category'],
             'is_pinned' => $request->has('is_pinned') ? 1 : 0,
@@ -1947,7 +1984,7 @@ class AdminController extends Controller
             'created_at' => now(),
         ]);
 
-        return redirect()->route('admin.news.index')->with('success', 'บันทึกและเผยแพร่ข่าวสารเรียบร้อยแล้ว');
+        return redirect()->route('admin.news.index')->with('success', 'บันทึกและเผยแพร่ข่าวสารเรียบร้อยแล้ว (พร้อมแปลภาษาอังกฤษอัตโนมัติ)');
     }
 
     public function newsUpdate(Request $request, $id)
@@ -1979,9 +2016,20 @@ class AdminController extends Controller
             $coverImageUrl = Storage::url($path);
         }
 
+        // Auto-translate if title/content changed
+        $titleEn = ($article->title !== $validated['title'] || empty($article->title_en))
+            ? TranslationService::translateToEnglish($validated['title'])
+            : $article->title_en;
+
+        $contentEn = ($article->content !== $validated['content'] || empty($article->content_en))
+            ? TranslationService::translateToEnglish($validated['content'])
+            : $article->content_en;
+
         $updateData = [
             'title' => $validated['title'],
+            'title_en' => $titleEn,
             'content' => $validated['content'],
+            'content_en' => $contentEn,
             'cover_image' => $coverImageUrl,
             'category' => $validated['category'],
             'is_pinned' => $request->has('is_pinned') ? 1 : 0,
@@ -2345,7 +2393,12 @@ class AdminController extends Controller
         }
 
         if ($request->filled('type')) {
-            $query->where('type', $request->input('type'));
+            $type = $request->input('type');
+            if (in_array($type, ['COLLEGE', 'SANGHA_COLLEGE'])) {
+                $query->whereIn('type', ['COLLEGE', 'SANGHA_COLLEGE']);
+            } else {
+                $query->where('type', $type);
+            }
         }
 
         $perPage = $this->getPerPage($request, 20);
@@ -2353,10 +2406,11 @@ class AdminController extends Controller
 
         $totalOrgs = OrganizationUnit::where('is_active', 1)->count();
         $totalCampuses = OrganizationUnit::where('type', 'CAMPUS')->count();
-        $totalColleges = OrganizationUnit::where('type', 'COLLEGE')->count();
+        $totalColleges = OrganizationUnit::whereIn('type', ['COLLEGE', 'SANGHA_COLLEGE'])->count();
         $totalCentral = OrganizationUnit::where('type', 'CENTRAL')->count();
+        $totalAcademicUnits = OrganizationUnit::where('type', 'ACADEMIC_UNIT')->count();
 
-        return view('admin.org_units', compact('orgUnits', 'totalOrgs', 'totalCampuses', 'totalColleges', 'totalCentral'));
+        return view('admin.org_units', compact('orgUnits', 'totalOrgs', 'totalCampuses', 'totalColleges', 'totalCentral', 'totalAcademicUnits'));
     }
 
     // Contact Settings & Inquiries Management

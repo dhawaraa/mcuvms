@@ -19,4 +19,12 @@ class OrganizationUnit extends Model
     {
         return $this->hasMany(GradStudent::class, 'org_unit_id');
     }
+
+    public function getLocalizedNameAttribute()
+    {
+        if (app()->getLocale() === 'en' && !empty($this->name_en)) {
+            return $this->name_en;
+        }
+        return $this->name_th;
+    }
 }
