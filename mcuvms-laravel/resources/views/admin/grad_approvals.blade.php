@@ -106,6 +106,27 @@
             </div>
         @endif
 
+        @if (session('error'))
+            <div class="bg-[#C86D51]/10 border border-[#C86D51]/30 text-[#A85238] px-4 py-3 rounded-2xl mb-6 text-sm flex items-center gap-2">
+                <i data-lucide="alert-circle" class="w-5 h-5 text-[#C86D51]"></i>
+                <span>{{ session('error') }}</span>
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-2xl mb-6 text-xs space-y-1">
+                <div class="font-bold flex items-center gap-1.5 text-sm">
+                    <i data-lucide="alert-triangle" class="w-4 h-4 text-red-600"></i>
+                    <span>เกิดข้อผิดพลาดในการบันทึกข้อมูล:</span>
+                </div>
+                <ul class="list-disc pl-5">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <!-- Filter & Search Bar -->
         <!-- Filter & Search Bar (9-Dimension Search ตามระบบ e-Document) -->
         <div class="earth-admin-card p-5 mb-6">
@@ -226,7 +247,7 @@
                                 </th>
                                 <th class="p-4">รูปถ่าย / นิสิต</th>
                                 <th class="p-4">ระดับ / สังกัด</th>
-                                <th class="p-4 text-center">หลักฐาน 4 รายการ</th>
+                                <th class="p-4 text-center">หลักฐาน</th>
                                 <th class="p-4 text-center">ค่าธรรมเนียม / สลิป</th>
                                 <th class="p-4 text-center">วันสะสม / เกณฑ์</th>
                                 <th class="p-4 text-center">สถานะ</th>
@@ -275,21 +296,21 @@
                                         <div class="text-[11px] text-[#7B8D65] line-clamp-1" title="{{ $s->program_name }}">{{ $s->program_name }}</div>
                                     </td>
                                     <td class="p-4 text-center space-y-1">
-                                        <!-- เอกสารแนบ e-Document -->
+                                        <!-- เอกสารหลักฐาน e-Document (2 รายการ: 1.สอบอารมณ์, 2.ใบลงเวลา) -->
                                         @if (!empty($s->interview_record_path))
                                             <a href="{{ asset('storage/' . $s->interview_record_path) }}" target="_blank" class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] bg-[#FAF8F2] text-[#2C3E2D] border border-[#D5CEBC] hover:bg-[#EAE5D9]">
-                                                <i data-lucide="file-check" class="w-3 h-3 text-[#5A6B47]"></i> สอบอารมณ์
+                                                <i data-lucide="file-check" class="w-3 h-3 text-[#5A6B47]"></i> 1. สอบอารมณ์
                                             </a>
                                         @else
-                                            <span class="text-[10px] text-[#B8AFA0] block">- ไม่มีใบลสอบอารมณ์ -</span>
+                                            <span class="text-[10px] text-[#B8AFA0] block">1. - ไม่มีใบสอบอารมณ์ -</span>
                                         @endif
 
                                         @if (!empty($s->attendance_record_path))
                                             <a href="{{ asset('storage/' . $s->attendance_record_path) }}" target="_blank" class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] bg-[#FAF8F2] text-[#2C3E2D] border border-[#D5CEBC] hover:bg-[#EAE5D9]">
-                                                <i data-lucide="calendar" class="w-3 h-3 text-[#5A6B47]"></i> ใบลงเวลา
+                                                <i data-lucide="calendar" class="w-3 h-3 text-[#5A6B47]"></i> 2. ใบลงเวลา
                                             </a>
                                         @else
-                                            <span class="text-[10px] text-[#B8AFA0] block">- ไม่มีใบลงเวลา -</span>
+                                            <span class="text-[10px] text-[#B8AFA0] block">2. - ไม่มีใบลงเวลา -</span>
                                         @endif
                                     </td>
                                     <td class="p-4 text-center">

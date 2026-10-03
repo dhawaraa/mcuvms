@@ -17,6 +17,9 @@ RUN apt-get update && apt-get install -y \
 # เปิดใช้งาน mod_rewrite ของ Apache สำหรับรองรับ Routing / Clean URL
 RUN a2enmod rewrite headers
 
+# ปรับขนาดการอัปโหลดไฟล์ใน PHP (รองรับเอกสารแนบและรูปถ่าย e-Document)
+RUN echo "upload_max_filesize = 50M\npost_max_size = 50M\nmemory_limit = 256M" > /usr/local/etc/php/conf.d/uploads.ini
+
 # กำหนด DocumentRoot ชี้ไปที่ Laravel public/
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
