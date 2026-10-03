@@ -183,10 +183,10 @@
                         <span class="sidebar-text whitespace-nowrap">คำร้องและอนุมัติ e-Doc</span>
                     </a>
 
-                    <!-- ย่อย 2: รายงานสถิติบัณฑิตศึกษา (SAR) -->
-                    <a href="{{ route('admin.grad.sar') }}" title="สถิติบัณฑิตศึกษา (SAR)" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 relative {{ $currentRoute === 'admin.grad.sar' ? 'bg-[#5A6B47] text-white font-semibold shadow-sm ring-1 ring-[#7B8D65]/40 pl-3.5' : 'text-[#D0C9BA] hover:text-white hover:bg-[#253726] border-l-2 border-transparent hover:border-[#7B8D65]' }}">
+                    <!-- ย่อย 2: รายงานสถิติการปฏิบัติธรรม บัณฑิตศึกษา -->
+                    <a href="{{ route('admin.grad.sar') }}" title="รายงานสถิติการปฏิบัติธรรม" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 relative {{ $currentRoute === 'admin.grad.sar' ? 'bg-[#5A6B47] text-white font-semibold shadow-sm ring-1 ring-[#7B8D65]/40 pl-3.5' : 'text-[#D0C9BA] hover:text-white hover:bg-[#253726] border-l-2 border-transparent hover:border-[#7B8D65]' }}">
                         <i data-lucide="bar-chart-2" class="w-4 h-4 shrink-0 {{ $currentRoute === 'admin.grad.sar' ? 'text-white' : 'text-[#A3B88C]' }}"></i>
-                        <span class="sidebar-text whitespace-nowrap">รายงานสถิติ (SAR)</span>
+                        <span class="sidebar-text whitespace-nowrap">รายงานสถิติการปฏิบัติธรรม</span>
                     </a>
 
                 </div>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>รายงานสถิติการปฏิบัติวิปัสสนากรรมฐาน บัณฑิตศึกษา (SAR) - VPSMCU Admin</title>
+    <title>รายงานสถิติการปฏิบัติวิปัสสนากรรมฐาน บัณฑิตศึกษา - VPSMCU Admin</title>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -88,7 +88,7 @@
                         </span>
                     @endif
                 </div>
-                <h1 class="text-2xl font-heading font-bold text-[#2C3E2D]">รายงานสถิติการปฏิบัติธรรม บัณฑิตศึกษา (SAR / EdPEx)</h1>
+                <h1 class="text-2xl font-heading font-bold text-[#2C3E2D]">รายงานสถิติการปฏิบัติธรรม บัณฑิตศึกษา</h1>
                 <p class="text-xs text-[#7B8D65] mt-1 font-medium">สรุปสถิติผลการสะสมวันปฏิบัติวิปัสสนากรรมฐาน คำร้อง e-Document และการอนุมัติใบรับรอง</p>
             </div>
 
