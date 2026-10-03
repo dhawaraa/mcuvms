@@ -6,6 +6,10 @@ use App\Models\GradStudent;
 use App\Models\GradCreditEntry;
 use Illuminate\Http\Request;
 
+use App\Models\OrganizationUnit;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+
 class GraduateController extends Controller
 {
     public function index(Request $request)
@@ -29,6 +33,122 @@ class GraduateController extends Controller
         }
 
         return view('portal.grad_progress', compact('student', 'credits', 'searchCode'));
+    }
+
+    public function requestForm()
+    {
+        // ตรวจสอบสถานะเปิด-ปิดระบบจาก system_settings
+        $setting = DB::table('system_settings')->where('setting_key', 'edoc_status')->first();
+        $isClosed = ($setting && $setting->setting_value === 'N');
+
+        $orgUnits = OrganizationUnit::where('is_active', 1)->orderBy('id', 'asc')->get();
+
+        return view('portal.grad_request', compact('isClosed', 'orgUnits'));
+    }
+
+    public function storeRequest(Request $request)
+    {
+        // ตรวจสอบสถานะเปิด-ปิดระบบ
+        $setting = DB::table('system_settings')->where('setting_key', 'edoc_status')->first();
+        if ($setting && $setting->setting_value === 'N') {
+            return back()->with('error', 'ระบบปิดรับคำร้อง e-Document ชั่วคราว')->withInput();
+        }
+
+        $validated = $request->validate([
+            'student_id' => 'required|string|max:20',
+            'citizen_id' => 'required|string|max:20',
+            'prefix' => 'required|string|max:50',
+            'first_name' => 'required|string|max:100',
+            'last_name' => 'required|string|max:100',
+            'buddhist_name' => 'nullable|string|max:100',
+            'age' => 'nullable|integer|min:10|max:120',
+            'vassa' => 'nullable|integer|min:0|max:100',
+            'nationality' => 'required|string|max:50',
+            'degree_level' => 'required|in:MASTER,DOCTORAL',
+            'faculty' => 'required|string|max:100',
+            'program_name' => 'required|string|max:150',
+            'org_unit_id' => 'required|exists:organization_units,id',
+            'accumulated_days' => 'required|integer|min:1',
+            'address' => 'required|string|max:255',
+            'subdistrict' => 'required|string|max:100',
+            'district' => 'required|string|max:100',
+            'province' => 'required|string|max:100',
+            'postcode' => 'required|string|max:10',
+            'phone' => 'required|string|max:30',
+            'transfer_date' => 'required|date',
+            'transfer_time' => 'required',
+            'file_photo' => 'required|image|mimes:jpeg,png,jpg|max:5120',
+            'file_interview' => 'required|mimes:pdf|max:10240',
+            'file_attendance' => 'required|mimes:pdf|max:10240',
+            'file_slip' => 'required|mimes:jpeg,png,jpg,pdf|max:10240',
+        ]);
+
+        $minDays = ($validated['degree_level'] === 'DOCTORAL') ? 45 : 30;
+        if ((int)$validated['accumulated_days'] < $minDays) {
+            return back()->with('error', "จำนวนวันสะสมต้องไม่น้อยกว่า {$minDays} วัน สำหรับระดับการศึกษานี้")->withInput();
+        }
+
+        // จัดการอัปโหลดไฟล์ทั้ง 4 รายการ
+        $photoPath = $request->file('file_photo')->store('edoc/photos', 'public');
+        $interviewPath = $request->file('file_interview')->store('edoc/interviews', 'public');
+        $attendancePath = $request->file('file_attendance')->store('edoc/attendances', 'public');
+        $slipPath = $request->file('file_slip')->store('edoc/slips', 'public');
+
+        $fullName = trim($validated['prefix'] . $validated['first_name'] . ' ' . $validated['last_name']);
+        if (!empty($validated['buddhist_name']) && $validated['buddhist_name'] !== '-') {
+            $fullName .= ' ' . $validated['buddhist_name'];
+        }
+
+        // ตรวจสอบว่ามีข้อมูลเดิมหรือไม่
+        $student = GradStudent::where('student_code', $validated['student_id'])
+            ->orWhere('student_id', $validated['student_id'])
+            ->first();
+
+        $data = [
+            'student_id' => $validated['student_id'],
+            'student_code' => $validated['student_id'],
+            'citizen_id' => $validated['citizen_id'],
+            'nationality' => $validated['nationality'],
+            'prefix' => $validated['prefix'],
+            'full_name' => $fullName,
+            'first_name' => $validated['first_name'],
+            'last_name' => $validated['last_name'],
+            'buddhist_name' => $validated['buddhist_name'] ?? null,
+            'age' => $validated['age'] ?? null,
+            'vassa' => $validated['vassa'] ?? 0,
+            'degree_level' => $validated['degree_level'],
+            'target_days' => $minDays,
+            'accumulated_days' => $validated['accumulated_days'],
+            'org_unit_id' => $validated['org_unit_id'],
+            'faculty' => $validated['faculty'],
+            'program_name' => $validated['program_name'],
+            'address' => $validated['address'],
+            'subdistrict' => $validated['subdistrict'],
+            'district' => $validated['district'],
+            'province' => $validated['province'],
+            'postcode' => $validated['postcode'],
+            'phone' => $validated['phone'],
+            'photo_path' => $photoPath,
+            'interview_record_path' => $interviewPath,
+            'attendance_record_path' => $attendancePath,
+            'slip_path' => $slipPath,
+            'transfer_date' => $validated['transfer_date'],
+            'transfer_time' => $validated['transfer_time'],
+            'submission_status' => 'SUBMITTED',
+            'submitted_at' => now(),
+            'updated_at' => now(),
+        ];
+
+        if ($student) {
+            $student->update($data);
+        } else {
+            $data['created_at'] = now();
+            $student = GradStudent::create($data);
+        }
+
+        return redirect()->route('grad.request')
+            ->with('success', "ยื่นคำร้องรหัสนิสิต {$student->student_code} เรียบร้อยแล้ว เจ้าหน้าที่จะทำการตรวจสอบข้อมูลและเอกสารของท่าน")
+            ->with('student_code', $student->student_code);
     }
 
     public function finalSubmit(Request $request)
@@ -65,4 +185,5 @@ class GraduateController extends Controller
         return view('portal.certificate_grad', compact('student', 'verifyUrl'));
     }
 }
+
 

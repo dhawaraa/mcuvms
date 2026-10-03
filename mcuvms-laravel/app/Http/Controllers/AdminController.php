@@ -1190,6 +1190,74 @@ class AdminController extends Controller
             $query->where('org_unit_id', $request->input('filter_org'));
         }
 
+        // 9-Dimension Search (ตามระบบ e-Document rdo_perid)
+        $rdoPerid = $request->input('rdo_perid', '');
+        $searchValue = trim($request->input('search_val', ''));
+
+        if ($request->filled('search')) {
+            $s = trim($request->input('search'));
+            $query->where(function ($q) use ($s) {
+                $q->where('student_code', 'LIKE', "%{$s}%")
+                  ->orWhere('student_id', 'LIKE', "%{$s}%")
+                  ->orWhere('citizen_id', 'LIKE', "%{$s}%")
+                  ->orWhere('first_name', 'LIKE', "%{$s}%")
+                  ->orWhere('last_name', 'LIKE', "%{$s}%")
+                  ->orWhere('buddhist_name', 'LIKE', "%{$s}%")
+                  ->orWhere('program_name', 'LIKE', "%{$s}%")
+                  ->orWhere('faculty', 'LIKE', "%{$s}%");
+            });
+        } elseif (!empty($searchValue) || !empty($rdoPerid)) {
+            switch ($rdoPerid) {
+                case '1': // รหัสนิสิต
+                    $query->where(function ($q) use ($searchValue) {
+                        $q->where('student_code', 'LIKE', "%{$searchValue}%")
+                          ->orWhere('student_id', 'LIKE', "%{$searchValue}%");
+                    });
+                    break;
+                case '2': // เลขประจำตัวประชาชน
+                    $query->where('citizen_id', 'LIKE', "%{$searchValue}%");
+                    break;
+                case '3': // ชื่อ-นามสกุล / ฉายา
+                    $query->where(function ($q) use ($searchValue) {
+                        $q->where('first_name', 'LIKE', "%{$searchValue}%")
+                          ->orWhere('last_name', 'LIKE', "%{$searchValue}%")
+                          ->orWhere('buddhist_name', 'LIKE', "%{$searchValue}%");
+                    });
+                    break;
+                case '4': // คณะ
+                    $query->where('faculty', 'LIKE', "%{$searchValue}%");
+                    break;
+                case '5': // สาขาวิชา
+                    $query->where('program_name', 'LIKE', "%{$searchValue}%");
+                    break;
+                case '7': // ระดับการศึกษา
+                    if (!empty($searchValue)) {
+                        $query->where('degree_level', $searchValue);
+                    }
+                    break;
+                case '8': // วันที่ขอเอกสาร
+                    if (!empty($searchValue)) {
+                        $query->whereDate('submitted_at', $searchValue);
+                    }
+                    break;
+                case '9': // สถานะเอกสาร
+                    if (!empty($searchValue)) {
+                        $query->where('submission_status', $searchValue);
+                    }
+                    break;
+                case '6': // แสดงทั้งหมด
+                default:
+                    if (!empty($searchValue)) {
+                        $query->where(function ($q) use ($searchValue) {
+                            $q->where('student_code', 'LIKE', "%{$searchValue}%")
+                              ->orWhere('first_name', 'LIKE', "%{$searchValue}%")
+                              ->orWhere('last_name', 'LIKE', "%{$searchValue}%");
+                        });
+                    }
+                    break;
+            }
+        }
+
         if ($request->filled('degree_level')) {
             $query->where('degree_level', $request->input('degree_level'));
         }
@@ -1198,22 +1266,16 @@ class AdminController extends Controller
             $query->where('submission_status', $request->input('status'));
         }
 
-        if ($request->filled('search')) {
-            $s = trim($request->input('search'));
-            $query->where(function ($q) use ($s) {
-                $q->where('student_code', 'LIKE', "%{$s}%")
-                  ->orWhere('first_name', 'LIKE', "%{$s}%")
-                  ->orWhere('last_name', 'LIKE', "%{$s}%")
-                  ->orWhere('program_name', 'LIKE', "%{$s}%");
-            });
-        }
-
         $perPage = $this->getPerPage($request);
         $students = $query->paginate($perPage)->withQueryString();
         $orgUnits = OrganizationUnit::where('is_active', 1)->orderBy('id', 'asc')->get();
 
-        return view('admin.grad_approvals', compact('students', 'orgUnits', 'isCentralOrSuper'));
+        $edocSetting = DB::table('system_settings')->where('setting_key', 'edoc_status')->first();
+        $edocStatus = $edocSetting ? $edocSetting->setting_value : 'Y';
+
+        return view('admin.grad_approvals', compact('students', 'orgUnits', 'isCentralOrSuper', 'edocStatus'));
     }
+
 
     public function gradApprove(Request $request)
     {
@@ -1307,6 +1369,166 @@ class AdminController extends Controller
 
         return back()->with('success', 'ลบข้อมูลนิสิตบัณฑิตศึกษาเรียบร้อยแล้ว');
     }
+
+    // อัปโหลดเอกสารตอบกลับ e-Document (upcert.php, upcert_en.php, uprcv.php, assessment)
+    public function gradUploadResponse(Request $request)
+    {
+        $this->checkAuth();
+        $request->validate([
+            'student_id' => 'required|exists:grad_students,id',
+            'doc_type' => 'required|in:cert_th,cert_en,receipt,assessment',
+            'response_file' => 'required|mimes:pdf,jpg,jpeg,png|max:10240',
+        ]);
+
+        $student = GradStudent::findOrFail($request->input('student_id'));
+        $docType = $request->input('doc_type');
+        $file = $request->file('response_file');
+
+        switch ($docType) {
+            case 'cert_th':
+                $path = $file->store('edoc/certs', 'public');
+                $student->cert_th_path = $path;
+                $label = 'ใบรับรองภาษาไทย';
+                break;
+            case 'cert_en':
+                $path = $file->store('edoc/certs', 'public');
+                $student->cert_en_path = $path;
+                $label = 'ใบรับรองภาษาอังกฤษ';
+                break;
+            case 'receipt':
+                $path = $file->store('edoc/receipts', 'public');
+                $student->receipt_path = $path;
+                $label = 'ใบเสร็จรับเงิน';
+                break;
+            case 'assessment':
+                $path = $file->store('edoc/assessments', 'public');
+                $student->assessment_doc_path = $path;
+                $label = 'ใบประเมินผล บฑ. ๒๑';
+                break;
+        }
+
+        $student->save();
+
+        return back()->with('success', "อัปโหลด{$label} สำหรับรหัสนิสิต {$student->student_code} สำเร็จเรียบร้อยแล้ว");
+    }
+
+    // เปิด-ปิด ระบบรับคำร้อง e-Document (edocconfig.php)
+    public function gradToggleEdoc(Request $request)
+    {
+        $this->checkAuth();
+        $status = $request->input('edoc_status') === 'Y' ? 'Y' : 'N';
+
+        DB::table('system_settings')->updateOrInsert(
+            ['setting_key' => 'edoc_status'],
+            [
+                'setting_value' => $status,
+                'description' => 'สถานะเปิด-ปิดระบบรับคำร้อง e-Document (Y=เปิด, N=ปิด)',
+                'updated_at' => now(),
+            ]
+        );
+
+        $statusText = ($status === 'Y') ? 'เปิดระบบรับคำร้อง (Open)' : 'ปิดระบบรับคำร้อง (Closed)';
+        return back()->with('success', "บันทึกการตั้งค่าระบบ e-Document เป็น: {$statusText} เรียบร้อยแล้ว");
+    }
+
+    // Export Excel สำหรับ e-Document บัณฑิตศึกษา (register2_excel_index.php)
+    public function gradExportExcel(Request $request)
+    {
+        $this->checkAuth();
+        $admin = Session::get('admin_user');
+        $isCentralOrSuper = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
+
+        $query = GradStudent::with('organizationUnit')->orderBy('id', 'asc');
+
+        if (!$isCentralOrSuper && !empty($admin['org_unit_id'])) {
+            $query->where('org_unit_id', $admin['org_unit_id']);
+        } elseif ($request->filled('filter_org')) {
+            $query->where('org_unit_id', $request->input('filter_org'));
+        }
+
+        if ($request->filled('degree_level')) {
+            $query->where('degree_level', $request->input('degree_level'));
+        }
+
+        if ($request->filled('status')) {
+            $query->where('submission_status', $request->input('status'));
+        }
+
+        $students = $query->get();
+
+        $filename = 'MCU_Grad_eDocument_' . date('Ymd_His') . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
+        ];
+
+        $callback = function () use ($students) {
+            $out = fopen('php://output', 'w');
+            fprintf($out, chr(0xEF) . chr(0xBB) . chr(0xBF)); // BOM for Excel UTF-8
+
+            fputcsv($out, [
+                'ลำดับ',
+                'รหัสนิสิต',
+                'เลขประจำตัวประชาชน',
+                'คำนำหน้า',
+                'ชื่อ',
+                'นามสกุล',
+                'ฉายาทางธรรม',
+                'ระดับการศึกษา',
+                'คณะ',
+                'สาขาวิชา/หลักสูตร',
+                'ส่วนงานสังกัด (มจร)',
+                'วันสะสม',
+                'เกณฑ์เป้าหมาย',
+                'เบอร์โทรศัพท์',
+                'ที่อยู่/สังกัด',
+                'วันที่ยื่นคำร้อง',
+                'วันที่โอนเงินในสลิป',
+                'เวลาโอน',
+                'สถานะคำร้อง',
+                'วันที่อนุมัติ',
+            ]);
+
+            $i = 1;
+            foreach ($students as $s) {
+                $degree = ($s->degree_level === 'DOCTORAL') ? 'ปริญญาเอก (ดุษฎีบัณฑิต)' : 'ปริญญาโท (มหาบัณฑิต)';
+                $org = $s->organizationUnit->name_th ?? 'มจร';
+                $fullAddress = trim("{$s->address} ต.{$s->subdistrict} อ.{$s->district} จ.{$s->province} {$s->postcode}");
+
+                fputcsv($out, [
+                    $i++,
+                    $s->student_code ?? $s->student_id,
+                    $s->citizen_id,
+                    $s->prefix,
+                    $s->first_name,
+                    $s->last_name,
+                    $s->buddhist_name ?? '-',
+                    $degree,
+                    $s->faculty,
+                    $s->program_name,
+                    $org,
+                    $s->accumulated_days,
+                    $s->target_days,
+                    $s->phone,
+                    $fullAddress,
+                    $s->submitted_at ?? $s->created_at,
+                    $s->transfer_date,
+                    $s->transfer_time,
+                    $s->submission_status,
+                    $s->approved_at,
+                ]);
+            }
+
+            fclose($out);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
 
     public function publicSar(Request $request)
     {

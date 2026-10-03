@@ -83,15 +83,23 @@
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-grow">
         
         <!-- Header Banner (Bark & Forest Earth Tone) -->
-        <div class="bg-gradient-to-r from-[#243325] via-[#4A3B32] to-[#2C3E2D] rounded-2xl p-6 md:p-8 text-white shadow-md mb-8 border border-[#3D523E]">
-            <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/15 backdrop-blur-sm rounded-full text-xs font-semibold uppercase tracking-wider mb-2 border border-white/20">
-                <i data-lucide="scroll-text" class="w-3.5 h-3.5 text-[#EAE5D9]"></i>
-                <span>{{ __('portal.grad_header_badge') }}</span>
+        <div class="bg-gradient-to-r from-[#243325] via-[#4A3B32] to-[#2C3E2D] rounded-2xl p-6 md:p-8 text-white shadow-md mb-8 border border-[#3D523E] flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div>
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/15 backdrop-blur-sm rounded-full text-xs font-semibold uppercase tracking-wider mb-2 border border-white/20">
+                    <i data-lucide="scroll-text" class="w-3.5 h-3.5 text-[#EAE5D9]"></i>
+                    <span>{{ __('portal.grad_header_badge') }}</span>
+                </div>
+                <h1 class="text-2xl md:text-3xl font-heading font-bold mb-2">{{ __('portal.grad_header_title') }}</h1>
+                <p class="text-[#EAE5D9] text-sm leading-relaxed max-w-2xl">
+                    {{ __('portal.grad_header_desc') }}
+                </p>
             </div>
-            <h1 class="text-2xl md:text-3xl font-heading font-bold mb-2">{{ __('portal.grad_header_title') }}</h1>
-            <p class="text-[#EAE5D9] text-sm leading-relaxed">
-                {{ __('portal.grad_header_desc') }}
-            </p>
+            <div class="shrink-0">
+                <a href="{{ route('grad.request') }}" class="inline-flex items-center gap-2 bg-[#C86D51] hover:bg-[#A85238] text-white px-5 py-3 rounded-xl font-medium text-sm transition shadow-lg border border-white/10">
+                    <i data-lucide="file-plus-2" class="w-4 h-4"></i>
+                    <span>ยื่นคำร้องขอหนังสือรับรอง (e-Doc)</span>
+                </a>
+            </div>
         </div>
 
         <!-- Search Box -->
@@ -153,10 +161,47 @@
                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#E9EFE2] text-[#3D523E] border border-[#CADBC0]">
                                 <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> {{ __('portal.grad_status_approved') }}
                             </span>
-                            <a href="{{ route('grad.certificate', ['code' => $student->student_code ?? $student->student_id]) }}" target="_blank" class="mt-1 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-[#2C3E2D] hover:bg-[#3D523E] text-white shadow-sm transition">
-                                <i data-lucide="file-check-2" class="w-4 h-4 text-[#A3B88C]"></i>
-                                <span>{{ __('portal.grad_download_cert') }}</span>
-                            </a>
+                            
+                            <!-- เอกสารและใบรับรองที่ได้รับอนุมัติ -->
+                            <div class="flex flex-wrap items-center gap-2 mt-2">
+                                <!-- ใบรับรองระบบออนไลน์ (Dynamic QR) -->
+                                <a href="{{ route('grad.certificate', ['code' => $student->student_code ?? $student->student_id]) }}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#2C3E2D] hover:bg-[#3D523E] text-white shadow-sm transition">
+                                    <i data-lucide="award" class="w-3.5 h-3.5 text-[#A3B88C]"></i>
+                                    <span>ใบรับรองดิจิทัล (QR)</span>
+                                </a>
+
+                                <!-- ไฟล์ใบรับรองภาษาไทย (ฉบับลงนาม) -->
+                                @if (!empty($student->cert_th_path))
+                                    <a href="{{ asset('storage/' . $student->cert_th_path) }}" target="_blank" download class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#5A6B47] hover:bg-[#475537] text-white shadow-sm transition">
+                                        <i data-lucide="file-check-2" class="w-3.5 h-3.5"></i>
+                                        <span>ใบรับรองไทย (PDF)</span>
+                                    </a>
+                                @endif
+
+                                <!-- ไฟล์ใบรับรองภาษาอังกฤษ -->
+                                @if (!empty($student->cert_en_path))
+                                    <a href="{{ asset('storage/' . $student->cert_en_path) }}" target="_blank" download class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#4A3B32] hover:bg-[#382C25] text-white shadow-sm transition">
+                                        <i data-lucide="globe" class="w-3.5 h-3.5"></i>
+                                        <span>ใบรับรอง EN (PDF)</span>
+                                    </a>
+                                @endif
+
+                                <!-- ใบเสร็จรับเงิน -->
+                                @if (!empty($student->receipt_path))
+                                    <a href="{{ asset('storage/' . $student->receipt_path) }}" target="_blank" download class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#C86D51] hover:bg-[#A85238] text-white shadow-sm transition">
+                                        <i data-lucide="receipt" class="w-3.5 h-3.5"></i>
+                                        <span>ใบเสร็จรับเงิน</span>
+                                    </a>
+                                @endif
+
+                                <!-- ใบประเมินผล บฑ. ๒๑ -->
+                                @if (!empty($student->assessment_doc_path))
+                                    <a href="{{ asset('storage/' . $student->assessment_doc_path) }}" target="_blank" download class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#6B6357] hover:bg-[#524B41] text-white shadow-sm transition">
+                                        <i data-lucide="clipboard-check" class="w-3.5 h-3.5"></i>
+                                        <span>ใบประเมิน บฑ. ๒๑</span>
+                                    </a>
+                                @endif
+                            </div>
                         @elseif ($student->submission_status === 'SUBMITTED')
                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#F7F0E3] text-[#9E692D] border border-[#ECD9BF]">
                                 <i data-lucide="clock" class="w-3.5 h-3.5 animate-spin"></i> {{ __('portal.grad_status_submitted') }}

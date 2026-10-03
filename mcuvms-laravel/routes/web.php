@@ -20,6 +20,9 @@ Route::get('/ug/certificate/{reg_no}', [UndergraduateController::class, 'certifi
 // Module 2: Graduate Studies
 Route::get('/grad_progress.php', [GraduateController::class, 'index'])->name('grad.progress');
 Route::get('/grad/progress', [GraduateController::class, 'index']);
+Route::get('/grad/request', [GraduateController::class, 'requestForm'])->name('grad.request');
+Route::get('/edoc/register.php', [GraduateController::class, 'requestForm']);
+Route::post('/grad/request', [GraduateController::class, 'storeRequest'])->name('grad.request.store');
 Route::post('/grad/final-submit', [GraduateController::class, 'finalSubmit'])->name('grad.finalSubmit');
 Route::get('/grad/certificate/{code}', [GraduateController::class, 'certificate'])->name('grad.certificate');
 
@@ -116,6 +119,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/grad/approvals/bulk-action', [AdminController::class, 'gradApprovalsBulkAction'])->name('grad.approvals.bulk');
     Route::post('/grad/student/update/{id}', [AdminController::class, 'gradStudentUpdate'])->name('grad.student.update');
     Route::get('/grad/student/delete/{id}', [AdminController::class, 'gradStudentDelete'])->name('grad.student.delete');
+    Route::post('/grad/upload-response', [AdminController::class, 'gradUploadResponse'])->name('grad.uploadResponse');
+    Route::post('/grad/toggle-edoc', [AdminController::class, 'gradToggleEdoc'])->name('grad.toggleEdoc');
+    Route::get('/grad/export', [AdminController::class, 'gradExportExcel'])->name('grad.export');
 
     // Module 3: Public Community & Meditation Courses
     Route::get('/public_events.php', [AdminController::class, 'publicEvents'])->name('public.events');
