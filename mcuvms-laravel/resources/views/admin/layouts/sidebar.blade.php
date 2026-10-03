@@ -11,6 +11,12 @@
         'admin.ug.sar',
     ]) || (str_contains($currentUrl, 'admin/ug') && !str_contains($currentUrl, 'ug_import') && !str_contains($currentUrl, 'ug/import'));
 
+    // ตรวจสอบว่าอยู่ในหมวด บัณฑิตศึกษา (โมดูล 2) หรือไม่
+    $isGradActive = in_array($currentRoute, [
+        'admin.grad.approvals',
+        'admin.grad.sar',
+    ]) || str_contains($currentUrl, 'admin/grad') || str_contains($currentUrl, 'grad_approvals') || str_contains($currentUrl, 'grad_sar');
+
     // ตรวจสอบว่าอยู่ในหมวด คอร์สปฏิบัติธรรม (โมดูล 3) หรือไม่
     $isPublicActive = in_array($currentRoute, [
         'admin.public.events',
@@ -152,27 +158,40 @@
                 </div>
             </div>
 
-            <!-- 3. บัณฑิตศึกษา (ป.โท / ป.เอก) -->
-            @if ($currentRoute === 'admin.grad.approvals')
-                <a href="{{ route('admin.grad.approvals') }}" title="บัณฑิตศึกษา (30/45 วัน)" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-[#5A6B47] to-[#465337] text-white shadow-md shadow-[#1B271C]/30 border border-[#7B8D65]/30">
+            <!-- 3. เมนูแม่: บัณฑิตศึกษา (ป.โท 30 วัน / ป.เอก 45 วัน) ย่อ/ขยาย Dropdown เมนูย่อย 2 เมนู -->
+            <div class="rounded-xl overflow-hidden transition-all duration-200 {{ $isGradActive ? 'bg-[#182319] border border-[#2F4430] shadow-inner' : 'hover:bg-[#1E2B1F]' }}">
+                <button type="button" 
+                    title="บัณฑิตศึกษา ป.โท 30 วัน / ป.เอก 45 วัน (โมดูล 2)"
+                    onclick="toggleSubmenu('submenu-grad', 'chevron-grad')" 
+                    class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition gap-3 {{ $isGradActive ? 'text-white font-semibold bg-[#223324]' : 'text-[#B8B1A2] hover:text-white' }}">
                     <span class="flex items-center gap-3">
-                        <i data-lucide="scroll-text" class="w-4.5 h-4.5 text-[#EAE5D9] shrink-0"></i>
-                        <div class="sidebar-text whitespace-nowrap">
-                            <div class="leading-tight font-semibold text-sm">บัณฑิตศึกษา (30/45 วัน)</div>
-                            <div class="text-[11px] text-[#D5CEBC]/80 font-mono">Graduate Studies</div>
-                        </div>
+                        <i data-lucide="scroll-text" class="w-4.5 h-4.5 {{ $isGradActive ? 'text-[#C5D7AF]' : 'text-[#A3B88C]' }} shrink-0"></i>
+                        <span class="sidebar-text text-left whitespace-nowrap">
+                            <div class="leading-tight text-sm">บัณฑิตศึกษา (30/45 วัน)</div>
+                            <div class="text-[11px] text-[#8C9B80] font-mono font-normal">Graduate Studies</div>
+                        </span>
                     </span>
-                    <span class="sidebar-text w-2 h-2 rounded-full bg-[#A3B88C] animate-pulse shrink-0"></span>
-                </a>
-            @else
-                <a href="{{ route('admin.grad.approvals') }}" title="บัณฑิตศึกษา (30/45 วัน)" class="flex items-center px-3.5 py-2.5 rounded-xl text-[#B8B1A2] hover:text-white hover:bg-[#2C3E2D] transition gap-3">
-                    <i data-lucide="scroll-text" class="w-4.5 h-4.5 text-[#A3B88C] shrink-0"></i>
-                    <div class="sidebar-text whitespace-nowrap">
-                        <div class="leading-tight text-sm">บัณฑิตศึกษา (30/45 วัน)</div>
-                        <div class="text-[11px] text-[#8C9B80] font-mono">Graduate Studies</div>
-                    </div>
-                </a>
-            @endif
+                    <i id="chevron-grad" data-lucide="chevron-down" class="sidebar-text w-4 h-4 text-[#8C9B80] transition-transform duration-200 {{ $isGradActive ? 'rotate-180 text-[#C5D7AF]' : '' }}"></i>
+                </button>
+
+                <!-- รายการเมนูย่อยของ บัณฑิตศึกษา -->
+                <div id="submenu-grad" class="space-y-1 px-2.5 pb-2.5 pt-2 bg-[#141E15]/90 border-t border-[#263727] {{ $isGradActive ? '' : 'hidden' }}">
+                    
+                    <!-- ย่อย 1: คำร้องและอนุมัติผล e-Doc -->
+                    <a href="{{ route('admin.grad.approvals') }}" title="คำร้องและอนุมัติสะสมวัน" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 relative {{ $currentRoute === 'admin.grad.approvals' ? 'bg-[#5A6B47] text-white font-semibold shadow-sm ring-1 ring-[#7B8D65]/40 pl-3.5' : 'text-[#D0C9BA] hover:text-white hover:bg-[#253726] border-l-2 border-transparent hover:border-[#7B8D65]' }}">
+                        <i data-lucide="file-check-2" class="w-4 h-4 shrink-0 {{ $currentRoute === 'admin.grad.approvals' ? 'text-white' : 'text-[#A3B88C]' }}"></i>
+                        <span class="sidebar-text whitespace-nowrap">คำร้องและอนุมัติ e-Doc</span>
+                    </a>
+
+                    <!-- ย่อย 2: รายงานสถิติบัณฑิตศึกษา (SAR) -->
+                    <a href="{{ route('admin.grad.sar') }}" title="สถิติบัณฑิตศึกษา (SAR)" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 relative {{ $currentRoute === 'admin.grad.sar' ? 'bg-[#5A6B47] text-white font-semibold shadow-sm ring-1 ring-[#7B8D65]/40 pl-3.5' : 'text-[#D0C9BA] hover:text-white hover:bg-[#253726] border-l-2 border-transparent hover:border-[#7B8D65]' }}">
+                        <i data-lucide="bar-chart-2" class="w-4 h-4 shrink-0 {{ $currentRoute === 'admin.grad.sar' ? 'text-white' : 'text-[#A3B88C]' }}"></i>
+                        <span class="sidebar-text whitespace-nowrap">รายงานสถิติ (SAR)</span>
+                    </a>
+
+                </div>
+            </div>
+
 
             <!-- 4. เมนูแม่: คอร์สวิปัสสนากรรมฐานสำหรับประชาชน ย่อ/ขยาย Dropdown เมนูย่อย 3 เมนู -->
             <div class="rounded-xl overflow-hidden transition-all duration-200 {{ $isPublicActive ? 'bg-[#182319] border border-[#2F4430] shadow-inner' : 'hover:bg-[#1E2B1F]' }}">

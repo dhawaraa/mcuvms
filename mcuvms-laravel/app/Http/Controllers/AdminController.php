@@ -1173,6 +1173,90 @@ class AdminController extends Controller
         ));
     }
 
+    public function gradSar(Request $request)
+    {
+        $this->checkAuth();
+        $admin = Session::get('admin_user');
+        $isCentralOrSuper = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
+
+        $baseQuery = GradStudent::query();
+
+        if (!$isCentralOrSuper && !empty($admin['org_unit_id'])) {
+            $baseQuery->where('org_unit_id', $admin['org_unit_id']);
+        } elseif ($request->filled('filter_org')) {
+            $baseQuery->where('org_unit_id', $request->input('filter_org'));
+        }
+
+        if ($request->filled('degree_level')) {
+            $baseQuery->where('degree_level', $request->input('degree_level'));
+        }
+
+        // 1. KPI Totals
+        $totalStudents = (clone $baseQuery)->count();
+        $masterCount = (clone $baseQuery)->where('degree_level', 'MASTER')->count();
+        $doctoralCount = (clone $baseQuery)->where('degree_level', 'DOCTORAL')->count();
+        $approvedCount = (clone $baseQuery)->where('submission_status', 'APPROVED')->count();
+        $submittedCount = (clone $baseQuery)->where('submission_status', 'SUBMITTED')->count();
+        $accumulatingCount = (clone $baseQuery)->where('submission_status', 'ACCUMULATING')->count();
+        $rejectedCount = (clone $baseQuery)->where('submission_status', 'REJECTED')->count();
+
+        // 2. สถิติแยกตามระดับการศึกษา & สถานะ (ป.โท / ป.เอก)
+        $masterApproved = (clone $baseQuery)->where('degree_level', 'MASTER')->where('submission_status', 'APPROVED')->count();
+        $masterSubmitted = (clone $baseQuery)->where('degree_level', 'MASTER')->where('submission_status', 'SUBMITTED')->count();
+        $doctoralApproved = (clone $baseQuery)->where('degree_level', 'DOCTORAL')->where('submission_status', 'APPROVED')->count();
+        $doctoralSubmitted = (clone $baseQuery)->where('degree_level', 'DOCTORAL')->where('submission_status', 'SUBMITTED')->count();
+
+        // 3. สถิติแยกตามคณะ (Faculty Breakdown)
+        $facultyStats = (clone $baseQuery)->select('faculty', DB::raw('count(*) as total'), DB::raw("SUM(CASE WHEN submission_status = 'APPROVED' THEN 1 ELSE 0 END) as approved_count"))
+            ->groupBy('faculty')
+            ->orderBy('total', 'desc')
+            ->get();
+
+        // 4. สถิติการสะสมวันเฉลี่ยและวันรวม
+        $totalDays = (clone $baseQuery)->sum('accumulated_days');
+        $avgDays = $totalStudents > 0 ? round((clone $baseQuery)->avg('accumulated_days'), 1) : 0;
+
+        // 5. สถิติเอกสารและหลักฐาน e-Document (ใบเสร็จ, สลิป, บันทึกสอบอารมณ์)
+        $slipCount = (clone $baseQuery)->whereNotNull('slip_path')->count();
+        $certThCount = (clone $baseQuery)->whereNotNull('cert_th_path')->count();
+        $certEnCount = (clone $baseQuery)->whereNotNull('cert_en_path')->count();
+        $receiptCount = (clone $baseQuery)->whereNotNull('receipt_path')->count();
+
+        // 6. สถิติแยกตามส่วนงาน/วิทยาเขต (Top Campuses)
+        $campusStats = (clone $baseQuery)->join('organization_units', 'grad_students.org_unit_id', '=', 'organization_units.id')
+            ->select('organization_units.name_th as campus_name', DB::raw('count(grad_students.id) as total'), DB::raw("SUM(CASE WHEN grad_students.submission_status = 'APPROVED' THEN 1 ELSE 0 END) as approved_count"))
+            ->groupBy('organization_units.name_th')
+            ->orderBy('total', 'desc')
+            ->limit(10)
+            ->get();
+
+        $orgUnits = OrganizationUnit::where('is_active', 1)->orderBy('id', 'asc')->get();
+
+        return view('admin.grad_sar', compact(
+            'totalStudents',
+            'masterCount',
+            'doctoralCount',
+            'approvedCount',
+            'submittedCount',
+            'accumulatingCount',
+            'rejectedCount',
+            'masterApproved',
+            'masterSubmitted',
+            'doctoralApproved',
+            'doctoralSubmitted',
+            'facultyStats',
+            'totalDays',
+            'avgDays',
+            'slipCount',
+            'certThCount',
+            'certEnCount',
+            'receiptCount',
+            'campusStats',
+            'orgUnits',
+            'isCentralOrSuper'
+        ));
+    }
+
     public function gradApprovals(Request $request)
     {
         $this->checkAuth();

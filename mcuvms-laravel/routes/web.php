@@ -112,6 +112,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/ug/export', [AdminController::class, 'ugExportRegistrar'])->name('ug.export');
 
+    Route::get('/grad_sar.php', [AdminController::class, 'gradSar'])->name('grad.sar');
+    Route::get('/grad/sar', [AdminController::class, 'gradSar']);
     Route::get('/grad_approvals.php', [AdminController::class, 'gradApprovals'])->name('grad.approvals');
     Route::get('/grad/approvals', [AdminController::class, 'gradApprovals']);
     Route::post('/grad/approve', [AdminController::class, 'gradApprove'])->name('grad.approve');
