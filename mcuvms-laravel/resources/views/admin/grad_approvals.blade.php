@@ -426,6 +426,10 @@
                                                 phone: @js($s->phone ?? ''),
                                                 transfer_date: @js($s->transfer_date ?? ''),
                                                 transfer_time: @js($s->transfer_time ?? ''),
+                                                photo: @js($s->photo_path ? asset('storage/' . $s->photo_path) : null),
+                                                interview: @js($s->interview_record_path ? asset('storage/' . $s->interview_record_path) : null),
+                                                attendance: @js($s->attendance_record_path ? asset('storage/' . $s->attendance_record_path) : null),
+                                                slip: @js($s->slip_path ? asset('storage/' . $s->slip_path) : null),
                                                 submission_status: @js($s->submission_status)
                                             })"
                                             title="แก้ไขข้อมูลนิสิต"
@@ -653,7 +657,7 @@
                 </button>
             </div>
 
-            <form id="edit-grad-form" method="POST" class="space-y-6 text-xs">
+            <form id="edit-grad-form" method="POST" enctype="multipart/form-data" class="space-y-6 text-xs">
                 @csrf
 
                 <!-- หมวด 1: ข้อมูลส่วนตัว -->
@@ -795,10 +799,69 @@
                     </div>
                 </div>
 
-                <!-- หมวด 4: วันสะสม ข้อมูลสลิปโอนเงิน และสถานะการอนุมัติ -->
+                <!-- หมวด 4: ไฟล์เอกสารแนบและหลักฐาน (4 รายการ e-Document) -->
                 <div class="bg-[#FAF8F2] p-4 rounded-2xl border border-[#EAE5D9] space-y-3">
                     <h4 class="font-heading font-bold text-[#2C3E2D] text-xs flex items-center gap-1.5 pb-2 border-b border-[#EAE5D9]">
                         <span class="w-5 h-5 rounded-full bg-[#5A6B47] text-white text-[10px] font-bold flex items-center justify-center">4</span>
+                        ไฟล์เอกสารแนบและหลักฐาน (4 รายการ)
+                    </h4>
+                    <p class="text-[11px] text-[#8C8275]">สามารถเลือกไฟล์ใหม่เพื่ออัปโหลดแทนที่ไฟล์เดิมได้ หรือปล่อยว่างไว้หากไม่ต้องการเปลี่ยน</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- ไฟล์ 1: รูปถ่าย -->
+                        <div class="p-3.5 bg-white border border-[#D5CEBC] rounded-xl space-y-2">
+                            <div class="flex items-center justify-between">
+                                <label class="font-semibold text-[#2C3E2D] flex items-center gap-1.5">
+                                    <i data-lucide="image" class="w-3.5 h-3.5 text-[#5A6B47]"></i>
+                                    1. รูปถ่ายนิสิต (2x2 นิ้ว)
+                                </label>
+                                <span id="edit_preview_photo" class="text-[10px]"></span>
+                            </div>
+                            <input type="file" name="file_photo" accept="image/jpeg,image/png" class="w-full text-xs text-[#4A3B32] file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#5A6B47] file:text-white hover:file:bg-[#2C3E2D]">
+                        </div>
+
+                        <!-- ไฟล์ 2: ใบบันทึกสอบอารมณ์ -->
+                        <div class="p-3.5 bg-white border border-[#D5CEBC] rounded-xl space-y-2">
+                            <div class="flex items-center justify-between">
+                                <label class="font-semibold text-[#2C3E2D] flex items-center gap-1.5">
+                                    <i data-lucide="file-check" class="w-3.5 h-3.5 text-[#5A6B47]"></i>
+                                    2. ใบบันทึกสอบอารมณ์ (PDF)
+                                </label>
+                                <span id="edit_preview_interview" class="text-[10px]"></span>
+                            </div>
+                            <input type="file" name="file_interview" accept="application/pdf" class="w-full text-xs text-[#4A3B32] file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#2C3E2D] file:text-white hover:file:bg-[#1E2B1F]">
+                        </div>
+
+                        <!-- ไฟล์ 3: ใบลงเวลา -->
+                        <div class="p-3.5 bg-white border border-[#D5CEBC] rounded-xl space-y-2">
+                            <div class="flex items-center justify-between">
+                                <label class="font-semibold text-[#2C3E2D] flex items-center gap-1.5">
+                                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#5A6B47]"></i>
+                                    3. ใบลงเวลาปฏิบัติธรรม (PDF)
+                                </label>
+                                <span id="edit_preview_attendance" class="text-[10px]"></span>
+                            </div>
+                            <input type="file" name="file_attendance" accept="application/pdf" class="w-full text-xs text-[#4A3B32] file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#2C3E2D] file:text-white hover:file:bg-[#1E2B1F]">
+                        </div>
+
+                        <!-- ไฟล์ 4: สลิปโอนเงิน -->
+                        <div class="p-3.5 bg-white border border-[#D5CEBC] rounded-xl space-y-2">
+                            <div class="flex items-center justify-between">
+                                <label class="font-semibold text-[#2C3E2D] flex items-center gap-1.5">
+                                    <i data-lucide="receipt" class="w-3.5 h-3.5 text-[#C86D51]"></i>
+                                    4. สลิปโอนเงินค่าธรรมเนียม
+                                </label>
+                                <span id="edit_preview_slip" class="text-[10px]"></span>
+                            </div>
+                            <input type="file" name="file_slip" accept="image/jpeg,image/png,application/pdf" class="w-full text-xs text-[#4A3B32] file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#C86D51] file:text-white hover:file:bg-[#A85238]">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- หมวด 5: วันสะสม ข้อมูลสลิปโอนเงิน และสถานะการอนุมัติ -->
+                <div class="bg-[#FAF8F2] p-4 rounded-2xl border border-[#EAE5D9] space-y-3">
+                    <h4 class="font-heading font-bold text-[#2C3E2D] text-xs flex items-center gap-1.5 pb-2 border-b border-[#EAE5D9]">
+                        <span class="w-5 h-5 rounded-full bg-[#5A6B47] text-white text-[10px] font-bold flex items-center justify-center">5</span>
                         การสะสมวัน ข้อมูลการโอนเงิน และสถานะคำร้อง
                     </h4>
 
@@ -986,12 +1049,33 @@
             document.getElementById('edit_grad_postcode').value = data.postcode || '';
             document.getElementById('edit_grad_phone').value = data.phone || '';
 
-            // 4. วันสะสม ข้อมูลสลิป และสถานะ
+            // 4. แสดงสถานะไฟล์แนบเดิม 4 รายการ
+            const photoPrev = document.getElementById('edit_preview_photo');
+            photoPrev.innerHTML = data.photo ? `<a href="${data.photo}" target="_blank" class="text-[#5A6B47] hover:underline font-semibold flex items-center gap-0.5"><i data-lucide="eye" class="w-3 h-3"></i> ดูไฟล์เดิม</a>` : `<span class="text-[#8C8275]">- ยังไม่มีไฟล์ -</span>`;
+
+            const interviewPrev = document.getElementById('edit_preview_interview');
+            interviewPrev.innerHTML = data.interview ? `<a href="${data.interview}" target="_blank" class="text-[#5A6B47] hover:underline font-semibold flex items-center gap-0.5"><i data-lucide="eye" class="w-3 h-3"></i> ดูไฟล์เดิม</a>` : `<span class="text-[#8C8275]">- ยังไม่มีไฟล์ -</span>`;
+
+            const attendancePrev = document.getElementById('edit_preview_attendance');
+            attendancePrev.innerHTML = data.attendance ? `<a href="${data.attendance}" target="_blank" class="text-[#5A6B47] hover:underline font-semibold flex items-center gap-0.5"><i data-lucide="eye" class="w-3 h-3"></i> ดูไฟล์เดิม</a>` : `<span class="text-[#8C8275]">- ยังไม่มีไฟล์ -</span>`;
+
+            const slipPrev = document.getElementById('edit_preview_slip');
+            slipPrev.innerHTML = data.slip ? `<a href="${data.slip}" target="_blank" class="text-[#C86D51] hover:underline font-semibold flex items-center gap-0.5"><i data-lucide="receipt" class="w-3 h-3"></i> ดูสลิปเดิม</a>` : `<span class="text-[#8C8275]">- ยังไม่มีสลิป -</span>`;
+
+            // รีเซ็ตช่องเลือกไฟล์
+            const fileInputs = form.querySelectorAll('input[type="file"]');
+            fileInputs.forEach(input => input.value = '');
+
+            // 5. วันสะสม ข้อมูลสลิป และสถานะ
             document.getElementById('edit_grad_accumulated').value = data.accumulated_days || 0;
             document.getElementById('edit_grad_target').value = data.target_days || 30;
             document.getElementById('edit_grad_transfer_date').value = data.transfer_date || '';
             document.getElementById('edit_grad_transfer_time').value = data.transfer_time ? data.transfer_time.substring(0, 5) : '';
             document.getElementById('edit_grad_status').value = data.submission_status || 'ACCUMULATING';
+
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
 
             document.getElementById('edit-grad-modal').classList.remove('hidden');
         }

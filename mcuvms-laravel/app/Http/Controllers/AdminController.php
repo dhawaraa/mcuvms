@@ -1425,10 +1425,28 @@ class AdminController extends Controller
             'transfer_time' => 'nullable|string|max:10',
             'submission_status' => 'required|in:ACCUMULATING,SUBMITTED,APPROVED,REJECTED',
             'org_unit_id' => 'nullable|integer',
+            'file_photo' => 'nullable|file|mimes:jpeg,jpg,png|max:5120',
+            'file_interview' => 'nullable|file|mimes:pdf|max:10240',
+            'file_attendance' => 'nullable|file|mimes:pdf|max:10240',
+            'file_slip' => 'nullable|file|mimes:jpeg,jpg,png,pdf|max:10240',
         ]);
 
         if ($isCentralOrSuper && !empty($validated['org_unit_id'])) {
             $student->org_unit_id = $validated['org_unit_id'];
+        }
+
+        // จัดการอัปโหลดไฟล์ใหม่แทนที่ไฟล์เดิม (ถ้ามีการอัปโหลดไฟล์ใหม่)
+        if ($request->hasFile('file_photo')) {
+            $student->photo_path = $request->file('file_photo')->store('edoc/photos', 'public');
+        }
+        if ($request->hasFile('file_interview')) {
+            $student->interview_record_path = $request->file('file_interview')->store('edoc/interviews', 'public');
+        }
+        if ($request->hasFile('file_attendance')) {
+            $student->attendance_record_path = $request->file('file_attendance')->store('edoc/attendances', 'public');
+        }
+        if ($request->hasFile('file_slip')) {
+            $student->slip_path = $request->file('file_slip')->store('edoc/slips', 'public');
         }
 
         $student->student_code = $validated['student_code'];
