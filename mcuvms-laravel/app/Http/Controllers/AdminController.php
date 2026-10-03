@@ -1402,13 +1402,27 @@ class AdminController extends Controller
 
         $validated = $request->validate([
             'student_code' => 'required|string|max:50',
+            'citizen_id' => 'nullable|string|max:20',
+            'nationality' => 'nullable|string|max:50',
             'prefix' => 'nullable|string|max:50',
             'first_name' => 'required|string|max:100',
             'last_name' => 'required|string|max:100',
+            'buddhist_name' => 'nullable|string|max:100',
+            'age' => 'nullable|integer|min:1|max:120',
+            'vassa' => 'nullable|integer|min:0|max:100',
             'degree_level' => 'required|in:MASTER,DOCTORAL',
+            'faculty' => 'nullable|string|max:100',
             'program_name' => 'nullable|string|max:150',
             'target_days' => 'required|integer|min:1',
             'accumulated_days' => 'required|integer|min:0',
+            'address' => 'nullable|string|max:255',
+            'subdistrict' => 'nullable|string|max:100',
+            'district' => 'nullable|string|max:100',
+            'province' => 'nullable|string|max:100',
+            'postcode' => 'nullable|string|max:10',
+            'phone' => 'nullable|string|max:50',
+            'transfer_date' => 'nullable|date',
+            'transfer_time' => 'nullable|string|max:10',
             'submission_status' => 'required|in:ACCUMULATING,SUBMITTED,APPROVED,REJECTED',
             'org_unit_id' => 'nullable|integer',
         ]);
@@ -1418,13 +1432,27 @@ class AdminController extends Controller
         }
 
         $student->student_code = $validated['student_code'];
-        $student->prefix = $validated['prefix'];
+        $student->citizen_id = $validated['citizen_id'] ?? null;
+        $student->nationality = $validated['nationality'] ?? 'ไทย';
+        $student->prefix = $validated['prefix'] ?? null;
         $student->first_name = $validated['first_name'];
         $student->last_name = $validated['last_name'];
+        $student->buddhist_name = $validated['buddhist_name'] ?? null;
+        $student->age = $validated['age'] ?? null;
+        $student->vassa = $validated['vassa'] ?? null;
         $student->degree_level = $validated['degree_level'];
-        $student->program_name = $validated['program_name'];
+        $student->faculty = $validated['faculty'] ?? null;
+        $student->program_name = $validated['program_name'] ?? null;
         $student->target_days = $validated['target_days'];
         $student->accumulated_days = $validated['accumulated_days'];
+        $student->address = $validated['address'] ?? null;
+        $student->subdistrict = $validated['subdistrict'] ?? null;
+        $student->district = $validated['district'] ?? null;
+        $student->province = $validated['province'] ?? null;
+        $student->postcode = $validated['postcode'] ?? null;
+        $student->phone = $validated['phone'] ?? null;
+        $student->transfer_date = $validated['transfer_date'] ?? null;
+        $student->transfer_time = $validated['transfer_time'] ?? null;
         $student->submission_status = $validated['submission_status'];
 
         if ($validated['submission_status'] === 'APPROVED' && empty($student->approved_at)) {

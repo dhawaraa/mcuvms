@@ -294,14 +294,18 @@
                                     </td>
                                     <td class="p-4 text-center">
                                         @if (!empty($s->slip_path))
-                                            <a href="{{ asset('storage/' . $s->slip_path) }}" target="_blank" class="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-semibold bg-[#C86D51]/10 text-[#C86D51] border border-[#C86D51]/30 hover:bg-[#C86D51]/20">
-                                                <i data-lucide="receipt" class="w-3.5 h-3.5"></i> สลิปโอนเงิน
-                                            </a>
-                                            <div class="text-[10px] text-[#8C8275] mt-1 font-mono">
-                                                {{ $s->transfer_date ?? '' }} {{ $s->transfer_time ? substr($s->transfer_time, 0, 5) : '' }}
+                                            <div class="inline-flex flex-col items-center">
+                                                <a href="{{ asset('storage/' . $s->slip_path) }}" target="_blank" title="เปิดดูสลิปโอนเงิน (โอนเมื่อ: {{ $s->transfer_date ?? '-' }} {{ $s->transfer_time ? substr($s->transfer_time, 0, 5) : '' }})" class="p-1.5 rounded-lg text-[#C86D51] bg-[#C86D51]/10 border border-[#C86D51]/30 hover:bg-[#C86D51]/20 transition inline-flex items-center justify-center">
+                                                    <i data-lucide="receipt" class="w-4 h-4"></i>
+                                                </a>
+                                                @if (!empty($s->transfer_date))
+                                                    <span class="text-[9px] text-[#8C8275] mt-0.5 font-mono leading-tight">
+                                                        {{ \Carbon\Carbon::parse($s->transfer_date)->format('d/m/y') }}
+                                                    </span>
+                                                @endif
                                             </div>
                                         @else
-                                            <span class="text-[11px] text-[#B8AFA0]">- ไม่มีสลิป -</span>
+                                            <span class="text-[11px] text-[#B8AFA0]">-</span>
                                         @endif
                                     </td>
                                     <td class="p-4 text-center">
@@ -400,15 +404,29 @@
                                             onclick="openEditGradModal({
                                                 id: {{ $s->id }},
                                                 student_code: @js($s->student_code ?? $s->student_id),
+                                                citizen_id: @js($s->citizen_id ?? ''),
+                                                nationality: @js($s->nationality ?? 'ไทย'),
                                                 prefix: @js($s->prefix ?? ''),
                                                 first_name: @js($s->first_name),
                                                 last_name: @js($s->last_name),
+                                                buddhist_name: @js($s->buddhist_name ?? ''),
+                                                age: @js($s->age ?? ''),
+                                                vassa: @js($s->vassa ?? ''),
                                                 degree_level: @js($s->degree_level),
+                                                faculty: @js($s->faculty ?? ''),
                                                 program_name: @js($s->program_name ?? ''),
-                                                target_days: {{ $s->target_days }},
+                                                org_unit_id: {{ $s->org_unit_id }},
                                                 accumulated_days: {{ $s->accumulated_days }},
-                                                submission_status: @js($s->submission_status),
-                                                org_unit_id: {{ $s->org_unit_id }}
+                                                target_days: {{ $s->target_days }},
+                                                address: @js($s->address ?? ''),
+                                                subdistrict: @js($s->subdistrict ?? ''),
+                                                district: @js($s->district ?? ''),
+                                                province: @js($s->province ?? ''),
+                                                postcode: @js($s->postcode ?? ''),
+                                                phone: @js($s->phone ?? ''),
+                                                transfer_date: @js($s->transfer_date ?? ''),
+                                                transfer_time: @js($s->transfer_time ?? ''),
+                                                submission_status: @js($s->submission_status)
                                             })"
                                             title="แก้ไขข้อมูลนิสิต"
                                             class="p-1.5 bg-[#FAF8F2] hover:bg-[#5A6B47]/15 text-[#5A6B47] rounded-lg border border-[#EAE5D9] transition inline-flex items-center">
@@ -619,91 +637,205 @@
     </div>
 
 
-    <!-- Modal: แก้ไขข้อมูลนิสิตบัณฑิตศึกษา (Edit Modal) -->
+    <!-- Modal: แก้ไขข้อมูลนิสิตบัณฑิตศึกษา (Edit Modal ครบทุกฟิลด์) -->
     <div id="edit-grad-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-3xl border border-[#EAE5D9] shadow-2xl max-w-xl w-full p-6 md:p-8 overflow-y-auto max-h-[90vh]">
+        <div class="bg-white rounded-3xl border border-[#EAE5D9] shadow-2xl max-w-3xl w-full p-6 md:p-8 overflow-y-auto max-h-[92vh]">
             <div class="flex justify-between items-center pb-4 border-b border-[#EAE5D9] mb-5">
                 <div>
-                    <h3 class="text-lg font-heading font-bold text-[#2C3E2D]">แก้ไขข้อมูลนิสิตบัณฑิตศึกษา</h3>
-                    <p class="text-xs text-[#7B8D65]">แก้ไขข้อมูลหลักสูตร เกณฑ์วันสะสม และสถานะการอนุมัติ</p>
+                    <h3 class="text-lg font-heading font-bold text-[#2C3E2D] flex items-center gap-2">
+                        <i data-lucide="edit" class="w-5 h-5 text-[#5A6B47]"></i>
+                        <span>แก้ไขข้อมูลคำร้องนิสิตบัณฑิตศึกษา</span>
+                    </h3>
+                    <p class="text-xs text-[#7B8D65]">สามารถแก้ไขได้ทุกฟิลด์ เสมือนแบบฟอร์มที่นิสิตยื่นคำร้องขอหนังสือรับรอง e-Document</p>
                 </div>
                 <button type="button" onclick="document.getElementById('edit-grad-modal').classList.add('hidden')" class="p-1.5 text-[#8C8275] hover:text-[#2C3E2D] rounded-lg">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
 
-            <form id="edit-grad-form" method="POST" class="space-y-4 text-xs">
+            <form id="edit-grad-form" method="POST" class="space-y-6 text-xs">
                 @csrf
-                @if ($isCentralOrSuper)
-                    <div>
-                        <label class="block font-semibold text-[#4A3B32] mb-1">ส่วนงานต้นสังกัด <span class="text-[#C86D51]">*</span></label>
-                        <select id="edit_grad_org" name="org_unit_id" class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
-                            @foreach ($orgUnits as $org)
-                                <option value="{{ $org->id }}">{{ $org->name_th }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                @endif
 
-                <div class="grid grid-cols-3 gap-3">
-                    <div>
-                        <label class="block font-semibold text-[#4A3B32] mb-1">รหัสนิสิต <span class="text-[#C86D51]">*</span></label>
-                        <input type="text" id="edit_grad_code" name="student_code" required class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs font-mono focus:ring-1 focus:ring-[#5A6B47]">
-                    </div>
-                    <div>
-                        <label class="block font-semibold text-[#4A3B32] mb-1">คำนำหน้า</label>
-                        <input type="text" id="edit_grad_prefix" name="prefix" placeholder="เช่น พระ/พระมหา/นาย" class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
-                    </div>
-                    <div>
-                        <label class="block font-semibold text-[#4A3B32] mb-1">ชื่อ <span class="text-[#C86D51]">*</span></label>
-                        <input type="text" id="edit_grad_first_name" name="first_name" required class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                <!-- หมวด 1: ข้อมูลส่วนตัว -->
+                <div class="bg-[#FAF8F2] p-4 rounded-2xl border border-[#EAE5D9] space-y-3">
+                    <h4 class="font-heading font-bold text-[#2C3E2D] text-xs flex items-center gap-1.5 pb-2 border-b border-[#EAE5D9]">
+                        <span class="w-5 h-5 rounded-full bg-[#5A6B47] text-white text-[10px] font-bold flex items-center justify-center">1</span>
+                        ข้อมูลส่วนตัวและประวัติผู้ยื่นคำร้อง
+                    </h4>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">รหัสนิสิต <span class="text-[#C86D51]">*</span></label>
+                            <input type="text" id="edit_grad_code" name="student_code" required class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-xl text-xs font-mono focus:ring-1 focus:ring-[#5A6B47]">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">เลข ปชช. / Passport <span class="text-[#C86D51]">*</span></label>
+                            <input type="text" id="edit_grad_citizen" name="citizen_id" maxlength="13" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-xl text-xs font-mono focus:ring-1 focus:ring-[#5A6B47]">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">คำนำหน้าชื่อ <span class="text-[#C86D51]">*</span></label>
+                            <select id="edit_grad_prefix" name="prefix" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                                <option value="พระมหา">พระมหา</option>
+                                <option value="พระครู">พระครู</option>
+                                <option value="พระครูปลัด">พระครูปลัด</option>
+                                <option value="พระ">พระ</option>
+                                <option value="สามเณร">สามเณร</option>
+                                <option value="นาย">นาย</option>
+                                <option value="นาง">นาง</option>
+                                <option value="นางสาว">นางสาว</option>
+                                <option value="ดร.">ดร.</option>
+                                <option value="แม่ชี">แม่ชี</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">สัญชาติ</label>
+                            <input type="text" id="edit_grad_nationality" name="nationality" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">ชื่อ <span class="text-[#C86D51]">*</span></label>
+                            <input type="text" id="edit_grad_first_name" name="first_name" required class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">นามสกุล <span class="text-[#C86D51]">*</span></label>
+                            <input type="text" id="edit_grad_last_name" name="last_name" required class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">ฉายาทางธรรม</label>
+                            <input type="text" id="edit_grad_buddhist_name" name="buddhist_name" placeholder="เช่น ปุญฺญกาโม หรือ -" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block font-semibold text-[#4A3B32] mb-1">อายุ (ปี)</label>
+                                <input type="number" id="edit_grad_age" name="age" min="15" max="120" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-xl text-xs font-mono focus:ring-1 focus:ring-[#5A6B47]">
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-[#4A3B32] mb-1">พรรษา</label>
+                                <input type="number" id="edit_grad_vassa" name="vassa" min="0" max="100" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-xl text-xs font-mono focus:ring-1 focus:ring-[#5A6B47]">
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block font-semibold text-[#4A3B32] mb-1">นามสกุล / ฉายา <span class="text-[#C86D51]">*</span></label>
-                        <input type="text" id="edit_grad_last_name" name="last_name" required class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
-                    </div>
-                    <div>
-                        <label class="block font-semibold text-[#4A3B32] mb-1">ระดับการศึกษา <span class="text-[#C86D51]">*</span></label>
-                        <select id="edit_grad_degree" name="degree_level" required onchange="updateGradTargetDays(this.value)" class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
-                            <option value="MASTER">ปริญญาโท (30 วัน)</option>
-                            <option value="DOCTORAL">ปริญญาเอก (45 วัน)</option>
-                        </select>
+                <!-- หมวด 2: ข้อมูลการศึกษาและสังกัดใน มจร -->
+                <div class="bg-[#FAF8F2] p-4 rounded-2xl border border-[#EAE5D9] space-y-3">
+                    <h4 class="font-heading font-bold text-[#2C3E2D] text-xs flex items-center gap-1.5 pb-2 border-b border-[#EAE5D9]">
+                        <span class="w-5 h-5 rounded-full bg-[#5A6B47] text-white text-[10px] font-bold flex items-center justify-center">2</span>
+                        ข้อมูลการศึกษาและสังกัดใน มจร
+                    </h4>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">ระดับการศึกษา <span class="text-[#C86D51]">*</span></label>
+                            <select id="edit_grad_degree" name="degree_level" required onchange="updateGradTargetDays(this.value)" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                                <option value="MASTER">ปริญญาโท (มหาบัณฑิต - 30 วัน)</option>
+                                <option value="DOCTORAL">ปริญญาเอก (ดุษฎีบัณฑิต - 45 วัน)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">คณะ</label>
+                            <select id="edit_grad_faculty" name="faculty" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                                <option value="บัณฑิตวิทยาลัย">บัณฑิตวิทยาลัย</option>
+                                <option value="พุทธศาสตร์">พุทธศาสตร์</option>
+                                <option value="ครุศาสตร์">ครุศาสตร์</option>
+                                <option value="มนุษยศาสตร์">มนุษยศาสตร์</option>
+                                <option value="สังคมศาสตร์">สังคมศาสตร์</option>
+                                <option value="IBSC">วิทยาลัยพุทธศาสตร์นานาชาติ (IBSC)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">สาขาวิชา / หลักสูตร</label>
+                            <input type="text" id="edit_grad_program" name="program_name" placeholder="เช่น สาขาวิชาการจัดการเชิงพุทธ" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                        </div>
+
+                        <div class="md:col-span-3">
+                            <label class="block font-semibold text-[#4A3B32] mb-1">วิทยาเขต / ส่วนงาน มจร <span class="text-[#C86D51]">*</span></label>
+                            <select id="edit_grad_org" name="org_unit_id" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                                @foreach ($orgUnits as $org)
+                                    <option value="{{ $org->id }}">{{ $org->name_th }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                 </div>
 
-                <div>
-                    <label class="block font-semibold text-[#4A3B32] mb-1">สาขาวิชา / หลักสูตร</label>
-                    <input type="text" id="edit_grad_program" name="program_name" placeholder="เช่น พุทธศาสตรดุษฎีบัณฑิต" class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                <!-- หมวด 3: ข้อมูลที่อยู่และการติดต่อ -->
+                <div class="bg-[#FAF8F2] p-4 rounded-2xl border border-[#EAE5D9] space-y-3">
+                    <h4 class="font-heading font-bold text-[#2C3E2D] text-xs flex items-center gap-1.5 pb-2 border-b border-[#EAE5D9]">
+                        <span class="w-5 h-5 rounded-full bg-[#5A6B47] text-white text-[10px] font-bold flex items-center justify-center">3</span>
+                        ข้อมูลที่อยู่และการติดต่อ
+                    </h4>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                        <div class="md:col-span-2">
+                            <label class="block font-semibold text-[#4A3B32] mb-1">ที่อยู่ / วัด / สังกัด</label>
+                            <input type="text" id="edit_grad_address" name="address" placeholder="เช่น 79 หมู่ 1 ต.ลำไทร หรือ วัดมหาธาตุฯ" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">ตำบล / แขวง</label>
+                            <input type="text" id="edit_grad_subdistrict" name="subdistrict" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">อำเภอ / เขต</label>
+                            <input type="text" id="edit_grad_district" name="district" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">จังหวัด</label>
+                            <input type="text" id="edit_grad_province" name="province" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">รหัสไปรษณีย์</label>
+                            <input type="text" id="edit_grad_postcode" name="postcode" maxlength="5" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-xl text-xs font-mono focus:ring-1 focus:ring-[#5A6B47]">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block font-semibold text-[#4A3B32] mb-1">หมายเลขโทรศัพท์มือถือ</label>
+                            <input type="tel" id="edit_grad_phone" name="phone" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-xl text-xs font-mono focus:ring-1 focus:ring-[#5A6B47]">
+                        </div>
+                    </div>
                 </div>
 
-                <div class="grid grid-cols-3 gap-3">
-                    <div>
-                        <label class="block font-semibold text-[#4A3B32] mb-1">วันสะสม (วัน) <span class="text-[#C86D51]">*</span></label>
-                        <input type="number" id="edit_grad_accumulated" name="accumulated_days" min="0" required class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs font-mono font-bold text-[#5A6B47] focus:ring-1 focus:ring-[#5A6B47]">
-                    </div>
-                    <div>
-                        <label class="block font-semibold text-[#4A3B32] mb-1">เกณฑ์เป้าหมาย <span class="text-[#C86D51]">*</span></label>
-                        <input type="number" id="edit_grad_target" name="target_days" min="1" required class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs font-mono focus:ring-1 focus:ring-[#5A6B47]">
-                    </div>
-                    <div>
-                        <label class="block font-semibold text-[#4A3B32] mb-1">สถานะอนุมัติ <span class="text-[#C86D51]">*</span></label>
-                        <select id="edit_grad_status" name="submission_status" required class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
-                            <option value="ACCUMULATING">กำลังสะสมวัน</option>
-                            <option value="SUBMITTED">ยื่นขออนุมัติแล้ว (Lock)</option>
-                            <option value="APPROVED">อนุมัติผลสมบูรณ์</option>
-                            <option value="REJECTED">ส่งกลับแก้ไข</option>
-                        </select>
+                <!-- หมวด 4: วันสะสม ข้อมูลสลิปโอนเงิน และสถานะการอนุมัติ -->
+                <div class="bg-[#FAF8F2] p-4 rounded-2xl border border-[#EAE5D9] space-y-3">
+                    <h4 class="font-heading font-bold text-[#2C3E2D] text-xs flex items-center gap-1.5 pb-2 border-b border-[#EAE5D9]">
+                        <span class="w-5 h-5 rounded-full bg-[#5A6B47] text-white text-[10px] font-bold flex items-center justify-center">4</span>
+                        การสะสมวัน ข้อมูลการโอนเงิน และสถานะคำร้อง
+                    </h4>
+
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">วันสะสม (วัน) <span class="text-[#C86D51]">*</span></label>
+                            <input type="number" id="edit_grad_accumulated" name="accumulated_days" min="0" required class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-xl text-xs font-mono font-bold text-[#5A6B47] focus:ring-1 focus:ring-[#5A6B47]">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">เกณฑ์เป้าหมาย <span class="text-[#C86D51]">*</span></label>
+                            <input type="number" id="edit_grad_target" name="target_days" min="1" required class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-xl text-xs font-mono focus:ring-1 focus:ring-[#5A6B47]">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">วันที่โอนในสลิป</label>
+                            <input type="date" id="edit_grad_transfer_date" name="transfer_date" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">เวลาที่โอนในสลิป</label>
+                            <input type="time" id="edit_grad_transfer_time" name="transfer_time" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-xl text-xs font-mono focus:ring-1 focus:ring-[#5A6B47]">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">สถานะคำร้อง <span class="text-[#C86D51]">*</span></label>
+                            <select id="edit_grad_status" name="submission_status" required class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-xl text-xs font-semibold focus:ring-1 focus:ring-[#5A6B47]">
+                                <option value="ACCUMULATING">กำลังสะสมวัน</option>
+                                <option value="SUBMITTED">ยื่นขออนุมัติแล้ว (Lock)</option>
+                                <option value="APPROVED">อนุมัติผลสมบูรณ์</option>
+                                <option value="REJECTED">ส่งกลับแก้ไข</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
                 <div class="pt-4 border-t border-[#EAE5D9] flex justify-end gap-2.5">
-                    <button type="button" onclick="document.getElementById('edit-grad-modal').classList.add('hidden')" class="px-4 py-2 text-[#6B6357] hover:text-[#2C3E2D] rounded-xl">ยกเลิก</button>
-                    <button type="submit" class="px-5 py-2 bg-[#5A6B47] hover:bg-[#2C3E2D] text-white rounded-xl font-medium shadow-md transition flex items-center gap-1.5">
+                    <button type="button" onclick="document.getElementById('edit-grad-modal').classList.add('hidden')" class="px-5 py-2.5 text-[#6B6357] hover:text-[#2C3E2D] rounded-xl transition">ยกเลิก</button>
+                    <button type="submit" class="px-6 py-2.5 bg-[#5A6B47] hover:bg-[#2C3E2D] text-white rounded-xl font-medium shadow-md transition flex items-center gap-1.5">
                         <i data-lucide="check" class="w-4 h-4"></i>
-                        <span>บันทึกการแก้ไข</span>
+                        <span>บันทึกการแก้ไขทั้งหมด</span>
                     </button>
                 </div>
             </form>
@@ -823,19 +955,42 @@
             const form = document.getElementById('edit-grad-form');
             form.action = "{{ url('/admin/grad/student/update') }}/" + data.id;
 
+            // 1. ข้อมูลส่วนตัว
+            document.getElementById('edit_grad_code').value = data.student_code || '';
+            document.getElementById('edit_grad_citizen').value = data.citizen_id || '';
+            document.getElementById('edit_grad_prefix').value = data.prefix || 'พระมหา';
+            document.getElementById('edit_grad_nationality').value = data.nationality || 'ไทย';
+            document.getElementById('edit_grad_first_name').value = data.first_name || '';
+            document.getElementById('edit_grad_last_name').value = data.last_name || '';
+            document.getElementById('edit_grad_buddhist_name').value = data.buddhist_name || '';
+            document.getElementById('edit_grad_age').value = data.age || '';
+            document.getElementById('edit_grad_vassa').value = data.vassa || '';
+
+            // 2. การศึกษาและสังกัด
+            document.getElementById('edit_grad_degree').value = data.degree_level || 'MASTER';
+            const facultyEl = document.getElementById('edit_grad_faculty');
+            if (facultyEl && data.faculty) {
+                facultyEl.value = data.faculty;
+            }
+            document.getElementById('edit_grad_program').value = data.program_name || '';
             const orgSelect = document.getElementById('edit_grad_org');
             if (orgSelect && data.org_unit_id) {
                 orgSelect.value = data.org_unit_id;
             }
 
-            document.getElementById('edit_grad_code').value = data.student_code || '';
-            document.getElementById('edit_grad_prefix').value = data.prefix || '';
-            document.getElementById('edit_grad_first_name').value = data.first_name || '';
-            document.getElementById('edit_grad_last_name').value = data.last_name || '';
-            document.getElementById('edit_grad_degree').value = data.degree_level || 'MASTER';
-            document.getElementById('edit_grad_program').value = data.program_name || '';
+            // 3. ที่อยู่และการติดต่อ
+            document.getElementById('edit_grad_address').value = data.address || '';
+            document.getElementById('edit_grad_subdistrict').value = data.subdistrict || '';
+            document.getElementById('edit_grad_district').value = data.district || '';
+            document.getElementById('edit_grad_province').value = data.province || '';
+            document.getElementById('edit_grad_postcode').value = data.postcode || '';
+            document.getElementById('edit_grad_phone').value = data.phone || '';
+
+            // 4. วันสะสม ข้อมูลสลิป และสถานะ
             document.getElementById('edit_grad_accumulated').value = data.accumulated_days || 0;
             document.getElementById('edit_grad_target').value = data.target_days || 30;
+            document.getElementById('edit_grad_transfer_date').value = data.transfer_date || '';
+            document.getElementById('edit_grad_transfer_time').value = data.transfer_time ? data.transfer_time.substring(0, 5) : '';
             document.getElementById('edit_grad_status').value = data.submission_status || 'ACCUMULATING';
 
             document.getElementById('edit-grad-modal').classList.remove('hidden');
