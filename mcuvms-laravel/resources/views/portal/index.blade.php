@@ -155,7 +155,7 @@
                         <i data-lucide="graduation-cap" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
                         <span>{{ __('portal.nav_ug') }}</span>
                     </a>
-                    <a href="{{ route('grad.progress') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5 whitespace-nowrap py-1">
+                    <a href="{{ route('grad.request') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5 whitespace-nowrap py-1">
                         <i data-lucide="scroll" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
                         <span>{{ __('portal.nav_grad') }}</span>
                     </a>
@@ -247,7 +247,7 @@
                     <p class="text-xs text-[#6B6357] mb-6 leading-relaxed">
                         {{ __('portal.module_2_desc') }}
                     </p>
-                    <a href="{{ route('grad.progress') }}" class="w-full inline-flex justify-between items-center py-2.5 px-4 rounded-xl text-xs font-semibold bg-[#2C3E2D] hover:bg-[#5A6B47] text-white transition shadow-sm">
+                    <a href="{{ route('grad.request') }}" class="w-full inline-flex justify-between items-center py-2.5 px-4 rounded-xl text-xs font-semibold bg-[#2C3E2D] hover:bg-[#5A6B47] text-white transition shadow-sm">
                         <span>{{ __('portal.module_2_btn') }}</span>
                         <i data-lucide="arrow-right" class="w-4 h-4"></i>
                     </a>

@@ -90,7 +90,7 @@
                         <i data-lucide="graduation-cap" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
                         <span>{{ __('portal.nav_ug') }}</span>
                     </a>
-                    <a href="{{ route('grad.progress') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5 whitespace-nowrap py-1">
+                    <a href="{{ route('grad.request') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5 whitespace-nowrap py-1">
                         <i data-lucide="scroll" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
                         <span>{{ __('portal.nav_grad') }}</span>
                     </a>

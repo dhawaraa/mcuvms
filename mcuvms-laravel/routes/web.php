@@ -18,10 +18,12 @@ Route::post('/ug/register', [UndergraduateController::class, 'store'])->name('ug
 Route::get('/ug/certificate/{reg_no}', [UndergraduateController::class, 'certificate'])->name('ug.certificate');
 
 // Module 2: Graduate Studies
-Route::get('/grad_progress.php', [GraduateController::class, 'index'])->name('grad.progress');
-Route::get('/grad/progress', [GraduateController::class, 'index']);
+Route::get('/grad.php', [GraduateController::class, 'requestForm'])->name('grad.index');
+Route::get('/grad', [GraduateController::class, 'requestForm']);
 Route::get('/grad/request', [GraduateController::class, 'requestForm'])->name('grad.request');
 Route::get('/edoc/register.php', [GraduateController::class, 'requestForm']);
+Route::get('/grad_progress.php', [GraduateController::class, 'index'])->name('grad.progress');
+Route::get('/grad/progress', [GraduateController::class, 'index']);
 Route::post('/grad/request', [GraduateController::class, 'storeRequest'])->name('grad.request.store');
 Route::post('/grad/final-submit', [GraduateController::class, 'finalSubmit'])->name('grad.finalSubmit');
 Route::get('/grad/certificate/{code}', [GraduateController::class, 'certificate'])->name('grad.certificate');

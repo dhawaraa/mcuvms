@@ -57,6 +57,19 @@
                         <div class="text-xs text-[#6B6357]">{{ __('portal.university_name') }}</div>
                     </div>
                 </a>
+
+                <!-- Module 2 Navigation Tabs: ยื่นคำร้อง vs ตรวจประวัติสะสมวัน (Active) -->
+                <div class="hidden sm:flex items-center bg-[#EAE5D9]/80 p-1 rounded-2xl border border-[#D5CEBC]">
+                    <a href="{{ route('grad.request') }}" class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 text-[#4A3B32] hover:text-[#2C3E2D] hover:bg-[#FAF8F2]">
+                        <i data-lucide="file-text" class="w-4 h-4 text-[#5A6B47]"></i>
+                        <span>ยื่นคำร้อง e-Document</span>
+                    </a>
+                    <a href="{{ route('grad.progress') }}" class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-[#5A6B47] text-white shadow-sm">
+                        <i data-lucide="search" class="w-4 h-4"></i>
+                        <span>ตรวจประวัติสะสมวัน</span>
+                    </a>
+                </div>
+
                 <div class="flex items-center space-x-3 sm:space-x-4">
                     @php
                         $currentLang = session('locale', 'th');
@@ -75,6 +88,16 @@
                         <i data-lucide="arrow-left" class="w-4.5 h-4.5 text-[#5A6B47]"></i> <span class="hidden sm:inline">{{ __('portal.nav_back_home') }}</span>
                     </a>
                 </div>
+            </div>
+
+            <!-- Mobile Sub-Navigation -->
+            <div class="flex sm:hidden items-center justify-center pb-3 pt-1 border-t border-[#EAE5D9] gap-2">
+                <a href="{{ route('grad.request') }}" class="flex-1 text-center py-1.5 px-3 rounded-lg text-xs font-bold bg-white text-[#4A3B32] border border-[#D5CEBC]">
+                    ยื่นคำร้อง
+                </a>
+                <a href="{{ route('grad.progress') }}" class="flex-1 text-center py-1.5 px-3 rounded-lg text-xs font-bold bg-[#5A6B47] text-white">
+                    ตรวจประวัติสะสมวัน
+                </a>
             </div>
         </div>
     </nav>
