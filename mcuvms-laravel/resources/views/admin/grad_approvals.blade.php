@@ -429,7 +429,7 @@
 
                             @empty
                                 <tr>
-                                    <td colspan="7" class="text-center py-10 text-[#8C8275]">
+                                    <td colspan="8" class="text-center py-10 text-[#8C8275]">
                                         <i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2 text-[#D5CEBC]"></i>
                                         <div>ไม่พบรายการยื่นขออนุมัติสะสมวันตามเงื่อนไข</div>
                                     </td>
@@ -710,6 +710,7 @@
         </div>
     </div>
 
+    <script>
         function openViewGradModal(data) {
             document.getElementById('view_grad_code').innerText = 'รหัสนิสิต: ' + data.student_code;
             document.getElementById('view_grad_name').innerText = data.full_name;
