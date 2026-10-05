@@ -14,4 +14,9 @@ class PublicRegistration extends Model
     {
         return $this->belongsTo(PublicEvent::class, 'event_id');
     }
+
+    public function organizationUnit()
+    {
+        return $this->belongsTo(OrganizationUnit::class, 'org_unit_id');
+    }
 }

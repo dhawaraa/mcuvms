@@ -234,7 +234,24 @@
                                         <span class="font-mono font-bold text-[#C86D51] text-sm">Q-{{ str_pad($r->queue_no, 3, '0', STR_PAD_LEFT) }}</span>
                                         <div class="text-[10px] text-[#8C8275] font-mono mt-0.5">{{ $r->registration_no ?: '-' }}</div>
                                         @if ($r->applicant_type === 'STUDENT')
-                                            <span class="inline-block mt-1 px-1.5 py-0.5 rounded text-[9px] bg-blue-50 text-blue-700 border border-blue-200">นิสิต มจร: {{ $r->student_id }}</span>
+                                            <div class="mt-1 space-y-0.5">
+                                                <span class="inline-block px-1.5 py-0.5 rounded text-[9px] bg-blue-50 text-blue-700 border border-blue-200 font-mono">นิสิต มจร: {{ $r->student_id ?: '-' }}</span>
+                                                @if ($r->degree_level || $r->faculty || $r->program_name || $r->organizationUnit)
+                                                    <div class="text-[10px] text-[#5A6B47]">
+                                                        {{ $r->degree_level }} {{ $r->faculty ? '• ' . $r->faculty : '' }}
+                                                    </div>
+                                                    @if($r->program_name)
+                                                        <div class="text-[9px] text-[#7B8D65] truncate max-w-[180px]" title="{{ $r->program_name }}">
+                                                            สาขา: {{ $r->program_name }}
+                                                        </div>
+                                                    @endif
+                                                    @if($r->organizationUnit)
+                                                        <div class="text-[9px] text-[#8C8275] truncate max-w-[180px]" title="{{ $r->organizationUnit->name_th }}">
+                                                            {{ $r->organizationUnit->name_th }}
+                                                        </div>
+                                                    @endif
+                                                @endif
+                                            </div>
                                         @endif
                                     </td>
                                     <td class="p-4">

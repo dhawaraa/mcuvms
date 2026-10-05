@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\OrganizationUnit;
 use App\Models\PublicEvent;
 use App\Models\PublicRegistration;
 use Illuminate\Http\Request;
@@ -16,7 +17,11 @@ class CommunityController extends Controller
             ->orderBy('start_date', 'asc')
             ->get();
 
-        return view('portal.public_register', compact('events'));
+        $orgUnits = OrganizationUnit::where('is_active', 1)
+            ->orderBy('id', 'asc')
+            ->get();
+
+        return view('portal.public_register', compact('events', 'orgUnits'));
     }
 
     public function store(Request $request)
@@ -25,6 +30,10 @@ class CommunityController extends Controller
             'event_id' => 'required|integer',
             'applicant_type' => 'nullable|string',
             'student_id' => 'nullable|string|max:30',
+            'degree_level' => 'nullable|string|max:50',
+            'faculty' => 'nullable|string|max:150',
+            'org_unit_id' => 'nullable|integer',
+            'program_name' => 'nullable|string|max:200',
             'citizen_id' => 'required|string|min:8|max:20',
             'prefix' => 'required|string',
             'first_name' => 'required|string',
@@ -71,7 +80,11 @@ class CommunityController extends Controller
                 'registration_no' => $regNo,
                 'event_id' => $event->id,
                 'applicant_type' => $validated['applicant_type'] ?? 'PEOPLE',
-                'student_id' => $validated['student_id'] ?? null,
+                'student_id' => ($validated['applicant_type'] ?? '') === 'STUDENT' ? ($validated['student_id'] ?? null) : null,
+                'degree_level' => ($validated['applicant_type'] ?? '') === 'STUDENT' ? ($validated['degree_level'] ?? null) : null,
+                'faculty' => ($validated['applicant_type'] ?? '') === 'STUDENT' ? ($validated['faculty'] ?? null) : null,
+                'org_unit_id' => ($validated['applicant_type'] ?? '') === 'STUDENT' ? ($validated['org_unit_id'] ?? null) : null,
+                'program_name' => ($validated['applicant_type'] ?? '') === 'STUDENT' ? ($validated['program_name'] ?? null) : null,
                 'citizen_id' => $validated['citizen_id'],
                 'prefix' => $validated['prefix'],
                 'first_name' => $validated['first_name'],
@@ -103,4 +116,29 @@ class CommunityController extends Controller
 
         return back()->with('success', $msg)->with('regSuccess', $regNo);
     }
+
+    public function checkStatus(Request $request)
+    {
+        $search = trim($request->input('search', ''));
+        $registrations = collect();
+
+        if ($search) {
+            // Strip any dashes or spaces for phone comparison (e.g., 0818889999)
+            $cleanDigits = preg_replace('/[^0-9]/', '', $search);
+
+            $registrations = PublicRegistration::with(['event.organizationUnit', 'organizationUnit'])
+                ->where(function ($q) use ($search, $cleanDigits) {
+                    $q->where('registration_no', $search)
+                      ->orWhere('phone', $search);
+                    if ($cleanDigits) {
+                        $q->orWhere(DB::raw("REPLACE(REPLACE(phone, '-', ''), ' ', '')"), $cleanDigits);
+                    }
+                })
+                ->orderBy('registered_at', 'desc')
+                ->get();
+        }
+
+        return view('portal.public_check', compact('search', 'registrations'));
+    }
 }
+

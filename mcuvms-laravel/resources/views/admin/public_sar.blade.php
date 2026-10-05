@@ -352,6 +352,12 @@
                                                 province: @js($r->province ?? '-'),
                                                 dietary: @js($r->dietary_restriction ?? 'ทั่วไป'),
                                                 medical: @js($r->medical_condition ?? '-'),
+                                                applicant_type: @js($r->applicant_type),
+                                                student_id: @js($r->student_id ?? ''),
+                                                degree_level: @js($r->degree_level ?? ''),
+                                                faculty: @js($r->faculty ?? ''),
+                                                program_name: @js($r->program_name ?? ''),
+                                                student_org: @js($r->organizationUnit->name_th ?? ''),
                                                 event_title: @js($r->event->title ?? '-'),
                                                 org_name: @js($r->event->organizationUnit->name_th ?? 'มจร'),
                                                 event_dates: @js(($r->event->start_date ?? '') . ' ถึง ' . ($r->event->end_date ?? '')),
@@ -454,6 +460,20 @@
                         <div><span class="text-[#7B8D65]">จังหวัดที่พำนัก:</span> <span id="view_public_province"></span></div>
                         <div><span class="text-[#7B8D65]">เบอร์โทร:</span> <span id="view_public_phone" class="font-mono"></span></div>
                         <div><span class="text-[#7B8D65]">อีเมล:</span> <span id="view_public_email" class="font-mono"></span></div>
+                    </div>
+                </div>
+
+                <!-- Student Info (MCU) -->
+                <div id="view_student_section" class="hidden border border-blue-200 bg-blue-50/40 rounded-2xl p-4 space-y-2">
+                    <h4 class="font-heading font-bold text-[#2C3E2D] text-xs flex items-center gap-1.5 border-b border-blue-200/60 pb-2">
+                        <i data-lucide="graduation-cap" class="w-3.5 h-3.5 text-blue-600"></i> ข้อมูลนิสิต มจร
+                    </h4>
+                    <div class="grid grid-cols-2 gap-2 text-[#4A3B32]">
+                        <div><span class="text-[#7B8D65]">รหัสนิสิต:</span> <strong id="view_student_code" class="text-blue-800 font-mono"></strong></div>
+                        <div><span class="text-[#7B8D65]">ระดับการศึกษา:</span> <span id="view_student_degree" class="font-medium text-[#2C3E2D]"></span></div>
+                        <div><span class="text-[#7B8D65]">คณะ:</span> <span id="view_student_faculty"></span></div>
+                        <div><span class="text-[#7B8D65]">หลักสูตร/สาขา:</span> <span id="view_student_program"></span></div>
+                        <div class="col-span-2"><span class="text-[#7B8D65]">ส่วนจัดการศึกษา:</span> <span id="view_student_org" class="font-medium text-[#2C3E2D]"></span></div>
                     </div>
                 </div>
 
@@ -585,6 +605,18 @@
             document.getElementById('view_public_dietary').innerText = data.dietary;
             document.getElementById('view_public_medical').innerText = data.medical;
             document.getElementById('view_public_registered_at').innerText = data.registered_at;
+
+            const studentSec = document.getElementById('view_student_section');
+            if (data.applicant_type === 'STUDENT' || data.student_id) {
+                document.getElementById('view_student_code').innerText = data.student_id || '-';
+                document.getElementById('view_student_degree').innerText = data.degree_level || '-';
+                document.getElementById('view_student_faculty').innerText = data.faculty || '-';
+                document.getElementById('view_student_program').innerText = data.program_name || '-';
+                document.getElementById('view_student_org').innerText = data.student_org || '-';
+                studentSec.classList.remove('hidden');
+            } else {
+                studentSec.classList.add('hidden');
+            }
 
             const badge = document.getElementById('view_public_status_badge');
             if (data.status === 'CONFIRMED') {

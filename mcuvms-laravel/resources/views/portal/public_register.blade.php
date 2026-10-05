@@ -79,6 +79,19 @@
                         <div class="text-xs text-[#7B8D65]">{{ __('portal.university_name') }}</div>
                     </div>
                 </a>
+
+                <!-- Module 3 Navigation Tabs: สมัครคอร์ส (Active) vs ตรวจสอบสถานะ -->
+                <div class="hidden sm:flex items-center bg-[#EAE5D9]/80 p-1 rounded-2xl border border-[#D5CEBC]">
+                    <a href="{{ route('public.register') }}" class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-[#5A6B47] text-white shadow-sm">
+                        <i data-lucide="user-plus" class="w-4 h-4"></i>
+                        <span>{{ __('portal.public_tab_register') }}</span>
+                    </a>
+                    <a href="{{ route('public.check') }}" class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 text-[#4A3B32] hover:text-[#2C3E2D] hover:bg-[#FAF8F2]">
+                        <i data-lucide="search" class="w-4 h-4 text-[#5A6B47]"></i>
+                        <span>{{ __('portal.public_tab_check') }}</span>
+                    </a>
+                </div>
+
                 <div class="flex items-center space-x-3 sm:space-x-4">
                     @php
                         $currentLang = session('locale', 'th');
@@ -97,6 +110,16 @@
                         <i data-lucide="arrow-left" class="w-4.5 h-4.5 text-[#5A6B47]"></i> <span class="hidden sm:inline">{{ __('portal.nav_back_home') }}</span>
                     </a>
                 </div>
+            </div>
+
+            <!-- Mobile Sub-Navigation -->
+            <div class="flex sm:hidden items-center justify-center pb-3 pt-1 border-t border-[#EAE5D9] gap-2">
+                <a href="{{ route('public.register') }}" class="flex-1 text-center py-1.5 px-3 rounded-lg text-xs font-bold bg-[#5A6B47] text-white">
+                    {{ __('portal.public_tab_register') }}
+                </a>
+                <a href="{{ route('public.check') }}" class="flex-1 text-center py-1.5 px-3 rounded-lg text-xs font-bold bg-white text-[#4A3B32] border border-[#D5CEBC]">
+                    {{ __('portal.public_tab_check') }}
+                </a>
             </div>
         </div>
     </nav>
@@ -227,11 +250,62 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div id="studentIdContainer" class="hidden md:col-span-3 bg-amber-50/60 p-3.5 rounded-xl border border-amber-200">
-                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">{{ __('portal.public_student_id') }}</label>
-                            <input type="text" name="student_id" id="txt_studentid" placeholder="เช่น 6401201001" class="w-full px-3.5 py-2.5 border border-[#EAE5D9] bg-white rounded-xl text-sm focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
+                    <!-- ข้อมูลการศึกษาใน มจร (กรณีเลือก นิสิต มจร) -->
+                    <div id="studentIdContainer" class="hidden mb-6 bg-[#FAF8F2] p-5 rounded-2xl border border-[#EAE5D9] space-y-4">
+                        <div class="flex items-center gap-2 pb-2.5 border-b border-[#EAE5D9]">
+                            <div class="w-7 h-7 rounded-lg bg-[#5A6B47]/10 text-[#5A6B47] flex items-center justify-center">
+                                <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-heading font-semibold text-sm text-[#2C3E2D]">ข้อมูลการศึกษาใน มจร (MCU Academic Information)</h3>
+                                <p class="text-[11px] text-[#7B8D65]">ระบุสังกัดและระดับการศึกษาปัจจุบันของนิสิต มจร</p>
+                            </div>
                         </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-[#4A3B32] mb-1">{{ __('portal.public_student_id') }} <span class="text-[#C86D51]">*</span></label>
+                                <input type="text" name="student_id" id="txt_studentid" placeholder="เช่น 6401201001" class="w-full px-3.5 py-2.5 border border-[#D5CEBC] bg-white rounded-xl text-sm focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-medium text-[#4A3B32] mb-1">{{ __('portal.public_degree_level') }} <span class="text-[#C86D51]">*</span></label>
+                                <select name="degree_level" id="select_degree_level" class="w-full px-3.5 py-2.5 border border-[#D5CEBC] bg-white rounded-xl text-sm focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
+                                    <option value="">-- เลือกระดับการศึกษา --</option>
+                                    <option value="ปริญญาตรี">{{ __('portal.public_degree_bachelor') }}</option>
+                                    <option value="ปริญญาโท">{{ __('portal.public_degree_master') }}</option>
+                                    <option value="ปริญญาเอก">{{ __('portal.public_degree_doctoral') }}</option>
+                                    <option value="ประกาศนียบัตร">{{ __('portal.public_degree_cert') }}</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-medium text-[#4A3B32] mb-1">{{ __('portal.public_faculty') }} <span class="text-[#C86D51]">*</span></label>
+                                <input type="text" name="faculty" id="txt_faculty" placeholder="เช่น คณะพุทธศาสตร์, คณะครุศาสตร์" class="w-full px-3.5 py-2.5 border border-[#D5CEBC] bg-white rounded-xl text-sm focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-medium text-[#4A3B32] mb-1">{{ __('portal.public_program_name') }} <span class="text-[#C86D51]">*</span></label>
+                                <input type="text" name="program_name" id="txt_program_name" placeholder="เช่น พุทธศาสตรบัณฑิต, การสอนภาษาไทย" class="w-full px-3.5 py-2.5 border border-[#D5CEBC] bg-white rounded-xl text-sm focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-[#4A3B32] mb-1">{{ __('portal.public_org_unit') }} <span class="text-[#C86D51]">*</span></label>
+                            <select name="org_unit_id" id="select_org_unit" class="w-full px-3.5 py-2.5 border border-[#D5CEBC] bg-white rounded-xl text-sm focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
+                                <option value="">-- เลือกส่วนจัดการศึกษาต้นสังกัด (51 ส่วนงาน มจร) --</option>
+                                @if(isset($orgUnits))
+                                    @foreach ($orgUnits as $ou)
+                                        <option value="{{ $ou->id }}">
+                                            {{ $ou->name_th }} {{ !empty($ou->province_th) ? '(' . $ou->province_th . ')' : '' }}
+                                        </option>
+                                    @endforeach
+                                @endif
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
                         <div>
                             <label class="block text-xs font-medium text-[#4A3B32] mb-1">{{ __('portal.public_citizen_id') }} <span class="text-[#C86D51]">*</span></label>
@@ -398,11 +472,26 @@
             <script>
                 function toggleStudentField(val) {
                     const el = document.getElementById('studentIdContainer');
+                    const studentIdInput = document.getElementById('txt_studentid');
+                    const degreeSelect = document.getElementById('select_degree_level');
+                    const facultyInput = document.getElementById('txt_faculty');
+                    const programInput = document.getElementById('txt_program_name');
+                    const orgUnitSelect = document.getElementById('select_org_unit');
+
                     if (val === 'STUDENT') {
                         el.classList.remove('hidden');
+                        if (studentIdInput) studentIdInput.required = true;
+                        if (degreeSelect) degreeSelect.required = true;
+                        if (facultyInput) facultyInput.required = true;
+                        if (programInput) programInput.required = true;
+                        if (orgUnitSelect) orgUnitSelect.required = true;
                     } else {
                         el.classList.add('hidden');
-                        document.getElementById('txt_studentid').value = '';
+                        if (studentIdInput) { studentIdInput.value = ''; studentIdInput.required = false; }
+                        if (degreeSelect) { degreeSelect.value = ''; degreeSelect.required = false; }
+                        if (facultyInput) { facultyInput.value = ''; facultyInput.required = false; }
+                        if (programInput) { programInput.value = ''; programInput.required = false; }
+                        if (orgUnitSelect) { orgUnitSelect.value = ''; orgUnitSelect.required = false; }
                     }
                 }
 

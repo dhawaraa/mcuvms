@@ -2117,7 +2117,7 @@ class AdminController extends Controller
         $admin = Session::get('admin_user');
         $isCentralOrSuper = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
 
-        $query = PublicRegistration::with(['event.organizationUnit'])->orderBy('registered_at', 'desc');
+        $query = PublicRegistration::with(['event.organizationUnit', 'organizationUnit'])->orderBy('registered_at', 'desc');
 
         if (!$isCentralOrSuper && !empty($admin['org_unit_id'])) {
             $query->whereHas('event', function ($q) use ($admin) {
@@ -2199,6 +2199,10 @@ class AdminController extends Controller
                 'เลขที่ลงทะเบียน',
                 'สถานะผู้สมัคร',
                 'รหัสนิสิต (ถ้ามี)',
+                'ระดับการศึกษา',
+                'คณะ',
+                'ส่วนจัดการศึกษา (มจร)',
+                'หลักสูตร/สาขาวิชา',
                 'เลขบัตร ปชช./Passport',
                 'คำนำหน้า',
                 'ชื่อ-นามสกุล',
@@ -2228,6 +2232,10 @@ class AdminController extends Controller
                     $r->registration_no,
                     $r->applicant_type === 'STUDENT' ? 'นิสิต มจร' : 'ประชาชนทั่วไป',
                     $r->student_id ?: '-',
+                    $r->degree_level ?: '-',
+                    $r->faculty ?: '-',
+                    $r->organizationUnit->name_th ?? '-',
+                    $r->program_name ?: '-',
                     "'" . $r->citizen_id,
                     $r->prefix,
                     $r->full_name,
@@ -2282,6 +2290,24 @@ class AdminController extends Controller
         }
 
         $perPage = $this->getPerPage($request);
+        // Action Dispatcher for Shared Hosting Compatibility (via /admin/news.php?action=...)
+        $action = $request->input('action');
+        if ($action === 'store' && $request->isMethod('post')) {
+            return $this->newsStore($request);
+        }
+        if ($action === 'update' && $request->isMethod('post')) {
+            $id = $request->input('id');
+            return $this->newsUpdate($request, $id);
+        }
+        if ($action === 'delete') {
+            $id = $request->input('id');
+            return $this->newsDelete($id);
+        }
+        if ($action === 'toggle_pin') {
+            $id = $request->input('id');
+            return $this->newsTogglePin($id);
+        }
+
         $newsList = $query->orderBy('is_pinned', 'desc')
             ->orderBy('created_at', 'desc')
             ->paginate($perPage)
@@ -2295,6 +2321,15 @@ class AdminController extends Controller
     public function newsStore(Request $request)
     {
         $this->checkAuth();
+
+        // Handle update action sent via POST /admin/news.php?action=update or POST with action=update
+        if ($request->input('action') === 'update') {
+            $updateId = $request->input('id');
+            if ($updateId) {
+                return $this->newsUpdate($request, $updateId);
+            }
+        }
+
         $admin = Session::get('admin_user');
         $isCentralOrSuper = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
 
