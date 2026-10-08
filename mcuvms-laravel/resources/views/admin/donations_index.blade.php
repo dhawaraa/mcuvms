@@ -772,7 +772,7 @@
             <div class="flex items-center justify-between pb-3 mb-4 border-b border-[#EAE5D9]">
                 <div class="text-left">
                     <h4 id="avatarModalTitle" class="font-heading font-bold text-sm text-[#2C3E2D]">ภาพประจำตัวผู้บริจาค</h4>
-                    <p class="text-[11px] text-[#7B8D65]">สำหรับจัดทำโปสเตอร์อนุโมทนาบุญ</p>
+                    <p class="text-[11px] text-[#7B8D65]">สำหรับจัดทำโปสเตอร์</p>
                 </div>
                 <button type="button" onclick="closeAvatarModal()" class="text-[#8C8275] hover:text-[#2C3E2D]">
                     <i data-lucide="x" class="w-5 h-5"></i>
