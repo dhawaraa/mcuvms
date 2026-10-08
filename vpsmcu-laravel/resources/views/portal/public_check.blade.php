@@ -186,7 +186,7 @@
                             <div class="text-[11px] text-[#7B8D65]">{{ __('portal.public_check_profile_name') }}</div>
                             <div class="text-base font-bold text-[#2C3E2D]">{{ $firstReg->full_name }}</div>
                             <div class="text-xs text-[#6B6357] mt-0.5">
-                                {{ $firstReg->applicant_type === 'STUDENT' ? __('portal.public_app_type_student') : __('portal.public_app_type_people') }} 
+                                {{ $firstReg->applicant_type === 'STUDENT' ? __('portal.public_status_student') : __('portal.public_status_people') }} 
                                 &bull; {{ __('portal.public_check_profile_gender') }} {{ $firstReg->gender === 'FEMALE' ? __('portal.public_gender_female') : ($firstReg->gender === 'MALE' ? __('portal.public_gender_male') : '-') }}
                             </div>
                             @if ($firstReg->applicant_type === 'STUDENT')
@@ -215,9 +215,9 @@
 
                         <div class="bg-[#FAF8F2] p-4 rounded-xl border border-[#EAE5D9]">
                             <div class="text-[11px] text-[#7B8D65]">{{ __('portal.public_check_profile_food') }}</div>
-                            <div class="text-sm font-semibold text-[#C86D51]">{{ $firstReg->dietary_restriction ?? __('portal.public_food_normal') }}</div>
+                            <div class="text-sm font-semibold text-[#C86D51]">{{ $firstReg->localized_dietary }}</div>
                             <div class="text-xs text-[#6B6357] mt-0.5">
-                                {{ __('portal.public_check_profile_special') }} {{ $firstReg->congenital_disease ?? __('portal.public_none') }}
+                                {{ __('portal.public_check_profile_special') }} {{ ($firstReg->congenital_disease && $firstReg->congenital_disease !== '-') ? $firstReg->congenital_disease : __('portal.public_none') }}
                             </div>
                         </div>
                     </div>
@@ -319,7 +319,7 @@
                                                 @endif
 
                                                 <!-- Print Slip Button -->
-                                                <button type="button" onclick="openSlipModal('{{ $reg->registration_no }}', '{{ $reg->full_name }}', '{{ $reg->event->title ?? '' }}', '{{ $reg->queue_no }}', '{{ $reg->status }}', '{{ $reg->dietary_restriction }}')" class="bg-[#FAF8F2] hover:bg-[#EAE5D9] text-[#2C3E2D] border border-[#D5CEBC] px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5 shadow-2xs">
+                                                <button type="button" onclick="openSlipModal('{{ $reg->registration_no }}', '{{ $reg->full_name }}', '{{ $reg->event->title ?? '' }}', '{{ $reg->queue_no }}', '{{ $reg->status }}', '{{ $reg->localized_dietary }}')" class="bg-[#FAF8F2] hover:bg-[#EAE5D9] text-[#2C3E2D] border border-[#D5CEBC] px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5 shadow-2xs">
                                                     <i data-lucide="printer" class="w-3.5 h-3.5 text-[#5A6B47]"></i>
                                                     <span>{{ __('portal.public_btn_print_slip') }}</span>
                                                 </button>
