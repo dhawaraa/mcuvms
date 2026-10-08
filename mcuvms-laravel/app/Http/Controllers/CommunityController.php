@@ -134,15 +134,20 @@ class CommunityController extends Controller
         $registrations = collect();
 
         if ($search) {
-            // Strip any dashes or spaces for phone comparison (e.g., 0818889999)
+            // Strip any dashes or spaces for phone or citizen_id comparison (e.g., 0818889999)
             $cleanDigits = preg_replace('/[^0-9]/', '', $search);
 
             $registrations = PublicRegistration::with(['event.organizationUnit', 'organizationUnit'])
                 ->where(function ($q) use ($search, $cleanDigits) {
                     $q->where('registration_no', $search)
-                      ->orWhere('phone', $search);
+                      ->orWhere('phone', $search)
+                      ->orWhere('citizen_id', $search)
+                      ->orWhere('full_name', 'LIKE', '%' . $search . '%')
+                      ->orWhere('first_name', 'LIKE', '%' . $search . '%')
+                      ->orWhere('last_name', 'LIKE', '%' . $search . '%');
                     if ($cleanDigits) {
-                        $q->orWhere(DB::raw("REPLACE(REPLACE(phone, '-', ''), ' ', '')"), $cleanDigits);
+                        $q->orWhere(DB::raw("REPLACE(REPLACE(phone, '-', ''), ' ', '')"), $cleanDigits)
+                          ->orWhere(DB::raw("REPLACE(REPLACE(citizen_id, '-', ''), ' ', '')"), $cleanDigits);
                     }
                 })
                 ->orderBy('registered_at', 'desc')
@@ -154,9 +159,10 @@ class CommunityController extends Controller
         return view('portal.public_check', compact('search', 'registrations', 'orgUnits'));
     }
 
-    public function updateRegistration(Request $request, $id)
+    public function updateRegistration(Request $request, $id = null)
     {
-        $reg = PublicRegistration::findOrFail($id);
+        $targetId = $id ?? $request->input('id');
+        $reg = PublicRegistration::findOrFail($targetId);
 
         // Security check: Only allow editing if status is PENDING or REJECTED
         if (!in_array($reg->status, ['PENDING', 'REJECTED'])) {

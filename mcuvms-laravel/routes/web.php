@@ -41,8 +41,10 @@ Route::get('/public/register', [CommunityController::class, 'create']);
 Route::get('/public_check.php', [CommunityController::class, 'checkStatus'])->name('public.check');
 Route::get('/public/check', [CommunityController::class, 'checkStatus']);
 Route::post('/public/register', [CommunityController::class, 'store'])->name('public.store');
+Route::post('/public_register.php', [CommunityController::class, 'store']);
 Route::post('/public/registration/update/{id}', [CommunityController::class, 'updateRegistration'])->name('public.update');
 Route::post('/public_update.php/{id}', [CommunityController::class, 'updateRegistration']);
+Route::post('/public_check.php', [CommunityController::class, 'updateRegistration']);
 
 // Auth Routes
 Route::get('/login.php', [AdminController::class, 'showLogin'])->name('login');

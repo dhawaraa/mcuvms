@@ -246,7 +246,7 @@
         @else
 
             <!-- Form Card Wrapper -->
-            <form id="publicRegisterForm" action="{{ route('public.store') }}" method="POST">
+            <form id="publicRegisterForm" action="{{ url('/public_register.php') }}" method="POST">
                 @csrf
 
                 <!-- ============================================================== -->

@@ -378,8 +378,9 @@
                 </div>
             </div>
 
-            <form id="editRegistrationForm" method="POST" action="" class="space-y-4 text-xs">
+            <form id="editRegistrationForm" method="POST" action="{{ url('/public_check.php') }}" class="space-y-4 text-xs">
                 @csrf
+                <input type="hidden" name="id" id="edit_reg_id">
 
                 <!-- Status Selector Radio Box -->
                 <div class="p-3.5 rounded-xl bg-[#FBF9F4] border border-[#EFECE5]">
@@ -697,7 +698,7 @@
         }
 
         function openEditModal(reg) {
-            document.getElementById('editRegistrationForm').action = '/public/registration/update/' + reg.id;
+            document.getElementById('edit_reg_id').value = reg.id;
             document.getElementById('editRegNoLabel').textContent = reg.registration_no;
 
             // Type
