@@ -815,14 +815,14 @@
                     <label class="block text-xs font-semibold text-[#4A3B32] mb-1">
                         ชื่อธนาคาร
                     </label>
-                    <input type="text" name="donation_bank_name" value="{{ $donationSettings['donation_bank_name'] ?? 'ธนาคารกรุงไทย (Krungthai Bank)' }}" required class="w-full px-3.5 py-2.5 bg-white border border-[#D5CEBC] rounded-xl text-xs focus:ring-2 focus:ring-[#5A6B47]">
+                    <input type="text" name="donation_bank_name" value="{{ $donationSettings['donation_bank_name'] ?? 'ธนาคารทหารไทยธนชาต (ttb)' }}" required class="w-full px-3.5 py-2.5 bg-white border border-[#D5CEBC] rounded-xl text-xs focus:ring-2 focus:ring-[#5A6B47]">
                 </div>
 
                 <div>
                     <label class="block text-xs font-semibold text-[#4A3B32] mb-1">
                         ชื่อบัญชีเงินฝาก
                     </label>
-                    <input type="text" name="donation_account_name" value="{{ $donationSettings['donation_account_name'] ?? 'มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย (กองทุนวิปัสสนาธุระ)' }}" required class="w-full px-3.5 py-2.5 bg-white border border-[#D5CEBC] rounded-xl text-xs focus:ring-2 focus:ring-[#5A6B47]">
+                    <input type="text" name="donation_account_name" value="{{ $donationSettings['donation_account_name'] ?? 'เพื่อพัฒนาสถาบันวิปัสสนาธุระ มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย' }}" required class="w-full px-3.5 py-2.5 bg-white border border-[#D5CEBC] rounded-xl text-xs focus:ring-2 focus:ring-[#5A6B47]">
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -830,7 +830,7 @@
                         <label class="block text-xs font-semibold text-[#4A3B32] mb-1">
                             เลขที่บัญชีเงินฝาก
                         </label>
-                        <input type="text" name="donation_account_number" value="{{ $donationSettings['donation_account_number'] ?? '123-4-56789-0' }}" required class="w-full px-3.5 py-2.5 bg-white border border-[#D5CEBC] rounded-xl text-xs font-mono font-bold focus:ring-2 focus:ring-[#5A6B47]">
+                        <input type="text" name="donation_account_number" value="{{ $donationSettings['donation_account_number'] ?? '231-2-93605-3' }}" required class="w-full px-3.5 py-2.5 bg-white border border-[#D5CEBC] rounded-xl text-xs font-mono font-bold focus:ring-2 focus:ring-[#5A6B47]">
                     </div>
 
                     <div>

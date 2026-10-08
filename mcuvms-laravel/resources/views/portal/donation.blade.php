@@ -1,8 +1,8 @@
 @php
     $currentRoute = Route::currentRouteName();
-    $bankName = $settings['donation_bank_name'] ?? 'ธนาคารกรุงไทย (Krungthai Bank)';
-    $accName = $settings['donation_account_name'] ?? 'มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย (กองทุนวิปัสสนาธุระ)';
-    $accNum = $settings['donation_account_number'] ?? '123-4-56789-0';
+    $bankName = $settings['donation_bank_name'] ?? 'ธนาคารทหารไทยธนชาต (ttb)';
+    $accName = $settings['donation_account_name'] ?? 'เพื่อพัฒนาสถาบันวิปัสสนาธุระ มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย';
+    $accNum = $settings['donation_account_number'] ?? '231-2-93605-3';
     $promptpay = $settings['donation_promptpay'] ?? '0994000159451';
     $infoNotes = $settings['donation_info_notes'] ?? 'การบริจาคเพื่อสนับสนุนการศึกษาและปฏิบัติวิปัสสนากรรมฐาน สามารถนำไปลดหย่อนภาษีได้ตามที่กฎหมายกำหนด โดยมหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัยจะออกใบเสร็จรับเงิน/ใบอนุโมทนาบัตร และเชื่อมโยงข้อมูลระบบ e-Donation ของกรมสรรพากร';
 @endphp
@@ -339,19 +339,6 @@
                                 </button>
                             </div>
                         </div>
-
-                        @if(!empty($promptpay))
-                            <div class="pt-2 border-t border-[#E3DEC9]">
-                                <div class="text-[11px] text-[#7B8D65] mb-1">{{ __('portal.donation_promptpay_edonation') }}</div>
-                                <div class="flex items-center justify-between bg-white px-3.5 py-2 rounded-xl border border-[#D5CEBC]">
-                                    <span id="promptpay-text" class="font-mono font-bold text-sm text-[#2C3E2D]">{{ $promptpay }}</span>
-                                    <button type="button" onclick="copyToClipboard('promptpay-text', 'copy-badge-2')" class="px-2.5 py-1 text-[11px] bg-[#FAF8F2] hover:bg-[#5A6B47] hover:text-white rounded-lg border border-[#D5CEBC] transition flex items-center gap-1 font-semibold text-[#4A3B32]">
-                                        <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                                        <span id="copy-badge-2">{{ __('portal.donation_copy') }}</span>
-                                    </button>
-                                </div>
-                            </div>
-                        @endif
                     </div>
 
                     <!-- QR Code Payment Card -->
@@ -485,7 +472,6 @@
                                 </label>
                                 <select name="bank_account" required class="w-full px-3.5 py-2.5 bg-white border border-[#EAE5D9] rounded-xl text-xs text-[#2D2A26] focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
                                     <option value="{{ $bankName }} ({{ $accNum }})" selected>{{ $bankName }} ({{ $accNum }})</option>
-                                    <option value="{{ __('portal.donation_promptpay_option') }} ({{ $promptpay }})">{{ __('portal.donation_promptpay_option') }} ({{ $promptpay }})</option>
                                 </select>
                             </div>
                         </div>
