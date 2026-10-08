@@ -798,21 +798,21 @@ class DatabaseSeeder extends Seeder
         $donationSettings = [
             [
                 'setting_key' => 'donation_bank_name',
-                'setting_value' => 'ธนาคารกรุงไทย (Krungthai Bank)',
+                'setting_value' => 'ธนาคารทหารไทยธนชาต (ttb)',
                 'setting_group' => 'donation',
                 'label' => 'ชื่อธนาคาร',
                 'field_type' => 'text',
             ],
             [
                 'setting_key' => 'donation_account_name',
-                'setting_value' => 'มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย (กองทุนวิปัสสนาธุระ)',
+                'setting_value' => 'เพื่อพัฒนาสถาบันวิปัสสนาธุระ มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย',
                 'setting_group' => 'donation',
                 'label' => 'ชื่อบัญชี',
                 'field_type' => 'text',
             ],
             [
                 'setting_key' => 'donation_account_number',
-                'setting_value' => '123-4-56789-0',
+                'setting_value' => '231-2-93605-3',
                 'setting_group' => 'donation',
                 'label' => 'เลขที่บัญชี',
                 'field_type' => 'text',
@@ -822,6 +822,13 @@ class DatabaseSeeder extends Seeder
                 'setting_value' => '0994000159451',
                 'setting_group' => 'donation',
                 'label' => 'พร้อมเพย์ (เลขประจำตัวผู้เสียภาษี มจร)',
+                'field_type' => 'text',
+            ],
+            [
+                'setting_key' => 'donation_qr_image',
+                'setting_value' => 'images/qr-codepayment.jpg',
+                'setting_group' => 'donation',
+                'label' => 'รูปภาพ QR Code รับบริจาค',
                 'field_type' => 'text',
             ],
             [

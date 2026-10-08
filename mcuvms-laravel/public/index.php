@@ -27,8 +27,8 @@ $autoloadPath = __DIR__.'/../vendor/autoload.php';
 if (!file_exists($autoloadPath)) {
     $altPaths = [
         dirname(__DIR__).'/vendor/autoload.php',
-        '/var/task/mcuvms-laravel/vendor/autoload.php',
-        '/var/task/user/mcuvms-laravel/vendor/autoload.php',
+        '/var/task/vpsmcu-laravel/vendor/autoload.php',
+        '/var/task/user/vpsmcu-laravel/vendor/autoload.php',
     ];
     foreach ($altPaths as $alt) {
         if (file_exists($alt)) {

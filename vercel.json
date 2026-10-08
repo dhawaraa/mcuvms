@@ -4,25 +4,25 @@
   "functions": {
     "api/index.php": {
       "runtime": "vercel-php@0.7.3",
-      "includeFiles": "mcuvms-laravel/**"
+      "includeFiles": "vpsmcu-laravel/**"
     }
   },
   "routes": [
     {
       "src": "/assets/(.*)",
-      "dest": "/mcuvms-laravel/public/assets/$1"
+      "dest": "/vpsmcu-laravel/public/assets/$1"
     },
     {
       "src": "/images/(.*)",
-      "dest": "/mcuvms-laravel/public/images/$1"
+      "dest": "/vpsmcu-laravel/public/images/$1"
     },
     {
       "src": "/favicon.ico",
-      "dest": "/mcuvms-laravel/public/favicon.ico"
+      "dest": "/vpsmcu-laravel/public/favicon.ico"
     },
     {
       "src": "/robots.txt",
-      "dest": "/mcuvms-laravel/public/robots.txt"
+      "dest": "/vpsmcu-laravel/public/robots.txt"
     },
     {
       "src": "/(.*)",

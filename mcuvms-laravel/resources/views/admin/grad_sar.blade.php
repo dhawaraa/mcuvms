@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>รายงานสถิติการปฏิบัติวิปัสสนากรรมฐาน บัณฑิตศึกษา - VPSMCU Admin</title>
+    <title>รายงานสถิติการยื่นคำร้อง - VPSMCU Admin</title>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -88,7 +88,7 @@
                         </span>
                     @endif
                 </div>
-                <h1 class="text-2xl font-heading font-bold text-[#2C3E2D]">รายงานสถิติการปฏิบัติธรรม บัณฑิตศึกษา</h1>
+                <h1 class="text-2xl font-heading font-bold text-[#2C3E2D]">รายงานสถิติการยื่นคำร้อง</h1>
                 <p class="text-xs text-[#7B8D65] mt-1 font-medium">สรุปสถิติผลการสะสมวันปฏิบัติวิปัสสนากรรมฐาน คำร้อง e-Document และการอนุมัติใบรับรอง</p>
             </div>
 
@@ -116,8 +116,13 @@
 
                     <select name="degree_level" onchange="this.form.submit()" class="px-3 py-1.5 text-xs bg-[#FAF8F2] border border-[#EAE5D9] rounded-lg text-[#2C3E2D] font-medium focus:ring-1 focus:ring-[#5A6B47]">
                         <option value="">-- ทุกระดับการศึกษา --</option>
-                        <option value="MASTER" {{ request('degree_level') === 'MASTER' ? 'selected' : '' }}>ปริญญาโท (มหาบัณฑิต 30 วัน)</option>
-                        <option value="DOCTORAL" {{ request('degree_level') === 'DOCTORAL' ? 'selected' : '' }}>ปริญญาเอก (ดุษฎีบัณฑิต 45 วัน)</option>
+                        <option value="ประกาศนียบัตร (7 วัน)" {{ request('degree_level') === 'ประกาศนียบัตร (7 วัน)' ? 'selected' : '' }}>ประกาศนียบัตร (7 วัน)</option>
+                        <option value="ประกาศนียบัตร (15 วัน)" {{ request('degree_level') === 'ประกาศนียบัตร (15 วัน)' ? 'selected' : '' }}>ประกาศนียบัตร (15 วัน)</option>
+                        <option value="ประกาศนียบัตร (30 วัน)" {{ request('degree_level') === 'ประกาศนียบัตร (30 วัน)' ? 'selected' : '' }}>ประกาศนียบัตร (30 วัน)</option>
+                        <option value="ประกาศนียบัตร (90วัน)" {{ request('degree_level') === 'ประกาศนียบัตร (90วัน)' ? 'selected' : '' }}>ประกาศนียบัตร (90วัน)</option>
+                        <option value="ปริญญาตรีปีละ (10วัน)" {{ request('degree_level') === 'ปริญญาตรีปีละ (10วัน)' ? 'selected' : '' }}>ปริญญาตรีปีละ (10วัน)</option>
+                        <option value="ปริญญาโท (30 วัน)" {{ request('degree_level') === 'ปริญญาโท (30 วัน)' || request('degree_level') === 'MASTER' ? 'selected' : '' }}>ปริญญาโท (30 วัน)</option>
+                        <option value="ปริญญาเอก (45 วัน)" {{ request('degree_level') === 'ปริญญาเอก (45 วัน)' || request('degree_level') === 'DOCTORAL' ? 'selected' : '' }}>ปริญญาเอก (45 วัน)</option>
                     </select>
 
                     @if ($isCentralOrSuper)

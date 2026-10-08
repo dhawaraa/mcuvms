@@ -13,6 +13,8 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 // Module 1: Undergraduate
 Route::get('/ug_register.php', [UndergraduateController::class, 'create'])->name('ug.register');
 Route::get('/ug/register', [UndergraduateController::class, 'create']);
+Route::get('/ug_check.php', [UndergraduateController::class, 'checkStatus'])->name('ug.check');
+Route::get('/ug/check', [UndergraduateController::class, 'checkStatus']);
 Route::get('/ug/lookup-student', [UndergraduateController::class, 'lookupStudent'])->name('ug.lookupStudent');
 Route::post('/ug/register', [UndergraduateController::class, 'store'])->name('ug.store');
 Route::get('/ug/certificate/{reg_no}', [UndergraduateController::class, 'certificate'])->name('ug.certificate');
@@ -36,7 +38,11 @@ Route::get('/verify.php', [HomeController::class, 'verifyCertificate']);
 // Module 3: Public Community
 Route::get('/public_register.php', [CommunityController::class, 'create'])->name('public.register');
 Route::get('/public/register', [CommunityController::class, 'create']);
+Route::get('/public_check.php', [CommunityController::class, 'checkStatus'])->name('public.check');
+Route::get('/public/check', [CommunityController::class, 'checkStatus']);
 Route::post('/public/register', [CommunityController::class, 'store'])->name('public.store');
+Route::post('/public/registration/update/{id}', [CommunityController::class, 'updateRegistration'])->name('public.update');
+Route::post('/public_update.php/{id}', [CommunityController::class, 'updateRegistration']);
 
 // Auth Routes
 Route::get('/login.php', [AdminController::class, 'showLogin'])->name('login');
@@ -50,7 +56,7 @@ Route::get('/logout', [AdminController::class, 'logout']);
 Route::get('/news.php', [HomeController::class, 'newsIndex'])->name('news.index');
 Route::get('/news', [HomeController::class, 'newsIndex']);
 Route::get('/news_detail.php', [HomeController::class, 'newsDetail'])->name('news.detail');
-Route::get('/news/{id}', [HomeController::class, 'newsDetail']);
+Route::get('/news/{id}', [HomeController::class, 'newsDetail'])->name('news.detail.clean');
 
 // Contact Us Routes (Portal)
 Route::get('/contact.php', [HomeController::class, 'contact'])->name('contact');
@@ -72,12 +78,20 @@ Route::get('/lang/{locale}', function ($locale) {
     return redirect()->back();
 })->name('lang.switch');
 
+Route::get('/lang.php', function (\Illuminate\Http\Request $request) {
+    $locale = $request->query('locale', 'th');
+    if (in_array($locale, ['th', 'en'])) {
+        session(['locale' => $locale]);
+    }
+    return redirect()->back();
+})->name('lang.switch.compat');
+
 // Admin Console Routes
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard.php', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::get('/dashboard', [AdminController::class, 'dashboard']);
     
-    Route::get('/ug_batches.php', [AdminController::class, 'ugBatches'])->name('ug.batches');
+    Route::match(['get', 'post'], '/ug_batches.php', [AdminController::class, 'ugBatches'])->name('ug.batches');
     Route::get('/ug/batches', [AdminController::class, 'ugBatches']);
     Route::post('/ug/batches', [AdminController::class, 'ugBatchStore'])->name('ug.batches.store');
     Route::post('/ug/batches/update/{id}', [AdminController::class, 'ugBatchUpdate'])->name('ug.batches.update');
@@ -90,7 +104,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/ug/import-csv', [AdminController::class, 'ugImportCsv'])->name('ug.import.csv');
     Route::get('/ug/import/template', [AdminController::class, 'ugDownloadTemplate'])->name('ug.import.template');
 
-    Route::get('/ug_students.php', [AdminController::class, 'ugStudents'])->name('ug.students');
+    Route::match(['get', 'post'], '/ug_students.php', [AdminController::class, 'ugStudents'])->name('ug.students');
     Route::get('/ug/students', [AdminController::class, 'ugStudents']);
     Route::post('/ug/students/update/{id}', [AdminController::class, 'ugStudentUpdate'])->name('ug.students.update');
     Route::get('/ug/students/delete/{id}', [AdminController::class, 'ugStudentDelete'])->name('ug.students.delete');
@@ -116,7 +130,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/grad_sar.php', [AdminController::class, 'gradSar'])->name('grad.sar');
     Route::get('/grad/sar', [AdminController::class, 'gradSar']);
-    Route::get('/grad_approvals.php', [AdminController::class, 'gradApprovals'])->name('grad.approvals');
+    Route::match(['get', 'post'], '/grad_approvals.php', [AdminController::class, 'gradApprovals'])->name('grad.approvals');
     Route::get('/grad/approvals', [AdminController::class, 'gradApprovals']);
     Route::post('/grad/approve', [AdminController::class, 'gradApprove'])->name('grad.approve');
     Route::post('/grad/reject', [AdminController::class, 'gradReject'])->name('grad.reject');
@@ -128,20 +142,20 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/grad/export', [AdminController::class, 'gradExportExcel'])->name('grad.export');
 
     // Module 3: Public Community & Meditation Courses
-    Route::get('/public_events.php', [AdminController::class, 'publicEvents'])->name('public.events');
+    Route::match(['get', 'post'], '/public_events.php', [AdminController::class, 'publicEvents'])->name('public.events');
     Route::get('/public/events', [AdminController::class, 'publicEvents']);
     Route::post('/public/events', [AdminController::class, 'publicEventStore'])->name('public.events.store');
     Route::post('/public/events/update/{id}', [AdminController::class, 'publicEventUpdate'])->name('public.events.update');
     Route::get('/public/events/status/{id}/{status}', [AdminController::class, 'publicEventStatus'])->name('public.events.status');
     Route::get('/public/events/delete/{id}', [AdminController::class, 'publicEventDelete'])->name('public.events.delete');
 
-    Route::get('/public_students.php', [AdminController::class, 'publicStudents'])->name('public.students');
+    Route::match(['get', 'post'], '/public_students.php', [AdminController::class, 'publicStudents'])->name('public.students');
     Route::get('/public/students', [AdminController::class, 'publicStudents']);
     Route::get('/public/student/approve/{id}', [AdminController::class, 'publicStudentApprove'])->name('public.student.approve');
     Route::post('/public/student/reject/{id}', [AdminController::class, 'publicStudentReject'])->name('public.student.reject');
     Route::get('/public/export', [AdminController::class, 'publicExport'])->name('public.export');
 
-    Route::get('/public_sar.php', [AdminController::class, 'publicSar'])->name('public.sar');
+    Route::match(['get', 'post'], '/public_sar.php', [AdminController::class, 'publicSar'])->name('public.sar');
     Route::get('/public/sar', [AdminController::class, 'publicSar']);
     Route::post('/public/sar/bulk-action', [AdminController::class, 'publicSarBulkAction'])->name('public.sar.bulk');
     Route::post('/public/sar/update/{id}', [AdminController::class, 'publicSarUpdate'])->name('public.sar.update');
@@ -150,10 +164,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // News Management
     Route::get('/news.php', [AdminController::class, 'newsIndex'])->name('news.index');
     Route::get('/news', [AdminController::class, 'newsIndex']);
+    Route::post('/news.php', [AdminController::class, 'newsStore']);
     Route::post('/news', [AdminController::class, 'newsStore'])->name('news.store');
     Route::post('/news/update/{id}', [AdminController::class, 'newsUpdate'])->name('news.update');
+    Route::post('/news_update.php/{id}', [AdminController::class, 'newsUpdate']);
     Route::get('/news/delete/{id}', [AdminController::class, 'newsDelete'])->name('news.delete');
+    Route::get('/news_delete.php/{id}', [AdminController::class, 'newsDelete']);
     Route::get('/news/toggle-pin/{id}', [AdminController::class, 'newsTogglePin'])->name('news.togglePin');
+    Route::get('/news_pin.php/{id}', [AdminController::class, 'newsTogglePin']);
 
     // Users & Roles Management (Rule Matrix: ผู้ดูแลระบบส่วนกลาง)
     Route::get('/users.php', [AdminController::class, 'usersIndex'])->name('users.index');

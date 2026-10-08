@@ -1,15 +1,15 @@
 <?php
 // Determine task root path
 $rootDir = realpath(__DIR__ . '/..');
-$autoloadPath = $rootDir . '/mcuvms-laravel/vendor/autoload.php';
+$autoloadPath = $rootDir . '/vpsmcu-laravel/vendor/autoload.php';
 
 if (!file_exists($autoloadPath)) {
     // Check possible alternative paths in Vercel lambda
     $candidates = [
-        __DIR__ . '/../mcuvms-laravel/vendor/autoload.php',
-        dirname(__DIR__) . '/mcuvms-laravel/vendor/autoload.php',
-        '/var/task/mcuvms-laravel/vendor/autoload.php',
-        '/var/task/user/mcuvms-laravel/vendor/autoload.php',
+        __DIR__ . '/../vpsmcu-laravel/vendor/autoload.php',
+        dirname(__DIR__) . '/vpsmcu-laravel/vendor/autoload.php',
+        '/var/task/vpsmcu-laravel/vendor/autoload.php',
+        '/var/task/user/vpsmcu-laravel/vendor/autoload.php',
     ];
     $found = false;
     foreach ($candidates as $cand) {
@@ -29,14 +29,14 @@ if (!file_exists($autoloadPath)) {
         print_r(scandir(__DIR__));
         echo "Directory listing of parent:\n";
         print_r(scandir(__DIR__ . '/..'));
-        if (file_exists(__DIR__ . '/../mcuvms-laravel')) {
-            echo "Directory listing of mcuvms-laravel:\n";
-            print_r(scandir(__DIR__ . '/../mcuvms-laravel'));
+        if (file_exists(__DIR__ . '/../vpsmcu-laravel')) {
+            echo "Directory listing of vpsmcu-laravel:\n";
+            print_r(scandir(__DIR__ . '/../vpsmcu-laravel'));
         }
         exit;
     }
 }
 
 // Forward to public/index.php
-require __DIR__ . '/../mcuvms-laravel/public/index.php';
+require __DIR__ . '/../vpsmcu-laravel/public/index.php';
 

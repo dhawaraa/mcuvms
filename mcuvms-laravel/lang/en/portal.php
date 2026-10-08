@@ -3,6 +3,9 @@
 return [
     // Navbar & Common Header
     'nav_calendar' => 'Calendar',
+    'nav_verify_days' => 'Verify Days',
+    'nav_request_cert' => 'Submit Request',
+    'nav_database' => 'Database',
     'nav_all_schedules' => 'All Schedules',
     'nav_all_schedules_desc' => 'Undergraduate & Public Courses',
     'nav_ug_schedules' => 'Undergraduate Schedule',
@@ -15,14 +18,28 @@ return [
     'nav_news' => 'News',
     'nav_contact' => 'Contact',
     'nav_donation' => 'Donate',
-    'nav_admin_login' => 'Officer Login',
+    'nav_admin_login' => 'Staff Login',
     'nav_admin_panel' => 'Admin Panel',
     'nav_login' => 'Staff Login',
     'nav_back_home' => 'Back to Home',
 
+    // Action Cards (Hero 4 Cards)
+    'card_register_title' => 'Register for Retreat',
+    'card_register_desc' => 'Enroll in meditation retreats',
+    'card_register_btn' => 'Register',
+    'card_database_title' => 'Student Database',
+    'card_database_desc' => 'Check student profiles & records',
+    'card_database_btn' => 'Database System',
+    'card_verify_days_title' => 'Verify Day Count',
+    'card_verify_days_desc' => 'Check meditation credit history',
+    'card_verify_days_btn' => 'Check Credits',
+    'card_request_cert_title' => 'Request Certificate',
+    'card_request_cert_desc' => 'Apply for meditation certificates',
+    'card_request_cert_btn' => 'Submit Request',
+
     // System Branding & Top Announcement
     'system_title' => 'Vipassana Meditation Information System',
-    'system_subtitle' => 'MCU Vipassana Coordination Center, Mahachulalongkornrajavidyalaya University',
+    'system_subtitle' => 'Vipassana Meditation Institute, Mahachulalongkornrajavidyalaya University',
     'university_name' => 'Mahachulalongkornrajavidyalaya University',
     'mcu_short' => 'MCU',
     'top_announcement' => 'Mahachulalongkornrajavidyalaya University — Vipassana Meditation Information System (VPSMCU)',
@@ -32,7 +49,8 @@ return [
 
     // Hero Section
     'hero_title_1' => 'Information System for',
-    'hero_title_2' => 'MCU Vipassana Meditation',
+    'hero_title_2' => 'Vipassana Meditation',
+    'hero_subtitle' => 'Vipassana Meditation Institute, Mahachulalongkornrajavidyalaya University',
     'hero_desc' => 'Cultivating peace, mindfulness, and Buddhist wisdom. Integrated registration and meditation day tracking for Undergraduate, Graduate students, and the General Public.',
 
     // 3 Main Modules (Index)
@@ -82,6 +100,7 @@ return [
     // News Section (Index & Index Page)
     'news_badge' => 'Announcements & News',
     'news_title' => 'News & Announcements',
+    'news_sub' => 'Follow latest updates, activities, and announcements',
     'news_view_all' => 'View All News',
     'news_read_more' => 'Read More',
     'news_views' => 'views',
@@ -331,6 +350,14 @@ return [
     'public_food_jay' => 'Jay (Strict Vegan)',
     'public_food_halal' => 'Halal / Muslim',
     'public_special_needs' => 'Special Needs / Health Limitations (Optional)',
+    'public_step1_label' => 'Review Courses',
+    'public_step2_label' => 'Applicant Info',
+    'public_step3_label' => 'Rules & Confirm',
+    'public_step1_badge' => 'Step 1 of 3',
+    'public_step2_badge' => 'Step 2 of 3',
+    'public_step3_badge' => 'Step 3 of 3',
+    'public_btn_next' => 'Next',
+    'public_btn_prev' => 'Back',
     'public_btn_submit' => 'Confirm Registration',
     'public_btn_cancel' => 'Cancel',
 
@@ -407,6 +434,9 @@ return [
     'donation_acc_name' => 'Account Name',
     'donation_acc_num' => 'Account Number',
     'donation_copy' => 'Copy',
+    'donation_qr_title' => 'Scan QR Code to Donate',
+    'donation_qr_desc' => 'Supports all Mobile Banking apps in Thailand. Quick and accurate.',
+    'donation_qr_save' => 'View Full QR / Save Image',
     'donation_promptpay_edonation' => 'PromptPay e-Donation (Tax ID)',
     'donation_tax_info_title' => 'Tax Deduction Details',
     'donation_recent_donors' => 'Recent Verified Donors',
@@ -433,6 +463,9 @@ return [
     'donation_slip_upload_label' => 'Upload Payment Slip / Receipt',
     'donation_slip_select_file' => 'Click to select slip file or drag here',
     'donation_slip_ready' => 'Ready',
+    'donation_avatar_label' => 'Donor Photo / Avatar (for Merit Announcement Poster)',
+    'donation_avatar_hint' => 'Upload personal photo, family portrait, or organization logo for the congratulatory merit poster (Optional)',
+    'donation_avatar_select_file' => 'Click to select photo or drag here (JPG, PNG)',
     'donation_address_label' => 'Mailing Address for Receipt (Optional)',
     'donation_address_placeholder' => 'House / Street / City / Postal code...',
     'donation_note_label' => 'Dedication Note / Prayer',

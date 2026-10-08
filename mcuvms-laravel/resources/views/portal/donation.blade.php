@@ -266,26 +266,28 @@
                     </div>
 
                     <!-- Bank Details Box -->
-                    <div class="bg-gradient-to-br from-[#FAF8F2] to-[#F2EFE7] rounded-2xl p-4 border border-[#E3DEC9] mb-4 space-y-3">
+                    <div class="bg-gradient-to-br from-[#FAF8F2] to-[#F2EFE7] rounded-2xl p-4 border border-[#E3DEC9] mb-5 space-y-3.5">
                         <div>
                             <div class="text-[11px] text-[#7B8D65]">{{ __('portal.donation_bank_receiver') }}</div>
-                            <div class="font-semibold text-sm text-[#2C3E2D] flex items-center gap-2">
-                                <i data-lucide="landmark" class="w-4 h-4 text-[#5A6B47]"></i>
+                            <div class="font-bold text-sm text-[#2C3E2D] flex items-center gap-2 mt-0.5">
+                                <div class="w-7 h-7 rounded-lg bg-[#2C3E2D]/10 text-[#2C3E2D] flex items-center justify-center shrink-0">
+                                    <i data-lucide="landmark" class="w-4 h-4 text-[#5A6B47]"></i>
+                                </div>
                                 <span>{{ $bankName }}</span>
                             </div>
                         </div>
 
                         <div>
                             <div class="text-[11px] text-[#7B8D65]">{{ __('portal.donation_acc_name') }}</div>
-                            <div class="font-bold text-xs text-[#2C3E2D] leading-relaxed">
+                            <div class="font-bold text-xs md:text-sm text-[#2C3E2D] leading-relaxed mt-0.5">
                                 {{ $accName }}
                             </div>
                         </div>
 
                         <div class="pt-2 border-t border-[#E3DEC9]">
-                            <div class="text-[11px] text-[#7B8D65] mb-1">{{ __('portal.donation_acc_num') }}</div>
-                            <div class="flex items-center justify-between bg-white px-3.5 py-2.5 rounded-xl border border-[#D5CEBC]">
-                                <span id="bank-acc-text" class="font-mono font-extrabold text-base md:text-lg text-[#C86D51] tracking-wider">{{ $accNum }}</span>
+                            <div class="text-[11px] text-[#7B8D65] mb-1.5">{{ __('portal.donation_acc_num') }}</div>
+                            <div class="flex items-center justify-between bg-white px-3.5 py-2.5 rounded-xl border border-[#D5CEBC] shadow-xs">
+                                <span id="bank-acc-text" class="font-mono font-extrabold text-lg md:text-xl text-[#C86D51] tracking-wider">{{ $accNum }}</span>
                                 <button type="button" onclick="copyToClipboard('bank-acc-text', 'copy-badge-1')" class="px-2.5 py-1 text-[11px] bg-[#FAF8F2] hover:bg-[#5A6B47] hover:text-white rounded-lg border border-[#D5CEBC] transition flex items-center gap-1 font-semibold text-[#4A3B32]">
                                     <i data-lucide="copy" class="w-3.5 h-3.5"></i>
                                     <span id="copy-badge-1">{{ __('portal.donation_copy') }}</span>
@@ -305,6 +307,28 @@
                                 </div>
                             </div>
                         @endif
+                    </div>
+
+                    <!-- QR Code Payment Card -->
+                    <div class="bg-white rounded-2xl p-5 border border-[#D5CEBC] shadow-sm mb-5 text-center">
+                        <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-[#5A6B47]/10 text-[#5A6B47] rounded-full text-xs font-semibold mb-2">
+                            <i data-lucide="qr-code" class="w-3.5 h-3.5"></i>
+                            <span>{{ __('portal.donation_qr_title') }}</span>
+                        </div>
+                        <p class="text-[11px] text-[#7B8D65] mb-4">
+                            {{ __('portal.donation_qr_desc') }}
+                        </p>
+                        
+                        <div class="relative inline-block mx-auto p-3 bg-white rounded-2xl border-2 border-[#5A6B47]/20 shadow-sm group">
+                            <img src="{{ asset('images/qr-codepayment.jpg') }}" alt="QR Code Payment" class="w-56 h-auto max-w-full rounded-xl mx-auto object-contain transition duration-200 group-hover:scale-[1.02]">
+                        </div>
+
+                        <div class="mt-4 flex flex-wrap justify-center gap-2">
+                            <a href="{{ asset('images/qr-codepayment.jpg') }}" target="_blank" download="VPSMCU-QR-Payment.jpg" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#FAF8F2] hover:bg-[#5A6B47] hover:text-white text-[#4A3B32] text-xs font-semibold rounded-xl border border-[#D5CEBC] transition">
+                                <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                                <span>{{ __('portal.donation_qr_save') }}</span>
+                            </a>
+                        </div>
                     </div>
 
                     <!-- Tax Deduction Information -->
@@ -370,30 +394,32 @@
                     <form action="{{ route('donation.submit') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
                         @csrf
 
-                        <!-- 1. ชื่อผู้บริจาค -->
-                        <div>
-                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1.5">
-                                {{ __('portal.donation_donor_name') }} <span class="text-[#C86D51]">*</span>
-                            </label>
-                            <input type="text" name="donor_name" value="{{ old('donor_name') }}" required placeholder="{{ __('portal.donation_donor_name') }}" class="w-full px-3.5 py-2.5 bg-white border border-[#EAE5D9] rounded-xl text-xs text-[#2D2A26] focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
+                        <!-- 1. ชื่อผู้บริจาค และ เลขประจำตัวผู้เสียภาษี -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-[#4A3B32] mb-1.5">
+                                    {{ __('portal.donation_donor_name') }} <span class="text-[#C86D51]">*</span>
+                                </label>
+                                <input type="text" name="donor_name" value="{{ old('donor_name') }}" required placeholder="{{ __('portal.donation_donor_name') }}" class="w-full px-3.5 py-2.5 bg-white border border-[#EAE5D9] rounded-xl text-xs text-[#2D2A26] focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-[#4A3B32] mb-1.5">
+                                    {{ __('portal.donation_tax_id_label') }}
+                                </label>
+                                <input type="text" id="tax_id" name="tax_id" value="{{ old('tax_id') }}" maxlength="20" placeholder="เลข 13 หลัก / เลขประจำตัวผู้เสียภาษี" class="w-full px-3.5 py-2.5 bg-white border border-[#EAE5D9] rounded-xl text-xs font-mono text-[#2D2A26] focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
+                            </div>
                         </div>
 
-                        <!-- 2. เช็คบ็อกซ์ ลดหย่อนภาษี & เลขประจำตัวผู้เสียภาษี -->
-                        <div class="p-4 rounded-2xl bg-[#FAF8F2] border border-[#EAE5D9] space-y-3">
+                        <!-- 2. เช็คบ็อกซ์ ลดหย่อนภาษี e-Donation -->
+                        <div class="p-3.5 rounded-2xl bg-[#FAF8F2] border border-[#EAE5D9] flex items-center justify-between">
                             <div class="flex items-center">
-                                <input type="checkbox" id="is_tax_deductible" name="is_tax_deductible" value="1" {{ old('is_tax_deductible') ? 'checked' : '' }} onchange="toggleTaxIdField(this)" class="w-4 h-4 text-[#5A6B47] border-[#D5CEBC] rounded focus:ring-[#5A6B47]">
+                                <input type="checkbox" id="is_tax_deductible" name="is_tax_deductible" value="1" {{ old('is_tax_deductible', '1') ? 'checked' : '' }} onchange="toggleTaxIdHighlight(this)" class="w-4 h-4 text-[#5A6B47] border-[#D5CEBC] rounded focus:ring-[#5A6B47]">
                                 <label for="is_tax_deductible" class="ml-2.5 text-xs font-semibold text-[#2C3E2D] cursor-pointer">
                                     {{ __('portal.donation_tax_check') }}
                                 </label>
                             </div>
-
-                            <div id="tax-id-container" class="{{ old('is_tax_deductible') ? '' : 'hidden' }} pt-2 border-t border-[#EAE5D9]">
-                                <label class="block text-xs font-semibold text-[#4A3B32] mb-1.5">
-                                    {{ __('portal.donation_tax_id_label') }} <span class="text-[#C86D51]">*</span>
-                                </label>
-                                <input type="text" id="tax_id" name="tax_id" value="{{ old('tax_id') }}" maxlength="20" placeholder="{{ __('portal.donation_tax_id_label') }}" class="w-full px-3.5 py-2.5 bg-white border border-[#EAE5D9] rounded-xl text-xs text-[#2D2A26] focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47]">
-                                <p class="text-[11px] text-[#7B8D65] mt-1">{{ __('portal.donation_tax_id_hint') }}</p>
-                            </div>
+                            <span class="text-[10px] text-[#7B8D65] font-mono font-bold hidden sm:inline-block bg-white px-2 py-0.5 rounded-md border border-[#EAE5D9]">e-Donation 100%</span>
                         </div>
 
                         <!-- 3. จำนวนเงินบริจาค และ บัญชีปลายทาง -->
@@ -436,29 +462,61 @@
                             </div>
                         </div>
 
-                        <!-- 5. แนบสลิปหลักฐานการโอนเงิน -->
-                        <div>
-                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1.5">
-                                {{ __('portal.donation_slip_upload_label') }} <span class="text-[#C86D51]">*</span>
-                            </label>
-                            <div class="border-2 border-dashed border-[#D5CEBC] hover:border-[#5A6B47] rounded-2xl p-4 transition bg-white/60 text-center">
-                                <input type="file" name="slip" id="slip-file" required accept="image/jpeg,image/png,image/jpg,application/pdf" onchange="previewSlip(event)" class="hidden">
-                                <label for="slip-file" class="cursor-pointer flex flex-col items-center justify-center space-y-2">
-                                    <div class="w-12 h-12 rounded-xl bg-[#5A6B47]/10 text-[#5A6B47] flex items-center justify-center">
-                                        <i data-lucide="upload-cloud" class="w-6 h-6"></i>
-                                    </div>
-                                    <span class="text-xs font-semibold text-[#2C3E2D]" id="slip-file-label">{{ __('portal.donation_slip_select_file') }}</span>
-                                    <span class="text-[10px] text-[#7B8D65]">JPG, PNG, PDF (Max 10MB)</span>
+                        <!-- 5. แนบหลักฐาน: สลิปโอนเงิน และ ภาพประจำตัวผู้บริจาคสำหรับทำโปสเตอร์ -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- 5.1 แนบสลิปโอนเงิน (บังคับ) -->
+                            <div>
+                                <label class="block text-xs font-semibold text-[#4A3B32] mb-1.5">
+                                    {{ __('portal.donation_slip_upload_label') }} <span class="text-[#C86D51]">*</span>
                                 </label>
+                                <div class="border-2 border-dashed border-[#D5CEBC] hover:border-[#5A6B47] rounded-2xl p-3.5 transition bg-white/60 text-center h-32 flex flex-col items-center justify-center">
+                                    <input type="file" name="slip" id="slip-file" required accept="image/jpeg,image/png,image/jpg,application/pdf" onchange="previewSlip(event)" class="hidden">
+                                    <label for="slip-file" class="cursor-pointer flex flex-col items-center justify-center space-y-1.5 w-full">
+                                        <div class="w-9 h-9 rounded-xl bg-[#5A6B47]/10 text-[#5A6B47] flex items-center justify-center">
+                                            <i data-lucide="receipt" class="w-5 h-5"></i>
+                                        </div>
+                                        <span class="text-xs font-semibold text-[#2C3E2D] truncate max-w-[200px]" id="slip-file-label">{{ __('portal.donation_slip_select_file') }}</span>
+                                        <span class="text-[10px] text-[#7B8D65]">JPG, PNG, PDF (Max 10MB)</span>
+                                    </label>
+                                </div>
+                                <!-- Slip Preview -->
+                                <div id="slip-preview-box" class="hidden mt-2 p-2 bg-white rounded-xl border border-[#EAE5D9] flex items-center gap-2.5">
+                                    <img id="slip-img-preview" src="#" alt="Slip Preview" class="w-12 h-12 object-cover rounded-lg border border-[#D5CEBC]">
+                                    <div class="text-[11px] truncate">
+                                        <div id="slip-filename" class="font-semibold text-[#2C3E2D] truncate"></div>
+                                        <div class="text-[10px] text-[#5A6B47] flex items-center gap-1">
+                                            <i data-lucide="check" class="w-3 h-3"></i>
+                                            <span>{{ __('portal.donation_slip_ready') }}</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <!-- Image Preview Area -->
-                            <div id="slip-preview-box" class="hidden mt-3 p-3 bg-white rounded-xl border border-[#EAE5D9] flex items-center gap-3">
-                                <img id="slip-img-preview" src="#" alt="Slip Preview" class="w-16 h-16 object-cover rounded-lg border border-[#D5CEBC]">
-                                <div class="text-xs">
-                                    <div id="slip-filename" class="font-semibold text-[#2C3E2D]"></div>
-                                    <div class="text-[10px] text-[#5A6B47] flex items-center gap-1 mt-0.5">
-                                        <i data-lucide="check" class="w-3.5 h-3.5"></i>
-                                        <span>{{ __('portal.donation_slip_ready') }}</span>
+
+                            <!-- 5.2 อัปโหลดภาพประจำตัวสำหรับทำโปสเตอร์อนุโมทนาบุญ (ไม่บังคับ) -->
+                            <div>
+                                <label class="block text-xs font-semibold text-[#4A3B32] mb-1.5 flex items-center justify-between">
+                                    <span>{{ __('portal.donation_avatar_label') }}</span>
+                                    <span class="text-[10px] text-[#7B8D65] font-normal">ทางเลือก</span>
+                                </label>
+                                <div class="border-2 border-dashed border-[#D5CEBC] hover:border-[#C86D51] rounded-2xl p-3.5 transition bg-white/60 text-center h-32 flex flex-col items-center justify-center">
+                                    <input type="file" name="avatar" id="avatar-file" accept="image/jpeg,image/png,image/jpg,image/webp" onchange="previewAvatar(event)" class="hidden">
+                                    <label for="avatar-file" class="cursor-pointer flex flex-col items-center justify-center space-y-1.5 w-full">
+                                        <div class="w-9 h-9 rounded-xl bg-[#C86D51]/10 text-[#C86D51] flex items-center justify-center">
+                                            <i data-lucide="image" class="w-5 h-5"></i>
+                                        </div>
+                                        <span class="text-xs font-semibold text-[#2C3E2D] truncate max-w-[200px]" id="avatar-file-label">{{ __('portal.donation_avatar_select_file') }}</span>
+                                        <span class="text-[10px] text-[#7B8D65]">ภาพถ่ายเดี่ยว/ครอบครัว/โลโก้ (Max 10MB)</span>
+                                    </label>
+                                </div>
+                                <!-- Avatar Preview -->
+                                <div id="avatar-preview-box" class="hidden mt-2 p-2 bg-white rounded-xl border border-[#EAE5D9] flex items-center gap-2.5">
+                                    <img id="avatar-img-preview" src="#" alt="Avatar Preview" class="w-12 h-12 object-cover rounded-full border-2 border-[#5A6B47]/30">
+                                    <div class="text-[11px] truncate">
+                                        <div id="avatar-filename" class="font-semibold text-[#2C3E2D] truncate"></div>
+                                        <div class="text-[10px] text-[#5A6B47] flex items-center gap-1">
+                                            <i data-lucide="sparkles" class="w-3 h-3 text-[#C86D51]"></i>
+                                            <span>ภาพสำหรับทำโปสเตอร์พร้อมแล้ว</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -562,16 +620,12 @@
     </footer>
 
     <script>
-        function toggleTaxIdField(checkbox) {
-            const container = document.getElementById('tax-id-container');
+        function toggleTaxIdHighlight(checkbox) {
             const taxInput = document.getElementById('tax_id');
             if (checkbox.checked) {
-                container.classList.remove('hidden');
-                taxInput.required = true;
-                taxInput.focus();
+                taxInput.placeholder = "ระบุเลข 13 หลักเพื่อบันทึก e-Donation";
             } else {
-                container.classList.add('hidden');
-                taxInput.required = false;
+                taxInput.placeholder = "เลข 13 หลัก (ไม่บังคับ)";
             }
         }
 
@@ -597,6 +651,29 @@
                 } else {
                     previewBox.classList.remove('hidden');
                     imgPreview.src = '/images/mcu-logo.png';
+                }
+            }
+        }
+
+        function previewAvatar(event) {
+            const input = event.target;
+            const label = document.getElementById('avatar-file-label');
+            const previewBox = document.getElementById('avatar-preview-box');
+            const imgPreview = document.getElementById('avatar-img-preview');
+            const filenameText = document.getElementById('avatar-filename');
+
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                label.textContent = file.name;
+                filenameText.textContent = file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
+                
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imgPreview.src = e.target.result;
+                        previewBox.classList.remove('hidden');
+                    }
+                    reader.readAsDataURL(file);
                 }
             }
         }

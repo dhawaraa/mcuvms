@@ -239,7 +239,7 @@
                                 <td class="p-4 text-right space-x-1.5 whitespace-nowrap">
                                     <!-- 1. Toggle Active (วางไว้หน้าสุด) -->
                                     @if ($u->id !== session('admin_user.id'))
-                                        <a href="{{ route('admin.users.toggleStatus', ['id' => $u->id]) }}" 
+                                        <a href="{{ url('/admin/users.php?action=toggle_status&id=' . $u->id) }}" 
                                             onclick="return confirm('ยืนยันการเปลี่ยนแปลงสถานะใช้งานของผู้ใช้ท่านนี้?')"
                                             title="{{ $u->is_active ? 'กดเพื่อระงับการใช้งาน' : 'กดเพื่อเปิดใช้งาน' }}" 
                                             class="p-1.5 bg-[#FAF8F2] hover:bg-[#EAE5D9] text-[#4A3B32] rounded-lg border border-[#EAE5D9] transition inline-flex items-center">
@@ -249,20 +249,20 @@
 
                                     <!-- 2. Edit User Button -->
                                     <button type="button" onclick="openEditUserModal({
-                                        id: {{ $u->id }},
-                                        username: @js($u->username),
-                                        full_name: @js($u->full_name),
-                                        email: @js($u->email ?? ''),
-                                        role: @js($u->role),
-                                        org_unit_id: {{ $u->org_unit_id ?? 1 }},
-                                        is_active: {{ $u->is_active ? 1 : 0 }}
-                                    })" title="แก้ไขข้อมูลผู้ใช้" class="p-1.5 bg-[#FAF8F2] hover:bg-[#5A6B47]/15 text-[#5A6B47] rounded-lg border border-[#EAE5D9] transition inline-flex items-center">
-                                        <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
-                                    </button>
+                                         id: {{ $u->id }},
+                                         username: @js($u->username),
+                                         full_name: @js($u->full_name),
+                                         email: @js($u->email ?? ''),
+                                         role: @js($u->role),
+                                         org_unit_id: {{ $u->org_unit_id ?? 1 }},
+                                         is_active: {{ $u->is_active ? 1 : 0 }}
+                                     })" title="แก้ไขข้อมูลผู้ใช้" class="p-1.5 bg-[#FAF8F2] hover:bg-[#5A6B47]/15 text-[#5A6B47] rounded-lg border border-[#EAE5D9] transition inline-flex items-center">
+                                         <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                                     </button>
 
                                     <!-- 3. Delete User -->
                                     @if ($u->id !== session('admin_user.id') && session('admin_user.role') === 'SUPER_ADMIN')
-                                        <a href="{{ route('admin.users.delete', ['id' => $u->id]) }}" 
+                                        <a href="{{ url('/admin/users.php?action=delete&id=' . $u->id) }}" 
                                             onclick="return confirm('ยืนยันลบบัญชีผู้ใช้งานนี้ถาวรหรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้')" 
                                             title="ลบบัญชีผู้ใช้" 
                                             class="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg border border-red-200 transition inline-flex items-center">
@@ -305,8 +305,9 @@
                 </button>
             </div>
             
-            <form action="{{ route('admin.users.store') }}" method="POST" class="p-6 space-y-4">
+            <form action="{{ url('/admin/users.php') }}" method="POST" class="p-6 space-y-4">
                 @csrf
+                <input type="hidden" name="action" value="store">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-semibold text-[#4A3B32] mb-1">
@@ -384,8 +385,10 @@
                 </button>
             </div>
             
-            <form id="editUserForm" method="POST" class="p-6 space-y-4">
+            <form id="editUserForm" method="POST" action="{{ url('/admin/users.php') }}" class="p-6 space-y-4">
                 @csrf
+                <input type="hidden" name="action" value="update">
+                <input type="hidden" name="id" id="edit_user_id">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-semibold text-[#4A3B32] mb-1">
@@ -466,7 +469,8 @@
         }
 
         function openEditUserModal(user) {
-            document.getElementById('editUserForm').action = '/admin/users/update/' + user.id;
+            document.getElementById('editUserForm').action = "{{ url('/admin/users.php') }}";
+            document.getElementById('edit_user_id').value = user.id;
             document.getElementById('edit_username').value = user.username;
             document.getElementById('edit_full_name').value = user.full_name;
             document.getElementById('edit_email').value = user.email || '';

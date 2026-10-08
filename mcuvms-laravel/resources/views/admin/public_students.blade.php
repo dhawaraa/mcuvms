@@ -162,7 +162,7 @@
 
         <!-- Participants Table with Bulk Actions -->
         <div class="earth-admin-card overflow-hidden">
-            <form id="bulk-form" method="POST" action="{{ route('admin.public.sar.bulk') }}">
+            <form id="bulk-form" method="POST" action="{{ url('/admin/public_students.php') }}">
                 @csrf
                 <div class="p-5 border-b border-[#EAE5D9] flex flex-wrap justify-between items-center gap-4 bg-[#FAF8F2]/60">
                     <h2 class="font-heading font-bold text-[#2C3E2D] flex items-center gap-2 text-sm">
@@ -344,7 +344,7 @@
                                         <div class="flex items-center justify-end gap-1.5">
                                             <!-- ปุ่มอนุมัติสิทธิ์ -->
                                             @if ($r->status !== 'CONFIRMED' && $r->status !== 'ATTENDED')
-                                                <a href="{{ route('admin.public.student.approve', $r->id) }}" onclick="return confirm('ยืนยันอนุมัติสิทธิ์การเข้าร่วมอบรมของ {{ $r->full_name }}?')" title="อนุมัติสิทธิ์เข้าร่วม (Approve)" class="p-1.5 text-[#5A6B47] hover:bg-[#5A6B47]/15 rounded-lg border border-[#5A6B47]/30 transition">
+                                                <a href="{{ url('/admin/public_students.php?action=approve&id=' . $r->id) }}" onclick="return confirm('ยืนยันอนุมัติสิทธิ์การเข้าร่วมอบรมของ {{ addslashes($r->full_name) }}?')" title="อนุมัติสิทธิ์เข้าร่วม (Approve)" class="p-1.5 text-[#5A6B47] hover:bg-[#5A6B47]/15 rounded-lg border border-[#5A6B47]/30 transition">
                                                     <i data-lucide="check" class="w-4 h-4"></i>
                                                 </a>
                                             @endif
@@ -357,7 +357,7 @@
                                             @endif
 
                                             <!-- ปุ่มลบข้อมูล -->
-                                            <a href="{{ route('admin.public.sar.delete', $r->id) }}" onclick="return confirm('ยืนยันลบข้อมูลผู้สมัครท่านนี้หรือไม่?')" title="ลบข้อมูล" class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition">
+                                            <a href="{{ url('/admin/public_students.php?action=delete&id=' . $r->id) }}" onclick="return confirm('ยืนยันลบข้อมูลผู้สมัครท่านนี้หรือไม่?')" title="ลบข้อมูล" class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition">
                                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                                             </a>
                                         </div>
@@ -400,8 +400,9 @@
                 </button>
             </div>
 
-            <form id="reject-form" method="POST" action="" class="space-y-4 text-xs">
+            <form id="reject-form" method="POST" action="{{ url('/admin/public_students.php?action=reject') }}" class="space-y-4 text-xs">
                 @csrf
+                <input type="hidden" name="id" id="reject-applicant-id" value="">
                 <div>
                     <p class="text-[#4A3B32] mb-2">ผู้สมัคร: <strong id="reject-applicant-name" class="text-[#2C3E2D]"></strong></p>
                     <label class="block font-semibold text-[#4A3B32] mb-1">ระบุเหตุผลในการไม่อนุมัติ <span class="text-[#C86D51]">*</span></label>
@@ -466,7 +467,7 @@
 
         function openRejectModal(id, name) {
             document.getElementById('reject-applicant-name').innerText = name;
-            document.getElementById('reject-form').action = '/admin/public/student/reject/' + id;
+            document.getElementById('reject-applicant-id').value = id;
             document.getElementById('reject-reason-select').value = 'คุณสมบัติหรือข้อมูลไม่ผ่านเกณฑ์การอบรม';
             document.getElementById('custom-reason-input').classList.add('hidden');
             document.getElementById('reject-modal').classList.remove('hidden');

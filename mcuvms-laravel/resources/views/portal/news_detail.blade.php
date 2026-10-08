@@ -185,10 +185,10 @@
                         </span>
                     </div>
 
-                    <!-- Cover Image -->
+                    <!-- Cover Image (แสดงภาพเต็ม ไม่ตัด/ไม่บีบ) -->
                     @if ($news->cover_image)
-                        <div class="rounded-2xl overflow-hidden mb-8 border border-[#E3DEC9] shadow-sm max-h-[450px]">
-                            <img src="{{ $news->cover_image }}" alt="{{ $news->localized_title }}" class="w-full h-full object-cover">
+                        <div class="rounded-2xl overflow-hidden mb-8 border border-[#E3DEC9] shadow-sm bg-[#FAF8F2] flex items-center justify-center">
+                            <img src="{{ $news->cover_image }}" alt="{{ $news->localized_title }}" class="w-full max-h-[600px] object-contain rounded-2xl cursor-pointer hover:opacity-95 transition" onclick="openPhotoModal('{{ $news->cover_image }}')">
                         </div>
                     @endif
 
@@ -196,6 +196,37 @@
                     <div class="prose max-w-none text-[#4A3B32] text-sm sm:text-base leading-relaxed space-y-4">
                         {!! $news->localized_content !!}
                     </div>
+
+                    <!-- Photo Gallery (คลังภาพกิจกรรม) -->
+                    @if (!empty($news->gallery_images) && count($news->gallery_images) > 0)
+                        <div class="mt-10 pt-8 border-t border-[#EAE5D9]">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-heading font-bold text-lg sm:text-xl text-[#2C3E2D] flex items-center gap-2">
+                                    <i data-lucide="images" class="w-5 h-5 text-[#5A6B47]"></i>
+                                    <span>{{ app()->getLocale() === 'en' ? 'Photo Gallery' : 'คลังภาพกิจกรรม / ภาพประกอบข่าว' }}</span>
+                                </h3>
+                                <span class="text-xs bg-[#FAF8F2] border border-[#D5CEBC] text-[#7B8D65] px-3 py-1 rounded-full font-mono font-semibold">
+                                    {{ count($news->gallery_images) }} {{ app()->getLocale() === 'en' ? 'Photos' : 'ภาพ' }}
+                                </span>
+                            </div>
+                            <p class="text-xs text-[#8C8275] mb-4">
+                                {{ app()->getLocale() === 'en' ? 'Click on any image to view full-size photo.' : 'คลิกที่รูปภาพเพื่อเปิดดูภาพขนาดเต็ม (แสดงภาพเต็ม ไม่ตัดสัดส่วน)' }}
+                            </p>
+
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+                                @foreach ($news->gallery_images as $index => $gImg)
+                                    <div class="group relative rounded-2xl overflow-hidden border border-[#EAE5D9] bg-[#FAF8F2] shadow-xs hover:shadow-md transition cursor-pointer flex items-center justify-center p-1.5" onclick="openPhotoModal('{{ $gImg }}')">
+                                        <img src="{{ $gImg }}" alt="Gallery Image {{ $index + 1 }}" class="w-full max-h-56 object-contain rounded-xl group-hover:scale-105 transition duration-300">
+                                        <div class="absolute inset-0 bg-[#2C3E2D]/20 opacity-0 group-hover:opacity-100 transition rounded-2xl flex items-center justify-center">
+                                            <span class="p-2 rounded-full bg-white/90 text-[#2C3E2D] shadow-sm">
+                                                <i data-lucide="zoom-in" class="w-4 h-4"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
 
                     <!-- Share / Actions -->
                     <div class="mt-10 pt-6 border-t border-[#EAE5D9] flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -312,8 +343,34 @@
         </div>
     </footer>
 
+    <!-- Lightbox Modal for Full Image View -->
+    <div id="photo-modal" class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4" onclick="closePhotoModal()">
+        <div class="relative max-w-5xl max-h-[90vh] flex flex-col items-center" onclick="event.stopPropagation()">
+            <button onclick="closePhotoModal()" class="absolute -top-12 right-0 sm:-right-8 p-2 rounded-full bg-white/20 hover:bg-white/40 text-white transition">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <img id="photo-modal-img" src="" alt="Full view" class="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl">
+        </div>
+    </div>
+
     <script>
         lucide.createIcons();
+
+        function openPhotoModal(imgSrc) {
+            const modal = document.getElementById('photo-modal');
+            const modalImg = document.getElementById('photo-modal-img');
+            modalImg.src = imgSrc;
+            modal.classList.remove('hidden');
+        }
+
+        function closePhotoModal() {
+            const modal = document.getElementById('photo-modal');
+            modal.classList.add('hidden');
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closePhotoModal();
+        });
     </script>
 </body>
 </html>

@@ -12,7 +12,7 @@ class UndergraduateController extends Controller
 {
     public function create()
     {
-        $orgs = OrganizationUnit::where('is_active', 1)->orderBy('id', 'asc')->get();
+        $orgs = OrganizationUnit::orderedForSelect()->get();
         $batches = UgBatch::with('organizationUnit')->where('status', 'OPEN')->orderBy('start_date', 'desc')->get();
 
         return view('portal.ug_register', compact('orgs', 'batches'));
@@ -149,6 +149,29 @@ class UndergraduateController extends Controller
 
         return back()->with('success', 'ส่งคำขอลงทะเบียนสำเร็จเรียบร้อยแล้ว! ข้อมูลของท่านอยู่ระหว่างรอเจ้าหน้าที่ส่วนงานตรวจสอบและอนุมัติสิทธิ์')
                      ->with('regSuccess', $reg_no);
+    }
+
+    public function checkStatus(Request $request)
+    {
+        $search = trim($request->input('search', ''));
+        $registrations = collect();
+        $student = null;
+
+        if ($search) {
+            $student = UgMasterStudent::with('organizationUnit')
+                ->where('student_code', $search)
+                ->orWhere('citizen_id', $search)
+                ->first();
+
+            $registrations = UgRegistration::with(['batch.organizationUnit', 'organizationUnit'])
+                ->where('student_code', $search)
+                ->orWhere('citizen_id', $search)
+                ->orWhere('registration_no', $search)
+                ->orderBy('created_at', 'desc')
+                ->get();
+        }
+
+        return view('portal.ug_check', compact('search', 'student', 'registrations'));
     }
 
     public function certificate($reg_no)

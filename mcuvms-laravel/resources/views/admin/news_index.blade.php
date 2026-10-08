@@ -194,7 +194,7 @@
                         @forelse ($newsList as $item)
                             <tr class="hover:bg-[#FAF8F2]/80 transition {{ $item->is_pinned ? 'bg-[#5A6B47]/5' : '' }}">
                                 <td class="p-4 text-center align-middle">
-                                    <a href="{{ route('admin.news.togglePin', $item->id) }}" title="{{ $item->is_pinned ? 'คลิกเพื่อยกเลิกการปักหมุด' : 'คลิกเพื่อปักหมุดไว้บนสุด' }}" class="inline-flex items-center justify-center p-1 rounded-lg hover:bg-white/80 transition transform hover:scale-110">
+                                    <a href="{{ url('/admin/news.php?action=toggle_pin&id=' . $item->id) }}" title="{{ $item->is_pinned ? 'คลิกเพื่อยกเลิกการปักหมุด' : 'คลิกเพื่อปักหมุดไว้บนสุด' }}" class="inline-flex items-center justify-center p-1 rounded-lg hover:bg-white/80 transition transform hover:scale-110">
                                         @if($item->is_pinned)
                                             <i data-lucide="pin" class="w-4 h-4 text-[#C86D51] fill-[#C86D51]"></i>
                                         @else
@@ -204,11 +204,16 @@
                                 </td>
                                 <td class="p-4 text-center align-middle">
                                     @if ($item->cover_image)
-                                        <div class="w-12 h-12 rounded-xl overflow-hidden border border-[#D5CEBC] shadow-xs mx-auto shrink-0 bg-[#FAF8F2]">
-                                            <img src="{{ $item->cover_image }}" alt="{{ $item->title }}" class="w-full h-full object-cover aspect-square">
+                                        <div class="w-14 h-14 rounded-xl overflow-hidden border border-[#D5CEBC] shadow-xs mx-auto shrink-0 bg-[#FAF8F2] flex items-center justify-center p-0.5 relative group">
+                                            <img src="{{ $item->cover_image }}" alt="{{ $item->title }}" class="max-w-full max-h-full object-contain">
+                                            @if (!empty($item->gallery_images) && count($item->gallery_images) > 0)
+                                                <span class="absolute bottom-0 right-0 bg-[#5A6B47] text-white text-[9px] font-bold px-1 rounded-tl-md font-mono" title="มีภาพในคลัง {{ count($item->gallery_images) }} ภาพ">
+                                                    +{{ count($item->gallery_images) }}
+                                                </span>
+                                            @endif
                                         </div>
                                     @else
-                                        <div class="w-12 h-12 rounded-xl border border-dashed border-[#D5CEBC] bg-[#FAF8F2] flex items-center justify-center mx-auto text-[#8C8275]">
+                                        <div class="w-14 h-14 rounded-xl border border-dashed border-[#D5CEBC] bg-[#FAF8F2] flex items-center justify-center mx-auto text-[#8C8275]">
                                             <i data-lucide="image" class="w-5 h-5 text-[#D5CEBC]"></i>
                                         </div>
                                     @endif
@@ -263,7 +268,7 @@
                                     <button onclick="editNews({{ json_encode($item) }})" class="p-1.5 bg-[#FAF8F2] hover:bg-[#5A6B47]/15 text-[#5A6B47] rounded-lg border border-[#EAE5D9] transition inline-flex items-center" title="แก้ไขข่าว">
                                         <i data-lucide="edit-3" class="w-4 h-4"></i>
                                     </button>
-                                    <a href="{{ route('admin.news.delete', $item->id) }}" onclick="return confirm('ยืนยันที่จะลบข่าวสารนี้หรือไม่?')" class="p-1.5 bg-[#FAF8F2] hover:bg-[#C86D51]/15 text-[#C86D51] rounded-lg border border-[#EAE5D9] transition inline-flex items-center" title="ลบข่าว">
+                                    <a href="{{ url('/admin/news.php?action=delete&id=' . $item->id) }}" onclick="return confirm('ยืนยันที่จะลบข่าวสารนี้หรือไม่?')" class="p-1.5 bg-[#FAF8F2] hover:bg-[#C86D51]/15 text-[#C86D51] rounded-lg border border-[#EAE5D9] transition inline-flex items-center" title="ลบข่าว">
                                         <i data-lucide="trash-2" class="w-4 h-4"></i>
                                     </a>
                                 </td>
@@ -303,7 +308,7 @@
                 </button>
             </div>
 
-            <form action="{{ route('admin.news.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4 text-xs">
+            <form action="{{ url('/admin/news.php') }}" method="POST" enctype="multipart/form-data" class="space-y-4 text-xs">
                 @csrf
                 <div>
                     <label class="block font-semibold text-[#4A3B32] mb-1">หัวข้อข่าวประชาสัมพันธ์ <span class="text-red-500">*</span></label>
@@ -333,45 +338,71 @@
 
                 @if ($isCentralOrSuper)
                     <div>
-                        <label class="block font-semibold text-[#4A3B32] mb-1">ส่วนงานเจ้าของข่าว (52 ส่วนงาน)</label>
+                        <label class="block font-semibold text-[#4A3B32] mb-1">ส่วนงานเจ้าของข่าว</label>
                         <select name="org_unit_id" class="w-full px-3.5 py-2.5 bg-[#FAF8F2] border border-[#D5CEBC] rounded-xl text-xs focus:ring-2 focus:ring-[#5A6B47]">
-                            <option value="">-- ส่วนกลาง (สถาบันวิปัสสนาธุระ / มจร ส่วนกลาง) --</option>
                             @foreach ($orgUnits as $org)
-                                <option value="{{ $org->id }}">{{ $org->name_th }}</option>
+                                <option value="{{ $org->id }}" {{ $loop->first ? 'selected' : '' }}>{{ $org->name_th }}</option>
                             @endforeach
+                            <option value="">-- ไม่ระบุ (ส่วนกลางทั่วไป) --</option>
                         </select>
                     </div>
                 @endif
 
-                <!-- Image Upload (1:1 Ratio) -->
+                <!-- Image Upload (Full Display) -->
                 <div class="p-4 bg-[#FAF8F2] rounded-2xl border border-[#EAE5D9] space-y-3">
                     <label class="block font-semibold text-[#2C3E2D]">
-                        รูปภาพหน้าปกข่าว (แนะนำอัตราส่วน 1:1 สี่เหลี่ยมจัตุรัส)
+                        รูปภาพหน้าปกข่าว (แสดงภาพเต็ม ไม่ตัดสัดส่วน)
                     </label>
 
                     <div class="flex flex-col sm:flex-row items-center gap-4">
-                        <!-- Preview Box 1:1 -->
-                        <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl border-2 border-dashed border-[#D5CEBC] bg-white flex flex-col items-center justify-center overflow-hidden shrink-0 relative group">
-                            <img id="add-cover-preview" src="" alt="พรีวิวรูปภาพ 1:1" class="w-full h-full object-cover hidden aspect-square">
+                        <!-- Preview Box (Full Contain) -->
+                        <div class="w-28 h-28 rounded-2xl border-2 border-dashed border-[#D5CEBC] bg-white flex flex-col items-center justify-center overflow-hidden shrink-0 relative p-1">
+                            <img id="add-cover-preview" src="" alt="พรีวิวรูปภาพหน้าปก" class="max-w-full max-h-full object-contain hidden rounded-lg">
                             <div id="add-cover-placeholder" class="text-center p-2 text-[#8C8275]">
                                 <i data-lucide="image" class="w-6 h-6 mx-auto mb-1 text-[#D5CEBC]"></i>
-                                <span class="text-[10px] block font-mono">1:1</span>
+                                <span class="text-[10px] block font-mono">ภาพเต็ม</span>
                             </div>
                         </div>
 
                         <div class="flex-grow space-y-2 w-full">
                             <div>
                                 <label class="block text-[11px] font-medium text-[#4A3B32] mb-1 flex items-center gap-1.5">
-                                    <i data-lucide="upload" class="w-3.5 h-3.5 text-[#5A6B47]"></i> อัปโหลดรูปภาพจากอุปกรณ์ (JPG, PNG, WebP ขนาดไม่เกิน 5MB)
+                                    <i data-lucide="upload" class="w-3.5 h-3.5 text-[#5A6B47]"></i> อัปโหลดรูปหน้าปก (JPG, PNG, WebP ขนาดไม่เกิน 5MB)
                                 </label>
                                 <input type="file" name="cover_file" id="add_cover_file" accept="image/jpeg,image/png,image/jpg,image/webp,image/gif" onchange="previewImage(this, 'add-cover-preview', 'add-cover-placeholder')" class="w-full text-xs text-[#6B6357] file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#5A6B47] file:text-white hover:file:bg-[#2C3E2D] file:cursor-pointer cursor-pointer">
                             </div>
 
                             <div>
-                                <label class="block text-[11px] font-medium text-[#8C8275] mb-0.5">หรือระบุ URL รูปภาพโดยตรง</label>
-                                <input type="url" name="cover_image" id="add_cover_image" placeholder="https://example.com/cover.jpg" oninput="previewUrl(this.value, 'add-cover-preview', 'add-cover-placeholder')" class="w-full px-3 py-1.5 bg-white border border-[#D5CEBC] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                                <label class="block text-[11px] font-medium text-[#8C8275] mb-0.5">หรือระบุ URL / Path รูปภาพโดยตรง (ไม่บังคับ)</label>
+                                <input type="text" name="cover_image" id="add_cover_image" placeholder="https://example.com/cover.jpg หรือเว้นว่างไว้" oninput="previewUrl(this.value, 'add-cover-preview', 'add-cover-placeholder')" class="w-full px-3 py-1.5 bg-white border border-[#D5CEBC] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Gallery Upload (คลังภาพกิจกรรม) -->
+                <div class="p-4 bg-[#FAF8F2] rounded-2xl border border-[#EAE5D9] space-y-3">
+                    <div class="flex items-center justify-between">
+                        <label class="block font-semibold text-[#2C3E2D] flex items-center gap-1.5">
+                            <i data-lucide="images" class="w-4 h-4 text-[#5A6B47]"></i>
+                            <span>คลังภาพกิจกรรม / ภาพประกอบข่าว (Gallery)</span>
+                        </label>
+                        <span class="text-[10px] bg-white px-2 py-0.5 rounded-full border border-[#D5CEBC] text-[#7B8D65]">แสดงภาพเต็ม</span>
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-medium text-[#4A3B32] mb-1 flex items-center gap-1.5">
+                            <i data-lucide="upload-cloud" class="w-3.5 h-3.5 text-[#5A6B47]"></i> อัปโหลดรูปภาพหลายไฟล์พร้อมกัน (เลือกได้หลายรูป)
+                        </label>
+                        <input type="file" name="gallery_files[]" multiple accept="image/jpeg,image/png,image/jpg,image/webp,image/gif" onchange="previewMultipleImages(this, 'add-gallery-preview-box')" class="w-full text-xs text-[#6B6357] file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#5A6B47] file:text-white hover:file:bg-[#2C3E2D] file:cursor-pointer cursor-pointer">
+                    </div>
+
+                    <!-- Multiple Preview Grid -->
+                    <div id="add-gallery-preview-box" class="grid grid-cols-4 sm:grid-cols-6 gap-2 hidden pt-2"></div>
+
+                    <div>
+                        <label class="block text-[11px] font-medium text-[#8C8275] mb-0.5">หรือระบุ URL รูปภาพคลังภาพ (แยก 1 บรรทัดต่อ 1 รูปภาพ)</label>
+                        <textarea name="gallery_urls" rows="2" placeholder="https://example.com/photo1.jpg&#10;https://example.com/photo2.jpg" class="w-full px-3 py-1.5 bg-white border border-[#D5CEBC] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47] font-mono"></textarea>
                     </div>
                 </div>
 
@@ -412,6 +443,8 @@
 
             <form id="edit-news-form" method="POST" enctype="multipart/form-data" class="space-y-4 text-xs">
                 @csrf
+                <input type="hidden" name="action" value="update">
+                <input type="hidden" id="edit_id" name="id" value="">
                 <div>
                     <label class="block font-semibold text-[#4A3B32] mb-1">หัวข้อข่าวประชาสัมพันธ์ <span class="text-red-500">*</span></label>
                     <input type="text" id="edit_title" name="title" required class="w-full px-3.5 py-2.5 bg-[#FAF8F2] border border-[#D5CEBC] rounded-xl text-xs focus:ring-2 focus:ring-[#5A6B47]">
@@ -440,29 +473,29 @@
 
                 @if ($isCentralOrSuper)
                     <div>
-                        <label class="block font-semibold text-[#4A3B32] mb-1">ส่วนงานเจ้าของข่าว (52 ส่วนงาน)</label>
+                        <label class="block font-semibold text-[#4A3B32] mb-1">ส่วนงานเจ้าของข่าว</label>
                         <select id="edit_org_unit_id" name="org_unit_id" class="w-full px-3.5 py-2.5 bg-[#FAF8F2] border border-[#D5CEBC] rounded-xl text-xs focus:ring-2 focus:ring-[#5A6B47]">
-                            <option value="">-- ส่วนกลาง (สถาบันวิปัสสนาธุระ / มจร ส่วนกลาง) --</option>
                             @foreach ($orgUnits as $org)
                                 <option value="{{ $org->id }}">{{ $org->name_th }}</option>
                             @endforeach
+                            <option value="">-- ไม่ระบุ (ส่วนกลางทั่วไป) --</option>
                         </select>
                     </div>
                 @endif
 
-                <!-- Image Upload (1:1 Ratio) for Edit -->
+                <!-- Image Upload (Full Display) for Edit -->
                 <div class="p-4 bg-[#FAF8F2] rounded-2xl border border-[#EAE5D9] space-y-3">
                     <label class="block font-semibold text-[#2C3E2D]">
-                        รูปภาพหน้าปกข่าว (แนะนำอัตราส่วน 1:1 สี่เหลี่ยมจัตุรัส)
+                        รูปภาพหน้าปกข่าว (แสดงภาพเต็ม ไม่ตัดสัดส่วน)
                     </label>
 
                     <div class="flex flex-col sm:flex-row items-center gap-4">
-                        <!-- Preview Box 1:1 -->
-                        <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl border-2 border-dashed border-[#D5CEBC] bg-white flex flex-col items-center justify-center overflow-hidden shrink-0 relative group">
-                            <img id="edit-cover-preview" src="" alt="พรีวิวรูปภาพ 1:1" class="w-full h-full object-cover hidden aspect-square">
+                        <!-- Preview Box (Full Contain) -->
+                        <div class="w-28 h-28 rounded-2xl border-2 border-dashed border-[#D5CEBC] bg-white flex flex-col items-center justify-center overflow-hidden shrink-0 relative p-1">
+                            <img id="edit-cover-preview" src="" alt="พรีวิวรูปภาพหน้าปก" class="max-w-full max-h-full object-contain hidden rounded-lg">
                             <div id="edit-cover-placeholder" class="text-center p-2 text-[#8C8275]">
                                 <i data-lucide="image" class="w-6 h-6 mx-auto mb-1 text-[#D5CEBC]"></i>
-                                <span class="text-[10px] block font-mono">1:1</span>
+                                <span class="text-[10px] block font-mono">ภาพเต็ม</span>
                             </div>
                         </div>
 
@@ -475,10 +508,45 @@
                             </div>
 
                             <div>
-                                <label class="block text-[11px] font-medium text-[#8C8275] mb-0.5">หรือระบุ URL รูปภาพโดยตรง</label>
-                                <input type="url" id="edit_cover_image" name="cover_image" placeholder="https://example.com/cover.jpg" oninput="previewUrl(this.value, 'edit-cover-preview', 'edit-cover-placeholder')" class="w-full px-3 py-1.5 bg-white border border-[#D5CEBC] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                                <div class="flex items-center justify-between mb-0.5">
+                                    <label class="block text-[11px] font-medium text-[#8C8275]">หรือระบุ URL / Path รูปภาพโดยตรง (ไม่บังคับ)</label>
+                                    <button type="button" onclick="clearEditCover()" class="text-[10px] text-red-600 hover:underline">ลบรูปหน้าปกออก</button>
+                                </div>
+                                <input type="text" id="edit_cover_image" name="cover_image" placeholder="https://example.com/cover.jpg หรือเว้นว่างไว้" oninput="previewUrl(this.value, 'edit-cover-preview', 'edit-cover-placeholder')" class="w-full px-3 py-1.5 bg-white border border-[#D5CEBC] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Gallery Management for Edit (คลังภาพกิจกรรม) -->
+                <div class="p-4 bg-[#FAF8F2] rounded-2xl border border-[#EAE5D9] space-y-3">
+                    <div class="flex items-center justify-between">
+                        <label class="block font-semibold text-[#2C3E2D] flex items-center gap-1.5">
+                            <i data-lucide="images" class="w-4 h-4 text-[#5A6B47]"></i>
+                            <span>คลังภาพกิจกรรม / ภาพประกอบข่าว (Gallery)</span>
+                        </label>
+                        <span class="text-[10px] bg-white px-2 py-0.5 rounded-full border border-[#D5CEBC] text-[#7B8D65]">แสดงภาพเต็ม</span>
+                    </div>
+
+                    <!-- Existing Gallery Images Container -->
+                    <div id="edit-existing-gallery-container" class="space-y-1.5 hidden">
+                        <span class="text-[11px] font-medium text-[#4A3B32] block">ภาพที่มีอยู่ในคลังปัจจุบัน (คลิกไอคอนถังขยะเพื่อลบออก):</span>
+                        <div id="edit-existing-gallery-grid" class="grid grid-cols-3 sm:grid-cols-4 gap-2 pt-1"></div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-medium text-[#4A3B32] mb-1 flex items-center gap-1.5">
+                            <i data-lucide="upload-cloud" class="w-3.5 h-3.5 text-[#5A6B47]"></i> เพิ่มรูปภาพใหม่เข้าคลังภาพ (เลือกได้หลายรูป)
+                        </label>
+                        <input type="file" name="gallery_files[]" multiple accept="image/jpeg,image/png,image/jpg,image/webp,image/gif" onchange="previewMultipleImages(this, 'edit-gallery-preview-box')" class="w-full text-xs text-[#6B6357] file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#5A6B47] file:text-white hover:file:bg-[#2C3E2D] file:cursor-pointer cursor-pointer">
+                    </div>
+
+                    <!-- Multiple Preview Grid for new files -->
+                    <div id="edit-gallery-preview-box" class="grid grid-cols-4 sm:grid-cols-6 gap-2 hidden pt-2"></div>
+
+                    <div>
+                        <label class="block text-[11px] font-medium text-[#8C8275] mb-0.5">หรือเพิ่ม URL รูปภาพคลังภาพ (แยก 1 บรรทัดต่อ 1 รูปภาพ)</label>
+                        <textarea name="gallery_urls" rows="2" placeholder="https://example.com/photo3.jpg" class="w-full px-3 py-1.5 bg-white border border-[#D5CEBC] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47] font-mono"></textarea>
                     </div>
                 </div>
 
@@ -535,9 +603,38 @@
             }
         }
 
+        function clearEditCover() {
+            document.getElementById('edit_cover_image').value = '';
+            const fileInput = document.getElementById('edit_cover_file');
+            if (fileInput) fileInput.value = '';
+            previewUrl('', 'edit-cover-preview', 'edit-cover-placeholder');
+        }
+
+        function previewMultipleImages(input, boxId) {
+            const box = document.getElementById(boxId);
+            box.innerHTML = '';
+            if (input.files && input.files.length > 0) {
+                box.classList.remove('hidden');
+                Array.from(input.files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const div = document.createElement('div');
+                        div.className = 'h-16 rounded-xl border border-[#D5CEBC] bg-white overflow-hidden p-1 flex items-center justify-center';
+                        div.innerHTML = `<img src="${e.target.result}" class="max-w-full max-h-full object-contain rounded-lg">`;
+                        box.appendChild(div);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            } else {
+                box.classList.add('hidden');
+            }
+        }
+
         function editNews(item) {
             const form = document.getElementById('edit-news-form');
-            form.action = `/admin/news/update/${item.id}`;
+            form.action = `/admin/news.php?action=update&id=${item.id}`;
+            const editIdInput = document.getElementById('edit_id');
+            if (editIdInput) editIdInput.value = item.id;
 
             document.getElementById('edit_title').value = item.title || '';
             document.getElementById('edit_category').value = item.category || 'GENERAL';
@@ -546,12 +643,46 @@
             document.getElementById('edit_content').value = item.content ? item.content.replace(/<[^>]*>?/gm, '') : '';
             document.getElementById('edit_is_pinned').checked = item.is_pinned == 1;
 
-            // Clear file input
+            // Clear file inputs & previews
             const fileInput = document.getElementById('edit_cover_file');
             if (fileInput) fileInput.value = '';
+            const gPreviewBox = document.getElementById('edit-gallery-preview-box');
+            if (gPreviewBox) {
+                gPreviewBox.innerHTML = '';
+                gPreviewBox.classList.add('hidden');
+            }
 
-            // Update preview
+            // Update cover preview
             previewUrl(item.cover_image, 'edit-cover-preview', 'edit-cover-placeholder');
+
+            // Populate existing gallery images
+            const existingContainer = document.getElementById('edit-existing-gallery-container');
+            const existingGrid = document.getElementById('edit-existing-gallery-grid');
+            existingGrid.innerHTML = '';
+
+            let gallery = item.gallery_images;
+            if (typeof gallery === 'string') {
+                try { gallery = JSON.parse(gallery); } catch(e) { gallery = []; }
+            }
+
+            if (gallery && Array.isArray(gallery) && gallery.length > 0) {
+                existingContainer.classList.remove('hidden');
+                gallery.forEach(imgUrl => {
+                    const div = document.createElement('div');
+                    div.className = 'relative group rounded-xl border border-[#D5CEBC] bg-white p-1 flex items-center justify-center h-20';
+                    div.innerHTML = `
+                        <input type="hidden" name="existing_gallery[]" value="${imgUrl}">
+                        <img src="${imgUrl}" class="max-w-full max-h-full object-contain rounded-lg">
+                        <button type="button" onclick="this.parentElement.remove()" title="ลบภาพนี้ออกจากคลัง" class="absolute top-1 right-1 p-1 bg-red-600 text-white rounded-md shadow-xs opacity-80 hover:opacity-100 transition">
+                            <i data-lucide="trash-2" class="w-3 h-3"></i>
+                        </button>
+                    `;
+                    existingGrid.appendChild(div);
+                });
+                lucide.createIcons();
+            } else {
+                existingContainer.classList.add('hidden');
+            }
 
             const orgSelect = document.getElementById('edit_org_unit_id');
             if (orgSelect) {

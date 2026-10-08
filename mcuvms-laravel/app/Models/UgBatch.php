@@ -35,4 +35,12 @@ class UgBatch extends Model
         }
         return $this->location;
     }
+
+    public function getCoverImageAttribute($value)
+    {
+        if (!empty($value) && str_starts_with($value, '/storage/')) {
+            return '/storage.php/' . substr($value, 9);
+        }
+        return $value;
+    }
 }

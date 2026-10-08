@@ -238,7 +238,7 @@
 
         <!-- Participants Table with Bulk Actions -->
         <div class="earth-admin-card overflow-hidden">
-            <form id="bulk-form" method="POST" action="{{ route('admin.public.sar.bulk') }}">
+            <form id="bulk-form" method="POST" action="{{ url('/admin/public_sar.php') }}">
                 @csrf
                 <div class="p-5 border-b border-[#EAE5D9] flex flex-wrap justify-between items-center gap-4 bg-[#FAF8F2]/60">
                     <h2 class="font-heading font-bold text-[#2C3E2D] flex items-center gap-2">
@@ -515,8 +515,10 @@
                 </button>
             </div>
 
-            <form id="edit-public-form" method="POST" class="space-y-4 text-xs">
+            <form id="edit-public-form" method="POST" action="{{ url('/admin/public_sar.php') }}" class="space-y-4 text-xs">
                 @csrf
+                <input type="hidden" name="action" value="update">
+                <input type="hidden" name="id" id="edit_pub_id">
                 <div class="grid grid-cols-3 gap-3">
                     <div>
                         <label class="block font-semibold text-[#4A3B32] mb-1">คำนำหน้า</label>
@@ -638,7 +640,8 @@
 
         function openEditPublicModal(data) {
             const form = document.getElementById('edit-public-form');
-            form.action = "{{ url('/admin/public/sar/update') }}/" + data.id;
+            form.action = "{{ url('/admin/public_sar.php') }}";
+            document.getElementById('edit_pub_id').value = data.id;
 
             document.getElementById('edit_pub_prefix').value = data.prefix || '';
             document.getElementById('edit_pub_name').value = data.full_name || '';

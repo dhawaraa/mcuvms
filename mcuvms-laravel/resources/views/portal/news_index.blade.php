@@ -197,9 +197,9 @@
                     @endif
 
                     @if ($item->cover_image)
-                        <div class="aspect-square w-full overflow-hidden bg-stone-100 relative">
-                            <img src="{{ $item->cover_image }}" alt="{{ $item->title }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                            <div class="absolute bottom-3 left-3">
+                        <div class="h-52 w-full overflow-hidden bg-[#FAF8F2] relative flex items-center justify-center border-b border-[#E3DEC9]">
+                            <img src="{{ $item->cover_image }}" alt="{{ $item->title }}" class="max-h-full max-w-full object-contain group-hover:scale-105 transition duration-300">
+                            <div class="absolute bottom-2.5 left-2.5">
                                 @if ($item->category === 'ANNOUNCEMENT')
                                     <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-[#C86D51] text-white shadow-sm">{{ __('portal.news_cat_announcement') }}</span>
                                 @elseif ($item->category === 'MEDITATION')
@@ -212,9 +212,9 @@
                             </div>
                         </div>
                     @else
-                        <div class="aspect-square w-full bg-[#FAF8F2] flex items-center justify-center text-[#D5CEBC] border-b border-[#E3DEC9] relative">
+                        <div class="h-52 w-full bg-[#FAF8F2] flex items-center justify-center text-[#D5CEBC] border-b border-[#E3DEC9] relative">
                             <i data-lucide="image" class="w-16 h-16 stroke-1"></i>
-                            <div class="absolute bottom-3 left-3">
+                            <div class="absolute bottom-2.5 left-2.5">
                                 @if ($item->category === 'ANNOUNCEMENT')
                                     <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-[#C86D51] text-white shadow-sm">{{ __('portal.news_cat_announcement') }}</span>
                                 @elseif ($item->category === 'MEDITATION')

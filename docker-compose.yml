@@ -54,7 +54,7 @@ services:
     ports:
       - "8086:80" # Port ภายนอก 8086 สำหรับเว็บไซต์ VPSMCU
     volumes:
-      - ./mcuvms-laravel:/var/www/html:z
+      - ./vpsmcu-laravel:/var/www/html:z
     networks:
       - vpsmcu-network
 

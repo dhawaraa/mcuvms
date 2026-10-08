@@ -20,9 +20,7 @@ class HomeController extends Controller
 {
     public function index(Request $request)
     {
-        $orgUnits = OrganizationUnit::where('is_active', 1)
-            ->orderBy('id', 'asc')
-            ->get();
+        $orgUnits = OrganizationUnit::orderedForSelect()->get();
 
         $recentNews = NewsArticle::with('organizationUnit')
             ->where('status', 'PUBLISHED')
@@ -72,7 +70,7 @@ class HomeController extends Controller
             ->orderBy('published_at', 'desc')
             ->paginate(9);
 
-        $orgUnits = OrganizationUnit::where('is_active', 1)->orderBy('name_th')->get();
+        $orgUnits = OrganizationUnit::orderedForSelect()->get();
 
         return view('portal.news_index', compact('newsList', 'orgUnits'));
     }
@@ -160,10 +158,10 @@ class HomeController extends Controller
 
             if ($record && $record->submission_status === 'APPROVED') {
                 $isValid = true;
-                $levelTh = $record->degree_level === 'DOCTORAL' ? 'ปริญญาเอก (45 วัน)' : 'ปริญญาโท (30 วัน)';
+                $levelTh = $record->degree_level ?: 'ระดับบัณฑิตศึกษา';
                 $result = [
                     'type' => 'GRAD',
-                    'title' => 'หนังสือรับรองผลการสะสมวันปฏิบัติวิปัสสนากรรมฐาน ระดับบัณฑิตศึกษา (' . $levelTh . ')',
+                    'title' => 'หนังสือรับรองผลการสะสมวันปฏิบัติวิปัสสนากรรมฐาน (' . $levelTh . ')',
                     'code' => 'GRAD-CERT-' . ($record->student_code ?? $record->student_id),
                     'student_code' => $record->student_code ?? $record->student_id,
                     'name' => ($record->prefix ?? '') . ($record->full_name ?? ($record->first_name . ' ' . $record->last_name)),
@@ -249,6 +247,7 @@ class HomeController extends Controller
             'purpose' => 'nullable|string|max:255',
             'note' => 'nullable|string|max:2000',
             'slip' => 'required|file|mimes:jpg,jpeg,png,pdf|max:10240', // สูงสุด 10MB
+            'avatar' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:10240', // ภาพประจำตัวผู้บริจาค สูงสุด 10MB
         ], [
             'donor_name.required' => 'กรุณาระบุชื่อ-นามสกุล ผู้บริจาค',
             'amount.required' => 'กรุณาระบุจำนวนเงินที่บริจาค',
@@ -259,6 +258,8 @@ class HomeController extends Controller
             'slip.required' => 'กรุณาแนบไฟล์สลิปหลักฐานการโอนเงิน',
             'slip.mimes' => 'ไฟล์สลิปต้องเป็นรูปภาพ (JPG, PNG) หรือไฟล์ PDF เท่านั้น',
             'slip.max' => 'ขนาดไฟล์สลิปต้องไม่เกิน 10MB',
+            'avatar.mimes' => 'ภาพประจำตัวผู้บริจาคต้องเป็นไฟล์รูปภาพ (JPG, PNG, WEBP) เท่านั้น',
+            'avatar.max' => 'ขนาดไฟล์ภาพประจำตัวต้องไม่เกิน 10MB',
         ]);
 
         // อัปโหลดไฟล์สลิป
@@ -268,6 +269,15 @@ class HomeController extends Controller
             $extension = $slipFile->getClientOriginalExtension();
             $filename = 'slip_' . date('Ymd_His') . '_' . uniqid() . '.' . $extension;
             $slipPath = $slipFile->storeAs('donations', $filename, 'public');
+        }
+
+        // อัปโหลดภาพประจำตัวผู้บริจาค (สำหรับทำโปสเตอร์อนุโมทนาบุญ)
+        $avatarPath = null;
+        if ($request->hasFile('avatar')) {
+            $avatarFile = $request->file('avatar');
+            $extension = $avatarFile->getClientOriginalExtension();
+            $filename = 'donor_avatar_' . date('Ymd_His') . '_' . uniqid() . '.' . $extension;
+            $avatarPath = $avatarFile->storeAs('donations/avatars', $filename, 'public');
         }
 
         // สร้างรหัสการบริจาค เช่น DON-20261001-XXXX
@@ -283,6 +293,7 @@ class HomeController extends Controller
             'transfer_date' => $validated['transfer_date'],
             'transfer_time' => $validated['transfer_time'],
             'slip_path' => $slipPath,
+            'avatar_path' => $avatarPath,
             'phone' => $validated['phone'] ?? null,
             'email' => $validated['email'] ?? null,
             'address' => $validated['address'] ?? null,

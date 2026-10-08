@@ -307,15 +307,31 @@
 
                                 <!-- ผู้บริจาค / วัตถุประสงค์ -->
                                 <td class="py-3.5 px-4 align-middle">
-                                    <div class="font-bold text-[#2C3E2D]">{{ $d->donor_name }}</div>
-                                    <div class="text-[11px] text-[#6B6357] line-clamp-1 max-w-xs" title="{{ $d->purpose }}">
-                                        {{ $d->purpose ?? 'บำรุงศูนย์ปฏิบัติธรรม' }}
-                                    </div>
-                                    @if($d->phone || $d->email)
-                                        <div class="text-[10px] text-[#8C8275] font-mono mt-0.5">
-                                            {{ $d->phone }} {{ $d->email ? '&bull; ' . $d->email : '' }}
+                                    <div class="flex items-center gap-3">
+                                        @if ($d->avatar_path)
+                                            <button type="button" onclick="viewAvatarModal('{{ asset('storage/' . $d->avatar_path) }}', '{{ addslashes($d->donor_name) }}', '{{ $d->donation_no }}')" class="relative shrink-0 group" title="คลิกเพื่อดูภาพประจำตัว">
+                                                <img src="{{ asset('storage/' . $d->avatar_path) }}" alt="{{ $d->donor_name }}" class="w-10 h-10 rounded-full object-cover border-2 border-[#5A6B47] shadow-xs group-hover:scale-110 transition">
+                                                <span class="absolute -bottom-1 -right-1 bg-[#C86D51] text-white p-0.5 rounded-full" title="ภาพทำโปสเตอร์">
+                                                    <i data-lucide="sparkles" class="w-2.5 h-2.5"></i>
+                                                </span>
+                                            </button>
+                                        @else
+                                            <div class="w-10 h-10 rounded-full bg-[#EAE5D9] text-[#7B8D65] flex items-center justify-center font-bold text-xs shrink-0 border border-[#D5CEBC]">
+                                                {{ mb_substr($d->donor_name, 0, 1) }}
+                                            </div>
+                                        @endif
+                                        <div class="min-w-0">
+                                            <div class="font-bold text-[#2C3E2D] truncate">{{ $d->donor_name }}</div>
+                                            <div class="text-[11px] text-[#6B6357] line-clamp-1 max-w-xs" title="{{ $d->purpose }}">
+                                                {{ $d->purpose ?? 'บำรุงศูนย์ปฏิบัติธรรม' }}
+                                            </div>
+                                            @if($d->phone || $d->email)
+                                                <div class="text-[10px] text-[#8C8275] font-mono mt-0.5">
+                                                    {{ $d->phone }} {{ $d->email ? '&bull; ' . $d->email : '' }}
+                                                </div>
+                                            @endif
                                         </div>
-                                    @endif
+                                    </div>
                                 </td>
 
                                 <!-- ลดหย่อนภาษี -->
@@ -396,7 +412,7 @@
                                         </button>
 
                                         <!-- ลบรายการ -->
-                                        <a href="{{ route('admin.donations.delete', $d->id) }}" onclick="return confirm('ยืนยันที่จะลบรายการบริจาคนี้หรือไม่?')" title="ลบรายการ" class="p-1.5 rounded-lg bg-white border border-[#D5CEBC] hover:bg-red-600 hover:text-white text-red-600 transition shadow-2xs">
+                                        <a href="{{ url('/admin/donations.php?action=delete&id=' . $d->id) }}" onclick="return confirm('ยืนยันที่จะลบรายการบริจาคนี้หรือไม่?')" title="ลบรายการ" class="p-1.5 rounded-lg bg-white border border-[#D5CEBC] hover:bg-red-600 hover:text-white text-red-600 transition shadow-2xs">
                                             <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                                         </a>
                                     </div>
@@ -442,8 +458,10 @@
                 </button>
             </div>
 
-            <form id="actionForm" method="POST" action="" enctype="multipart/form-data" class="space-y-4">
+            <form id="actionForm" method="POST" action="{{ url('/admin/donations.php') }}" enctype="multipart/form-data" class="space-y-4">
                 @csrf
+                <input type="hidden" name="action" value="update">
+                <input type="hidden" name="id" id="edit_donation_id">
 
                 <!-- แถวที่ 1: ชื่อผู้บริจาค และ จำนวนเงิน -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -543,26 +561,52 @@
                     <textarea name="note" id="edit_note" rows="2" placeholder="คำอธิษฐานจิต..." class="w-full px-3.5 py-2 bg-white border border-[#D5CEBC] rounded-xl text-xs focus:ring-2 focus:ring-[#5A6B47]"></textarea>
                 </div>
 
-                <!-- แถวที่ 7: การจัดการสลิปหลักฐานโอนเงิน (ดูสลิปเดิม + แนบสลิปใหม่เพิ่มเติม/แทนที่) -->
-                <div class="p-4 rounded-2xl bg-[#FAF8F2] border border-[#EAE5D9] space-y-3">
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs font-semibold text-[#2C3E2D] flex items-center gap-1.5">
-                            <i data-lucide="paperclip" class="w-4 h-4 text-[#5A6B47]"></i>
-                            <span>หลักฐานสลิปการโอนเงิน (Slip)</span>
-                        </span>
-                        <div id="current_slip_preview_btn" class="hidden">
-                            <button type="button" id="btn_open_current_slip" onclick="" class="px-2.5 py-1 bg-white border border-[#D5CEBC] hover:border-[#5A6B47] text-[#5A6B47] rounded-lg text-[11px] font-semibold flex items-center gap-1 shadow-2xs">
-                                <i data-lucide="eye" class="w-3.5 h-3.5"></i>
-                                <span>เปิดดูสลิปปัจจุบัน</span>
-                            </button>
+                <!-- แถวที่ 7: การจัดการสลิปหลักฐานโอนเงิน & ภาพประจำตัวทำโปสเตอร์ -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- 7.1 สลิปโอนเงิน -->
+                    <div class="p-4 rounded-2xl bg-[#FAF8F2] border border-[#EAE5D9] space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold text-[#2C3E2D] flex items-center gap-1.5">
+                                <i data-lucide="receipt" class="w-4 h-4 text-[#5A6B47]"></i>
+                                <span>หลักฐานสลิปการโอนเงิน (Slip)</span>
+                            </span>
+                            <div id="current_slip_preview_btn" class="hidden">
+                                <button type="button" id="btn_open_current_slip" onclick="" class="px-2.5 py-1 bg-white border border-[#D5CEBC] hover:border-[#5A6B47] text-[#5A6B47] rounded-lg text-[11px] font-semibold flex items-center gap-1 shadow-2xs">
+                                    <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                                    <span>เปิดดูสลิป</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] text-[#6B6357] mb-1">
+                                แนบสลิปใหม่เพิ่มเติม หรืออัปโหลดแทนที่เดิม (JPG, PNG, PDF ไม่เกิน 10MB)
+                            </label>
+                            <input type="file" name="slip" id="edit_slip_input" accept="image/jpeg,image/png,image/jpg,application/pdf" class="w-full px-3 py-1.5 bg-white border border-[#D5CEBC] rounded-xl text-xs file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#5A6B47]/10 file:text-[#5A6B47] hover:file:bg-[#5A6B47]/20">
                         </div>
                     </div>
 
-                    <div>
-                        <label class="block text-[11px] text-[#6B6357] mb-1">
-                            แนบสลิปใหม่เพิ่มเติม หรืออัปโหลดแทนที่เดิม (JPG, PNG, PDF ขนาดไม่เกิน 10MB)
-                        </label>
-                        <input type="file" name="slip" id="edit_slip_input" accept="image/jpeg,image/png,image/jpg,application/pdf" class="w-full px-3 py-1.5 bg-white border border-[#D5CEBC] rounded-xl text-xs file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#5A6B47]/10 file:text-[#5A6B47] hover:file:bg-[#5A6B47]/20">
+                    <!-- 7.2 ภาพประจำตัวสำหรับทำโปสเตอร์อนุโมทนาบุญ -->
+                    <div class="p-4 rounded-2xl bg-[#FAF8F2] border border-[#EAE5D9] space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold text-[#2C3E2D] flex items-center gap-1.5">
+                                <i data-lucide="sparkles" class="w-4 h-4 text-[#C86D51]"></i>
+                                <span>ภาพถ่ายทำโปสเตอร์ (Avatar)</span>
+                            </span>
+                            <div id="current_avatar_preview_btn" class="hidden">
+                                <button type="button" id="btn_open_current_avatar" onclick="" class="px-2.5 py-1 bg-white border border-[#D5CEBC] hover:border-[#C86D51] text-[#C86D51] rounded-lg text-[11px] font-semibold flex items-center gap-1 shadow-2xs">
+                                    <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                                    <span>เปิดดูภาพ</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] text-[#6B6357] mb-1">
+                                แนบภาพประจำตัวใหม่ หรืออัปโหลดแทนที่เดิม (JPG, PNG ไม่เกิน 10MB)
+                            </label>
+                            <input type="file" name="avatar" id="edit_avatar_input" accept="image/jpeg,image/png,image/jpg,image/webp" class="w-full px-3 py-1.5 bg-white border border-[#D5CEBC] rounded-xl text-xs file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#C86D51]/10 file:text-[#C86D51] hover:file:bg-[#C86D51]/20">
+                        </div>
                     </div>
                 </div>
 
@@ -618,8 +662,10 @@
                 </button>
             </div>
 
-            <form id="quickStatusForm" method="POST" action="" class="space-y-4">
+            <form id="quickStatusForm" method="POST" action="{{ url('/admin/donations.php') }}" class="space-y-4">
                 @csrf
+                <input type="hidden" name="action" value="status">
+                <input type="hidden" name="id" id="quick_donation_id">
 
                 <div class="p-3 bg-[#FAF8F2] rounded-xl border border-[#EAE5D9] text-[11px]">
                     <span class="text-[#6B6357]">ผู้บริจาค:</span>
@@ -720,6 +766,33 @@
         </div>
     </div>
 
+    <!-- Modal: ดูภาพประจำตัวผู้บริจาคสำหรับทำโปสเตอร์ (Avatar Modal) -->
+    <div id="avatarModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-[#D5CEBC] text-center">
+            <div class="flex items-center justify-between pb-3 mb-4 border-b border-[#EAE5D9]">
+                <div class="text-left">
+                    <h4 id="avatarModalTitle" class="font-heading font-bold text-sm text-[#2C3E2D]">ภาพประจำตัวผู้บริจาค</h4>
+                    <p class="text-[11px] text-[#7B8D65]">สำหรับจัดทำโปสเตอร์อนุโมทนาบุญ</p>
+                </div>
+                <button type="button" onclick="closeAvatarModal()" class="text-[#8C8275] hover:text-[#2C3E2D]">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="max-h-[60vh] overflow-auto rounded-2xl border border-[#EAE5D9] bg-[#FAF8F2] p-4 flex items-center justify-center">
+                <img id="avatarModalImage" src="#" alt="Avatar Preview" class="max-w-full max-h-[50vh] rounded-2xl shadow-sm object-contain">
+            </div>
+            <div class="mt-4 flex justify-center gap-3">
+                <a id="avatarDownloadBtn" href="#" target="_blank" download class="px-4 py-2 bg-[#C86D51] hover:bg-[#A85238] text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                    <span>ดาวน์โหลดไฟล์ต้นฉบับ</span>
+                </a>
+                <button type="button" onclick="closeAvatarModal()" class="px-4 py-2 bg-white border border-[#D5CEBC] text-[#4A3B32] rounded-xl text-xs font-semibold">
+                    ปิดหน้าต่าง
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal: ตั้งค่าบัญชีรับบริจาค (Settings Modal) -->
     <div id="settingsModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-xl w-full p-6 md:p-8 shadow-2xl border border-[#D5CEBC] text-xs">
@@ -801,7 +874,8 @@
         }
 
         function openActionModal(donation) {
-            document.getElementById('actionForm').action = '/admin/donations/update/' + donation.id;
+            document.getElementById('actionForm').action = "{{ url('/admin/donations.php') }}";
+            document.getElementById('edit_donation_id').value = donation.id;
             document.getElementById('modal-donation-no-badge').textContent = donation.donation_no;
             
             // Populate all inputs
@@ -842,8 +916,21 @@
                 slipBtnWrapper.classList.add('hidden');
             }
 
-            // Reset file input
+            // Handle current avatar preview button
+            const avatarBtnWrapper = document.getElementById('current_avatar_preview_btn');
+            const openAvatarBtn = document.getElementById('btn_open_current_avatar');
+            if (donation.avatar_path) {
+                avatarBtnWrapper.classList.remove('hidden');
+                openAvatarBtn.onclick = function() {
+                    viewAvatarModal('/storage/' + donation.avatar_path, donation.donor_name, donation.donation_no);
+                };
+            } else {
+                avatarBtnWrapper.classList.add('hidden');
+            }
+
+            // Reset file inputs
             document.getElementById('edit_slip_input').value = '';
+            document.getElementById('edit_avatar_input').value = '';
 
             document.getElementById('edit_status').value = donation.status;
             document.getElementById('edit_admin_notes').value = donation.admin_notes || '';
@@ -857,7 +944,8 @@
 
         // Quick Status Modal Functions
         function openQuickStatusModal(id, donationNo, donorName, currentStatus, adminNotes) {
-            document.getElementById('quickStatusForm').action = '/admin/donations/status/' + id;
+            document.getElementById('quickStatusForm').action = "{{ url('/admin/donations.php') }}";
+            document.getElementById('quick_donation_id').value = id;
             document.getElementById('quick_modal_donation_no').textContent = donationNo;
             document.getElementById('quick_modal_donor_name').textContent = donorName;
             document.getElementById('quick_modal_admin_notes').value = adminNotes || '';
@@ -886,6 +974,17 @@
 
         function closeSlipModal() {
             document.getElementById('slipModal').classList.add('hidden');
+        }
+
+        function viewAvatarModal(avatarUrl, donorName, donationNo) {
+            document.getElementById('avatarModalTitle').textContent = donorName ? 'ภาพประจำตัว: ' + donorName : 'ภาพประจำตัวผู้บริจาค';
+            document.getElementById('avatarModalImage').src = avatarUrl;
+            document.getElementById('avatarDownloadBtn').href = avatarUrl;
+            document.getElementById('avatarModal').classList.remove('hidden');
+        }
+
+        function closeAvatarModal() {
+            document.getElementById('avatarModal').classList.add('hidden');
         }
 
         function openSettingsModal() {

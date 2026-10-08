@@ -41,7 +41,7 @@ class GraduateController extends Controller
         $setting = DB::table('system_settings')->where('setting_key', 'edoc_status')->first();
         $isClosed = ($setting && $setting->setting_value === 'N');
 
-        $orgUnits = OrganizationUnit::where('is_active', 1)->orderBy('id', 'asc')->get();
+        $orgUnits = OrganizationUnit::orderedForSelect()->get();
 
         return view('portal.grad_request', compact('isClosed', 'orgUnits'));
     }
@@ -64,7 +64,7 @@ class GraduateController extends Controller
             'age' => 'nullable|integer|min:10|max:120',
             'vassa' => 'nullable|integer|min:0|max:100',
             'nationality' => 'required|string|max:50',
-            'degree_level' => 'required|in:MASTER,DOCTORAL',
+            'degree_level' => 'required|string|max:100',
             'faculty' => 'required|string|max:100',
             'program_name' => 'required|string|max:150',
             'org_unit_id' => 'required|exists:organization_units,id',
@@ -83,9 +83,22 @@ class GraduateController extends Controller
             'file_slip' => 'required|mimes:jpeg,png,jpg,pdf|max:10240',
         ]);
 
-        $minDays = ($validated['degree_level'] === 'DOCTORAL') ? 45 : 30;
+        $degreeMap = [
+            'ประกาศนียบัตร (7 วัน)' => 7,
+            'ประกาศนียบัตร (15 วัน)' => 15,
+            'ประกาศนียบัตร (30 วัน)' => 30,
+            'ประกาศนียบัตร (90วัน)' => 90,
+            'ปริญญาตรีปีละ (10วัน)' => 10,
+            'ปริญญาโท (30 วัน)' => 30,
+            'ปริญญาเอก (45 วัน)' => 45,
+            // legacy
+            'MASTER' => 30,
+            'DOCTORAL' => 45,
+        ];
+
+        $minDays = $degreeMap[$validated['degree_level']] ?? 30;
         if ((int)$validated['accumulated_days'] < $minDays) {
-            return back()->with('error', "จำนวนวันสะสมต้องไม่น้อยกว่า {$minDays} วัน สำหรับระดับการศึกษานี้")->withInput();
+            return back()->with('error', "จำนวนวันสะสมต้องไม่น้อยกว่า {$minDays} วัน สำหรับระดับการศึกษานี้ ({$validated['degree_level']})")->withInput();
         }
 
         // จัดการอัปโหลดไฟล์ทั้ง 4 รายการ

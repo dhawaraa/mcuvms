@@ -186,12 +186,23 @@
                             @endphp
                             <tr class="hover:bg-[#FAF8F2]/80 transition">
                                 <td class="p-4">
-                                    <div class="font-heading font-semibold text-[#2C3E2D] text-sm">
-                                        {{ $e->title }}
-                                    </div>
-                                    <div class="text-[#7B8D65] text-[11px] flex items-center gap-1 mt-0.5">
-                                        <i data-lucide="map-pin" class="w-3 h-3 text-[#C86D51]"></i>
-                                        <span>{{ $e->location_name }}</span>
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-12 h-12 rounded-xl bg-[#EAE5D9] border border-[#D5CEBC] overflow-hidden shrink-0 flex items-center justify-center">
+                                            @if (!empty($e->cover_image))
+                                                <img src="{{ $e->cover_image }}" alt="{{ $e->title }}" class="w-full h-full object-cover">
+                                            @else
+                                                <i data-lucide="image" class="w-5 h-5 text-[#8C8275]"></i>
+                                            @endif
+                                        </div>
+                                        <div>
+                                            <div class="font-heading font-semibold text-[#2C3E2D] text-sm">
+                                                {{ $e->title }}
+                                            </div>
+                                            <div class="text-[#7B8D65] text-[11px] flex items-center gap-1 mt-0.5">
+                                                <i data-lucide="map-pin" class="w-3 h-3 text-[#C86D51]"></i>
+                                                <span>{{ $e->location_name }}</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </td>
                                 <td class="p-4">
@@ -200,8 +211,12 @@
                                     </span>
                                 </td>
                                 <td class="p-4 font-mono text-[11px]">
-                                    <div class="text-[#2C3E2D] font-semibold">{{ \Carbon\Carbon::parse($e->start_date)->format('d/m/Y') }}</div>
-                                    <div class="text-[#7B8D65]">ถึง {{ \Carbon\Carbon::parse($e->end_date)->format('d/m/Y') }}</div>
+                                    @php
+                                        $sDate = \Carbon\Carbon::parse($e->start_date);
+                                        $eDate = \Carbon\Carbon::parse($e->end_date);
+                                    @endphp
+                                    <div class="text-[#2C3E2D] font-semibold">{{ $sDate->format('d/m/') . ($sDate->year + 543) }}</div>
+                                    <div class="text-[#7B8D65]">ถึง {{ $eDate->format('d/m/') . ($eDate->year + 543) }}</div>
                                 </td>
                                 <td class="p-4 text-center">
                                     <span class="font-mono font-bold {{ $isFull ? 'text-red-600' : 'text-[#5A6B47]' }} text-sm">
@@ -245,11 +260,11 @@
 
                                         <!-- ปุ่มเปลี่ยนสถานะ -->
                                         @if ($e->status === 'OPEN')
-                                            <a href="{{ route('admin.public.events.status', ['id' => $e->id, 'status' => 'CLOSED']) }}" title="ปิดรับสมัคร" onclick="return confirm('ยืนยันปิดรับสมัครคอร์สนี้หรือไม่?')" class="p-1.5 text-amber-600 hover:bg-amber-50 rounded-lg transition">
+                                            <a href="{{ url('/admin/public_events.php?action=status&id=' . $e->id . '&status_val=CLOSED') }}" title="ปิดรับสมัคร" onclick="return confirm('ยืนยันปิดรับสมัครคอร์สนี้หรือไม่?')" class="p-1.5 text-amber-600 hover:bg-amber-50 rounded-lg transition">
                                                 <i data-lucide="lock" class="w-4 h-4"></i>
                                             </a>
                                         @else
-                                            <a href="{{ route('admin.public.events.status', ['id' => $e->id, 'status' => 'OPEN']) }}" title="เปิดรับสมัคร" onclick="return confirm('ยืนยันเปิดรับสมัครคอร์สนี้หรือไม่?')" class="p-1.5 text-[#5A6B47] hover:bg-[#5A6B47]/10 rounded-lg transition">
+                                            <a href="{{ url('/admin/public_events.php?action=status&id=' . $e->id . '&status_val=OPEN') }}" title="เปิดรับสมัคร" onclick="return confirm('ยืนยันเปิดรับสมัครคอร์สนี้หรือไม่?')" class="p-1.5 text-[#5A6B47] hover:bg-[#5A6B47]/10 rounded-lg transition">
                                                 <i data-lucide="unlock" class="w-4 h-4"></i>
                                             </a>
                                         @endif
@@ -260,7 +275,7 @@
                                         </button>
 
                                         <!-- ปุ่มลบ -->
-                                        <a href="{{ route('admin.public.events.delete', $e->id) }}" onclick="return confirm('ยืนยันลบคอร์สปฏิบัตินี้? ข้อมูลการลงทะเบียนจะถูกลบด้วย')" title="ลบโครงการ" class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition">
+                                        <a href="{{ url('/admin/public_events.php?action=delete&id=' . $e->id) }}" onclick="return confirm('ยืนยันลบคอร์สปฏิบัตินี้? ข้อมูลการลงทะเบียนจะถูกลบด้วย')" title="ลบโครงการ" class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition">
                                             <i data-lucide="trash-2" class="w-4 h-4"></i>
                                         </a>
                                     </div>
@@ -300,8 +315,9 @@
                 </button>
             </div>
 
-            <form action="{{ route('admin.public.events.store') }}" method="POST" class="space-y-4 text-xs">
+            <form action="{{ url('/admin/public_events.php') }}" method="POST" enctype="multipart/form-data" class="space-y-4 text-xs">
                 @csrf
+                <input type="hidden" name="action" value="store">
 
                 @if ($isCentralOrSuper)
                     <div>
@@ -322,6 +338,27 @@
                 <div>
                     <label class="block font-semibold text-[#4A3B32] mb-1">สถานที่จัดโครงการ / อาคารปฏิบัติธรรม <span class="text-[#C86D51]">*</span></label>
                     <input type="text" name="location_name" placeholder="เช่น อาคาร 72 พรรษา หรือ ศูนย์วิปัสสนา มจร วังน้อย" required class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                </div>
+
+                <!-- ช่องใส่ภาพปกโครงการ (Cover Image) -->
+                <div class="p-3 bg-[#FAF8F2] rounded-2xl border border-[#EAE5D9]">
+                    <label class="block font-semibold text-[#4A3B32] mb-1.5 flex items-center gap-1.5">
+                        <i data-lucide="image" class="w-3.5 h-3.5 text-[#5A6B47]"></i>
+                        <span>ภาพปกโครงการ (Cover Image / Banner)</span>
+                        <span class="text-[10px] text-[#7B8D65] font-normal">(แสดงบนปฏิทินและรายการหน้า Portal)</span>
+                    </label>
+                    <div class="space-y-2">
+                        <div>
+                            <input type="file" name="cover_file" accept="image/*"
+                                class="w-full text-xs text-[#4A3B32] file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-medium file:bg-[#5A6B47] file:text-white hover:file:bg-[#2C3E2D] file:cursor-pointer cursor-pointer">
+                            <span class="text-[10px] text-[#8C8275] mt-0.5 block">อัปโหลดไฟล์ภาพ (JPG, PNG, WebP ขนาดไม่เกิน 10MB)</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] text-[#8C8275]">หรือระบุ URL:</span>
+                            <input type="text" name="cover_image" placeholder="https://... หรือ /images/..."
+                                class="flex-grow px-2.5 py-1 bg-white border border-[#EAE5D9] rounded-lg text-xs font-mono text-[#4A3B32]">
+                        </div>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
@@ -373,8 +410,10 @@
                 </button>
             </div>
 
-            <form id="edit-event-form" method="POST" action="" class="space-y-4 text-xs">
+            <form id="edit-event-form" method="POST" enctype="multipart/form-data" action="{{ url('/admin/public_events.php') }}" class="space-y-4 text-xs">
                 @csrf
+                <input type="hidden" name="action" value="update">
+                <input type="hidden" id="edit_event_id" name="id" value="">
 
                 @if ($isCentralOrSuper)
                     <div>
@@ -395,6 +434,37 @@
                 <div>
                     <label class="block font-semibold text-[#4A3B32] mb-1">สถานที่จัดโครงการ / อาคารปฏิบัติธรรม <span class="text-[#C86D51]">*</span></label>
                     <input type="text" name="location_name" id="edit-location" required class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                </div>
+
+                <!-- ช่องใส่ภาพปกโครงการ (Cover Image) -->
+                <div class="p-3 bg-[#FAF8F2] rounded-2xl border border-[#EAE5D9]">
+                    <label class="block font-semibold text-[#4A3B32] mb-1.5 flex items-center gap-1.5">
+                        <i data-lucide="image" class="w-3.5 h-3.5 text-[#5A6B47]"></i>
+                        <span>ภาพปกโครงการ (Cover Image / Banner)</span>
+                    </label>
+                    
+                    <div id="edit_cover_preview_container" class="mb-2 hidden">
+                        <div class="flex items-center gap-3 p-2 bg-white rounded-xl border border-[#D5CEBC]">
+                            <img id="edit_cover_preview" src="" alt="Cover Preview" class="w-16 h-12 object-cover rounded-lg border border-[#EAE5D9]">
+                            <div class="text-[11px] text-[#6B6357] flex-grow">
+                                <div class="font-medium text-[#2C3E2D]">ภาพปัจจุบัน</div>
+                                <div id="edit_cover_url_text" class="text-[10px] text-[#8C8275] truncate max-w-xs font-mono"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <div>
+                            <input type="file" name="cover_file" accept="image/*"
+                                class="w-full text-xs text-[#4A3B32] file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-medium file:bg-[#5A6B47] file:text-white hover:file:bg-[#2C3E2D] file:cursor-pointer cursor-pointer">
+                            <span class="text-[10px] text-[#8C8275] mt-0.5 block">อัปโหลดภาพใหม่ (JPG, PNG, WebP ขนาดไม่เกิน 10MB)</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] text-[#8C8275]">หรือระบุ URL:</span>
+                            <input type="text" id="edit_cover_image" name="cover_image" placeholder="https://... หรือ /images/..."
+                                class="flex-grow px-2.5 py-1 bg-white border border-[#EAE5D9] rounded-lg text-xs font-mono text-[#4A3B32]">
+                        </div>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
@@ -435,13 +505,30 @@
 
     <script>
         function openEditModal(event) {
-            document.getElementById('edit-event-form').action = '/admin/public/events/update/' + event.id;
+            document.getElementById('edit-event-form').action = "{{ url('/admin/public_events.php') }}";
+            document.getElementById('edit_event_id').value = event.id;
             document.getElementById('edit-title').value = event.title || '';
             document.getElementById('edit-location').value = event.location_name || '';
             document.getElementById('edit-start-date').value = event.start_date || '';
             document.getElementById('edit-end-date').value = event.end_date || '';
             document.getElementById('edit-quota').value = event.max_quota || 50;
             document.getElementById('edit-status').value = event.status || 'OPEN';
+
+            // Handle cover image preview and input
+            const coverInput = document.getElementById('edit_cover_image');
+            const previewContainer = document.getElementById('edit_cover_preview_container');
+            const previewImg = document.getElementById('edit_cover_preview');
+            const previewUrlText = document.getElementById('edit_cover_url_text');
+
+            if (event.cover_image) {
+                coverInput.value = event.cover_image;
+                previewImg.src = event.cover_image;
+                previewUrlText.textContent = event.cover_image;
+                previewContainer.classList.remove('hidden');
+            } else {
+                coverInput.value = '';
+                previewContainer.classList.add('hidden');
+            }
 
             const orgSelect = document.getElementById('edit-org-unit-id');
             if (orgSelect && event.org_unit_id) {

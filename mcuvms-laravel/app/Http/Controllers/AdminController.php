@@ -127,6 +127,21 @@ class AdminController extends Controller
         $admin = Session::get('admin_user');
         $isCentralOrSuper = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
 
+        // Action Dispatcher for Shared Hosting Compatibility (via /admin/ug_batches.php?action=... or POST)
+        $action = $request->input('action');
+        if ($action === 'store') {
+            return $this->ugBatchStore($request);
+        }
+        if ($action === 'update') {
+            return $this->ugBatchUpdate($request, $request->input('id'));
+        }
+        if ($action === 'status') {
+            return $this->ugBatchStatus($request->input('id'), $request->input('status_val'));
+        }
+        if ($action === 'delete') {
+            return $this->ugBatchDelete($request->input('id'));
+        }
+
         $query = UgBatch::with(['organizationUnit', 'registrations'])->orderBy('start_date', 'desc');
 
         // สิทธิ์การเข้าถึง: ถ้าเป็นเจ้าหน้าที่วิทยาเขต (CAMPUS_ADMIN) จะเห็นเฉพาะรอบของวิทยาเขตตนเอง
@@ -139,7 +154,7 @@ class AdminController extends Controller
 
         $perPage = $this->getPerPage($request);
         $batches = $query->paginate($perPage)->withQueryString();
-        $orgUnits = OrganizationUnit::where('is_active', 1)->orderBy('id', 'asc')->get();
+        $orgUnits = OrganizationUnit::orderedForSelect()->get();
 
         return view('admin.ug_batches', compact('batches', 'orgUnits', 'isCentralOrSuper'));
     }
@@ -160,7 +175,16 @@ class AdminController extends Controller
             'max_quota' => 'required|integer|min:1',
             'status' => 'required|in:OPEN,CLOSED,IN_PROGRESS,COMPLETED',
             'org_unit_id' => 'nullable|integer',
+            'cover_image' => 'nullable|string|max:500',
+            'cover_file' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:10240',
         ]);
+
+        // จัดการอัปโหลดไฟล์ภาพปกโครงการ
+        $coverImageUrl = $validated['cover_image'] ?? null;
+        if ($request->hasFile('cover_file') && $request->file('cover_file')->isValid()) {
+            $path = $request->file('cover_file')->store('batches', 'public');
+            $coverImageUrl = Storage::url($path);
+        }
 
         // กำหนดส่วนงานเจ้าของโครงการ:
         // หากเป็น CAMPUS_ADMIN จะล็อกให้อยู่ใน org_unit_id ของตนเองเสมอ
@@ -180,6 +204,7 @@ class AdminController extends Controller
             'title_en' => $titleEn,
             'location' => $validated['location'],
             'location_en' => $locationEn,
+            'cover_image' => $coverImageUrl,
             'start_date' => $validated['start_date'],
             'end_date' => $validated['end_date'],
             'max_quota' => $validated['max_quota'],
@@ -211,7 +236,15 @@ class AdminController extends Controller
             'max_quota' => 'required|integer|min:1',
             'status' => 'required|in:OPEN,CLOSED,IN_PROGRESS,COMPLETED',
             'org_unit_id' => 'nullable|integer',
+            'cover_image' => 'nullable|string|max:500',
+            'cover_file' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:10240',
         ]);
+
+        $coverImageUrl = $validated['cover_image'] ?? $batch->cover_image;
+        if ($request->hasFile('cover_file') && $request->file('cover_file')->isValid()) {
+            $path = $request->file('cover_file')->store('batches', 'public');
+            $coverImageUrl = Storage::url($path);
+        }
 
         $titleEn = ($batch->title !== $validated['title'] || empty($batch->title_en))
             ? TranslationService::translateToEnglish($validated['title'])
@@ -227,6 +260,7 @@ class AdminController extends Controller
             'title_en' => $titleEn,
             'location' => $validated['location'],
             'location_en' => $locationEn,
+            'cover_image' => $coverImageUrl,
             'start_date' => $validated['start_date'],
             'end_date' => $validated['end_date'],
             'max_quota' => $validated['max_quota'],
@@ -307,7 +341,7 @@ class AdminController extends Controller
 
         $perPage = $this->getPerPage($request);
         $students = $query->paginate($perPage)->withQueryString();
-        $orgUnits = OrganizationUnit::where('is_active', 1)->orderBy('id', 'asc')->get();
+        $orgUnits = OrganizationUnit::orderedForSelect()->get();
         $totalMasterCount = UgMasterStudent::count();
 
         return view('admin.ug_import', compact('students', 'orgUnits', 'totalMasterCount', 'isCentralOrSuper'));
@@ -532,6 +566,30 @@ class AdminController extends Controller
         $admin = Session::get('admin_user');
         $isCentralOrSuper = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
 
+        // Action Dispatcher for Shared Hosting Compatibility (via /admin/ug_students.php?action=... or POST)
+        $action = $request->input('action');
+        if ($action === 'update') {
+            return $this->ugStudentUpdate($request, $request->input('id'));
+        }
+        if ($action === 'approve') {
+            return $this->ugStudentApprove($request->input('id'));
+        }
+        if ($action === 'reject') {
+            return $this->ugStudentReject($request, $request->input('id'));
+        }
+        if ($action === 'checkin') {
+            return $this->ugCheckin($request->input('id'));
+        }
+        if ($action === 'complete') {
+            return $this->ugComplete($request->input('id'));
+        }
+        if ($action === 'delete') {
+            return $this->ugStudentDelete($request->input('id'));
+        }
+        if ($action === 'bulk' || $request->has('bulk_action')) {
+            return $this->ugStudentsBulkAction($request);
+        }
+
         $query = UgRegistration::with(['batch', 'organizationUnit'])->orderBy('created_at', 'desc');
 
         // สิทธิ์การเข้าถึงข้อมูลรายชื่อนิสิต:
@@ -568,7 +626,7 @@ class AdminController extends Controller
 
         $perPage = $this->getPerPage($request);
         $registrations = $query->paginate($perPage)->withQueryString();
-        $orgUnits = OrganizationUnit::where('is_active', 1)->orderBy('id', 'asc')->get();
+        $orgUnits = OrganizationUnit::orderedForSelect()->get();
         $batches = UgBatch::where('status', '!=', 'COMPLETED')->orderBy('academic_year', 'desc')->orderBy('start_date', 'asc')->get();
 
         return view('admin.ug_students', compact('registrations', 'orgUnits', 'batches', 'isCentralOrSuper'));
@@ -1148,7 +1206,7 @@ class AdminController extends Controller
         }
         $batches = $batchQuery->get();
         $academicYears = UgBatch::select('academic_year')->distinct()->orderBy('academic_year', 'desc')->pluck('academic_year');
-        $orgUnits = OrganizationUnit::where('is_active', 1)->orderBy('id', 'asc')->get();
+        $orgUnits = OrganizationUnit::orderedForSelect()->get();
 
         return view('admin.ug_sar', compact(
             'totalRegistered',
@@ -1230,7 +1288,7 @@ class AdminController extends Controller
             ->limit(10)
             ->get();
 
-        $orgUnits = OrganizationUnit::where('is_active', 1)->orderBy('id', 'asc')->get();
+        $orgUnits = OrganizationUnit::orderedForSelect()->get();
 
         return view('admin.grad_sar', compact(
             'totalStudents',
@@ -1262,6 +1320,22 @@ class AdminController extends Controller
         $this->checkAuth();
         $admin = Session::get('admin_user');
         $isCentralOrSuper = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
+
+        if ($request->has('bulk_action') || $request->input('action') === 'bulk') {
+            return $this->gradApprovalsBulkAction($request);
+        }
+        if ($request->input('action') === 'update') {
+            return $this->gradStudentUpdate($request, $request->input('id'));
+        }
+        if ($request->input('action') === 'approve') {
+            return $this->gradApprove($request);
+        }
+        if ($request->input('action') === 'reject') {
+            return $this->gradReject($request);
+        }
+        if ($request->input('action') === 'delete') {
+            return $this->gradStudentDelete($request->input('id'));
+        }
 
         $query = GradStudent::with('organizationUnit')
             ->orderByRaw("FIELD(submission_status, 'SUBMITTED', 'ACCUMULATING', 'APPROVED', 'REJECTED')")
@@ -1352,7 +1426,7 @@ class AdminController extends Controller
 
         $perPage = $this->getPerPage($request);
         $students = $query->paginate($perPage)->withQueryString();
-        $orgUnits = OrganizationUnit::where('is_active', 1)->orderBy('id', 'asc')->get();
+        $orgUnits = OrganizationUnit::orderedForSelect()->get();
 
         $edocSetting = DB::table('system_settings')->where('setting_key', 'edoc_status')->first();
         $edocStatus = $edocSetting ? $edocSetting->setting_value : 'Y';
@@ -1410,7 +1484,7 @@ class AdminController extends Controller
             'buddhist_name' => 'nullable|string|max:100',
             'age' => 'nullable|integer|min:1|max:120',
             'vassa' => 'nullable|integer|min:0|max:100',
-            'degree_level' => 'required|in:MASTER,DOCTORAL',
+            'degree_level' => 'required|string|max:100',
             'faculty' => 'nullable|string|max:100',
             'program_name' => 'nullable|string|max:150',
             'target_days' => 'required|integer|min:1',
@@ -1666,6 +1740,13 @@ class AdminController extends Controller
         $admin = Session::get('admin_user');
         $isCentralOrSuper = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
 
+        if ($request->has('bulk_action') || $request->input('action') === 'bulk') {
+            return $this->publicSarBulkAction($request);
+        }
+        if ($request->input('action') === 'update') {
+            return $this->publicSarUpdate($request, $request->input('id'));
+        }
+
         $total_registered = PublicRegistration::count();
         $pending_count = PublicRegistration::where('status', 'PENDING')->count();
         $confirmed_count = PublicRegistration::where('status', 'CONFIRMED')->count();
@@ -1726,7 +1807,7 @@ class AdminController extends Controller
         $perPage = $this->getPerPage($request);
         $registrations = $query->paginate($perPage)->withQueryString();
         $events = PublicEvent::orderBy('start_date', 'desc')->get();
-        $orgUnits = OrganizationUnit::where('is_active', 1)->orderBy('id', 'asc')->get();
+        $orgUnits = OrganizationUnit::orderedForSelect()->get();
 
         return view('admin.public_sar', compact('total_registered', 'pending_count', 'confirmed_count', 'waiting_count', 'rejected_count', 'gender_stats', 'age_stats', 'registrations', 'events', 'orgUnits', 'isCentralOrSuper'));
     }
@@ -1958,6 +2039,21 @@ class AdminController extends Controller
         $admin = Session::get('admin_user');
         $isCentralOrSuper = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
 
+        // Action Dispatcher for Shared Hosting Compatibility (via /admin/public_events.php?action=... or POST)
+        $action = $request->input('action');
+        if ($action === 'store') {
+            return $this->publicEventStore($request);
+        }
+        if ($action === 'update') {
+            return $this->publicEventUpdate($request, $request->input('id'));
+        }
+        if ($action === 'status') {
+            return $this->publicEventStatus($request->input('id'), $request->input('status_val'));
+        }
+        if ($action === 'delete') {
+            return $this->publicEventDelete($request->input('id'));
+        }
+
         $query = PublicEvent::with(['organizationUnit', 'registrations'])->orderBy('start_date', 'desc');
 
         if (!$isCentralOrSuper && !empty($admin['org_unit_id'])) {
@@ -1980,7 +2076,7 @@ class AdminController extends Controller
 
         $perPage = $this->getPerPage($request);
         $events = $query->paginate($perPage)->withQueryString();
-        $orgUnits = OrganizationUnit::where('is_active', 1)->orderBy('id', 'asc')->get();
+        $orgUnits = OrganizationUnit::orderedForSelect()->get();
 
         return view('admin.public_events', compact('events', 'orgUnits', 'isCentralOrSuper'));
     }
@@ -1999,7 +2095,15 @@ class AdminController extends Controller
             'max_quota' => 'required|integer|min:1',
             'status' => 'required|in:OPEN,CLOSED,COMPLETED',
             'org_unit_id' => 'nullable|integer',
+            'cover_image' => 'nullable|string|max:500',
+            'cover_file' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:10240',
         ]);
+
+        $coverImageUrl = $validated['cover_image'] ?? null;
+        if ($request->hasFile('cover_file') && $request->file('cover_file')->isValid()) {
+            $path = $request->file('cover_file')->store('public_events', 'public');
+            $coverImageUrl = Storage::url($path);
+        }
 
         $orgUnitId = ($isCentralOrSuper && !empty($validated['org_unit_id']))
             ? $validated['org_unit_id']
@@ -2015,6 +2119,7 @@ class AdminController extends Controller
             'title_en' => $titleEn,
             'location_name' => $validated['location_name'],
             'location_name_en' => $locationEn,
+            'cover_image' => $coverImageUrl,
             'start_date' => $validated['start_date'],
             'end_date' => $validated['end_date'],
             'max_quota' => $validated['max_quota'],
@@ -2046,7 +2151,15 @@ class AdminController extends Controller
             'max_quota' => 'required|integer|min:1',
             'status' => 'required|in:OPEN,CLOSED,COMPLETED',
             'org_unit_id' => 'nullable|integer',
+            'cover_image' => 'nullable|string|max:500',
+            'cover_file' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:10240',
         ]);
+
+        $coverImageUrl = $validated['cover_image'] ?? $event->cover_image;
+        if ($request->hasFile('cover_file') && $request->file('cover_file')->isValid()) {
+            $path = $request->file('cover_file')->store('public_events', 'public');
+            $coverImageUrl = Storage::url($path);
+        }
 
         if ($isCentralOrSuper && !empty($validated['org_unit_id'])) {
             $event->org_unit_id = $validated['org_unit_id'];
@@ -2062,6 +2175,7 @@ class AdminController extends Controller
 
         $event->title = $validated['title'];
         $event->location_name = $validated['location_name'];
+        $event->cover_image = $coverImageUrl;
         $event->start_date = $validated['start_date'];
         $event->end_date = $validated['end_date'];
         $event->max_quota = $validated['max_quota'];
@@ -2117,6 +2231,21 @@ class AdminController extends Controller
         $admin = Session::get('admin_user');
         $isCentralOrSuper = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
 
+        // Action Dispatcher for Shared Hosting Compatibility (via /admin/public_students.php?action=... or POST)
+        $action = $request->input('action');
+        if ($action === 'approve') {
+            return $this->publicStudentApprove($request->input('id'));
+        }
+        if ($action === 'reject') {
+            return $this->publicStudentReject($request, $request->input('id'));
+        }
+        if ($action === 'delete') {
+            return $this->publicSarDelete($request->input('id'));
+        }
+        if ($action === 'bulk' || $request->has('bulk_action')) {
+            return $this->publicSarBulkAction($request);
+        }
+
         $query = PublicRegistration::with(['event.organizationUnit', 'organizationUnit'])->orderBy('registered_at', 'desc');
 
         if (!$isCentralOrSuper && !empty($admin['org_unit_id'])) {
@@ -2159,7 +2288,7 @@ class AdminController extends Controller
         $perPage = $this->getPerPage($request);
         $registrations = $query->paginate($perPage)->withQueryString();
         $events = PublicEvent::orderBy('start_date', 'desc')->get();
-        $orgUnits = OrganizationUnit::where('is_active', 1)->orderBy('id', 'asc')->get();
+        $orgUnits = OrganizationUnit::orderedForSelect()->get();
 
         return view('admin.public_students', compact('registrations', 'events', 'orgUnits', 'isCentralOrSuper'));
     }
@@ -2313,7 +2442,7 @@ class AdminController extends Controller
             ->paginate($perPage)
             ->withQueryString();
 
-        $orgUnits = OrganizationUnit::where('is_active', 1)->orderBy('name_th')->get();
+        $orgUnits = OrganizationUnit::orderedForSelect()->get();
 
         return view('admin.news_index', compact('newsList', 'orgUnits', 'admin', 'isCentralOrSuper'));
     }
@@ -2341,6 +2470,8 @@ class AdminController extends Controller
             'is_pinned' => 'nullable|boolean',
             'cover_image' => 'nullable|string|max:500',
             'cover_file' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
+            'gallery_files.*' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
+            'gallery_urls' => 'nullable|string',
             'org_unit_id' => 'nullable|integer',
         ]);
 
@@ -2348,6 +2479,25 @@ class AdminController extends Controller
         if ($request->hasFile('cover_file') && $request->file('cover_file')->isValid()) {
             $path = $request->file('cover_file')->store('news', 'public');
             $coverImageUrl = Storage::url($path);
+        }
+
+        // Process Gallery Images
+        $galleryImages = [];
+        if ($request->hasFile('gallery_files')) {
+            foreach ($request->file('gallery_files') as $file) {
+                if ($file && $file->isValid()) {
+                    $gPath = $file->store('news/gallery', 'public');
+                    $galleryImages[] = Storage::url($gPath);
+                }
+            }
+        }
+        if (!empty($validated['gallery_urls'])) {
+            $urls = array_filter(array_map('trim', explode("\n", $validated['gallery_urls'])));
+            foreach ($urls as $u) {
+                if (filter_var($u, FILTER_VALIDATE_URL) || str_starts_with($u, '/')) {
+                    $galleryImages[] = $u;
+                }
+            }
         }
 
         $orgUnitId = $isCentralOrSuper ? (!empty($validated['org_unit_id']) ? $validated['org_unit_id'] : null) : ($admin['org_unit_id'] ?? null);
@@ -2363,6 +2513,7 @@ class AdminController extends Controller
             'content' => $validated['content'],
             'content_en' => $contentEn,
             'cover_image' => $coverImageUrl,
+            'gallery_images' => !empty($galleryImages) ? $galleryImages : null,
             'category' => $validated['category'],
             'is_pinned' => $request->has('is_pinned') ? 1 : 0,
             'status' => $validated['status'],
@@ -2394,6 +2545,9 @@ class AdminController extends Controller
             'is_pinned' => 'nullable|boolean',
             'cover_image' => 'nullable|string|max:500',
             'cover_file' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
+            'gallery_files.*' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
+            'gallery_urls' => 'nullable|string',
+            'existing_gallery' => 'nullable|array',
             'org_unit_id' => 'nullable|integer',
         ]);
 
@@ -2401,6 +2555,30 @@ class AdminController extends Controller
         if ($request->hasFile('cover_file') && $request->file('cover_file')->isValid()) {
             $path = $request->file('cover_file')->store('news', 'public');
             $coverImageUrl = Storage::url($path);
+        }
+
+        // Process Gallery Images (keep selected existing + add newly uploaded or URLs)
+        $currentGallery = $request->input('existing_gallery', []);
+        if (!is_array($currentGallery)) {
+            $currentGallery = [];
+        }
+
+        if ($request->hasFile('gallery_files')) {
+            foreach ($request->file('gallery_files') as $file) {
+                if ($file && $file->isValid()) {
+                    $gPath = $file->store('news/gallery', 'public');
+                    $currentGallery[] = Storage::url($gPath);
+                }
+            }
+        }
+
+        if (!empty($validated['gallery_urls'])) {
+            $urls = array_filter(array_map('trim', explode("\n", $validated['gallery_urls'])));
+            foreach ($urls as $u) {
+                if (filter_var($u, FILTER_VALIDATE_URL) || str_starts_with($u, '/')) {
+                    $currentGallery[] = $u;
+                }
+            }
         }
 
         // Auto-translate if title/content changed
@@ -2418,6 +2596,7 @@ class AdminController extends Controller
             'content' => $validated['content'],
             'content_en' => $contentEn,
             'cover_image' => $coverImageUrl,
+            'gallery_images' => !empty($currentGallery) ? array_values(array_unique($currentGallery)) : null,
             'category' => $validated['category'],
             'is_pinned' => $request->has('is_pinned') ? 1 : 0,
             'status' => $validated['status'],
@@ -2472,6 +2651,20 @@ class AdminController extends Controller
             return redirect()->route('admin.dashboard')->with('error', 'ท่านไม่มีสิทธิ์เข้าถึงเมนูจัดการผู้ใช้งานและกำหนดสิทธิ์');
         }
 
+        $action = $request->input('action');
+        if ($action === 'store') {
+            return $this->userStore($request);
+        }
+        if ($action === 'update') {
+            return $this->userUpdate($request, $request->input('id'));
+        }
+        if ($action === 'toggle_status') {
+            return $this->userToggleStatus($request->input('id'));
+        }
+        if ($action === 'delete') {
+            return $this->userDelete($request->input('id'));
+        }
+
         $query = User::with('organizationUnit')->orderBy('role', 'asc')->orderBy('id', 'asc');
 
         if ($request->filled('role_filter')) {
@@ -2489,7 +2682,7 @@ class AdminController extends Controller
 
         $perPage = $this->getPerPage($request);
         $users = $query->paginate($perPage)->withQueryString();
-        $orgUnits = OrganizationUnit::where('is_active', 1)->orderBy('id', 'asc')->get();
+        $orgUnits = OrganizationUnit::orderedForSelect()->get();
 
         return view('admin.users_index', compact('users', 'orgUnits'));
     }
@@ -2639,7 +2832,7 @@ class AdminController extends Controller
             });
 
         // รายการส่วนงานทั้งหมดสำหรับการเปรียบเทียบ (52 ส่วนงาน)
-        $allOrgUnits = OrganizationUnit::where('is_active', 1)->orderBy('id', 'asc')->get();
+        $allOrgUnits = OrganizationUnit::orderedForSelect()->get();
 
         // ดึงสถิติรวมของทุกส่วนงานแบบ Group By ครั้งเดียว (Single Query Batching ป้องกัน N+1)
         $ugTotals = UgRegistration::select('org_unit_id', DB::raw('count(*) as total'), DB::raw("sum(case when status = 'COMPLETED' then 1 else 0 end) as completed"), DB::raw("sum(case when status in ('CHECKED_IN', 'COMPLETED') then 1 else 0 end) as checkin"))
@@ -2861,6 +3054,17 @@ class AdminController extends Controller
     {
         $this->checkAuth();
 
+        $action = $request->input('action');
+        if ($action === 'update') {
+            return $this->donationUpdate($request, $request->input('id'));
+        }
+        if ($action === 'status') {
+            return $this->donationStatus($request, $request->input('id'));
+        }
+        if ($action === 'delete') {
+            return $this->donationDelete($request->input('id'));
+        }
+
         $query = Donation::with('verifier')->orderBy('created_at', 'desc');
 
         // ฟิลเตอร์สถานะ
@@ -2974,6 +3178,7 @@ class AdminController extends Controller
             'admin_notes' => 'nullable|string|max:1000',
             'status' => 'required|in:PENDING,VERIFIED,REJECTED',
             'slip' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:10240',
+            'avatar' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:10240',
         ]);
 
         $updateData = [
@@ -3005,6 +3210,18 @@ class AdminController extends Controller
             $updateData['slip_path'] = $slipFile->storeAs('donations', $filename, 'public');
         }
 
+        // หากมีการแนบภาพประจำตัวผู้บริจาคใหม่เพิ่มเติม/แทนที่เดิม
+        if ($request->hasFile('avatar')) {
+            // ลบภาพเก่าหากมี
+            if ($donation->avatar_path && Storage::disk('public')->exists($donation->avatar_path)) {
+                Storage::disk('public')->delete($donation->avatar_path);
+            }
+            $avatarFile = $request->file('avatar');
+            $extension = $avatarFile->getClientOriginalExtension();
+            $filename = 'donor_avatar_' . date('Ymd_His') . '_' . uniqid() . '.' . $extension;
+            $updateData['avatar_path'] = $avatarFile->storeAs('donations/avatars', $filename, 'public');
+        }
+
         // หากมีการเปลี่ยนสถานะ
         $adminUser = Session::get('admin_user');
         if (in_array($validated['status'], ['VERIFIED', 'REJECTED'])) {
@@ -3029,6 +3246,11 @@ class AdminController extends Controller
         // ลบไฟล์สลิปหากมี
         if ($donation->slip_path && Storage::disk('public')->exists($donation->slip_path)) {
             Storage::disk('public')->delete($donation->slip_path);
+        }
+
+        // ลบไฟล์ภาพประจำตัวหากมี
+        if ($donation->avatar_path && Storage::disk('public')->exists($donation->avatar_path)) {
+            Storage::disk('public')->delete($donation->avatar_path);
         }
 
         $no = $donation->donation_no;

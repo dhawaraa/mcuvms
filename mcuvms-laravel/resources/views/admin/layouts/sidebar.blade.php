@@ -158,16 +158,16 @@
                 </div>
             </div>
 
-            <!-- 3. เมนูแม่: บัณฑิตศึกษา (ป.โท 30 วัน / ป.เอก 45 วัน) ย่อ/ขยาย Dropdown เมนูย่อย 2 เมนู -->
+            <!-- 3. เมนูแม่: ระบบหนังสือรับรอง ย่อ/ขยาย Dropdown เมนูย่อย 2 เมนู -->
             <div class="rounded-xl overflow-hidden transition-all duration-200 {{ $isGradActive ? 'bg-[#182319] border border-[#2F4430] shadow-inner' : 'hover:bg-[#1E2B1F]' }}">
                 <button type="button" 
-                    title="บัณฑิตศึกษา ป.โท 30 วัน / ป.เอก 45 วัน (โมดูล 2)"
+                    title="ระบบหนังสือรับรอง (บัณฑิตศึกษา 30/45 วัน)"
                     onclick="toggleSubmenu('submenu-grad', 'chevron-grad')" 
                     class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition gap-3 {{ $isGradActive ? 'text-white font-semibold bg-[#223324]' : 'text-[#B8B1A2] hover:text-white' }}">
                     <span class="flex items-center gap-3">
                         <i data-lucide="scroll-text" class="w-4.5 h-4.5 {{ $isGradActive ? 'text-[#C5D7AF]' : 'text-[#A3B88C]' }} shrink-0"></i>
                         <span class="sidebar-text text-left whitespace-nowrap">
-                            <div class="leading-tight text-sm">บัณฑิตศึกษา (30/45 วัน)</div>
+                            <div class="leading-tight text-sm">ระบบหนังสือรับรอง</div>
                             <div class="text-[11px] text-[#8C9B80] font-mono font-normal">Graduate Studies</div>
                         </span>
                     </span>
@@ -183,27 +183,27 @@
                         <span class="sidebar-text whitespace-nowrap">คำร้องและอนุมัติ e-Doc</span>
                     </a>
 
-                    <!-- ย่อย 2: รายงานสถิติการปฏิบัติธรรม บัณฑิตศึกษา -->
-                    <a href="{{ route('admin.grad.sar') }}" title="รายงานสถิติการปฏิบัติธรรม" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 relative {{ $currentRoute === 'admin.grad.sar' ? 'bg-[#5A6B47] text-white font-semibold shadow-sm ring-1 ring-[#7B8D65]/40 pl-3.5' : 'text-[#D0C9BA] hover:text-white hover:bg-[#253726] border-l-2 border-transparent hover:border-[#7B8D65]' }}">
+                    <!-- ย่อย 2: รายงานสถิติการยื่นคำร้อง -->
+                    <a href="{{ route('admin.grad.sar') }}" title="รายงานสถิติการยื่นคำร้อง" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 relative {{ $currentRoute === 'admin.grad.sar' ? 'bg-[#5A6B47] text-white font-semibold shadow-sm ring-1 ring-[#7B8D65]/40 pl-3.5' : 'text-[#D0C9BA] hover:text-white hover:bg-[#253726] border-l-2 border-transparent hover:border-[#7B8D65]' }}">
                         <i data-lucide="bar-chart-2" class="w-4 h-4 shrink-0 {{ $currentRoute === 'admin.grad.sar' ? 'text-white' : 'text-[#A3B88C]' }}"></i>
-                        <span class="sidebar-text whitespace-nowrap">รายงานสถิติการปฏิบัติธรรม</span>
+                        <span class="sidebar-text whitespace-nowrap">รายงานสถิติการยื่นคำร้อง</span>
                     </a>
 
                 </div>
             </div>
 
 
-            <!-- 4. เมนูแม่: คอร์สวิปัสสนากรรมฐานสำหรับประชาชน ย่อ/ขยาย Dropdown เมนูย่อย 3 เมนู -->
+            <!-- 4. เมนูแม่: คอร์สปฏิบัติธรรม ย่อ/ขยาย Dropdown เมนูย่อย 3 เมนู -->
             <div class="rounded-xl overflow-hidden transition-all duration-200 {{ $isPublicActive ? 'bg-[#182319] border border-[#2F4430] shadow-inner' : 'hover:bg-[#1E2B1F]' }}">
                 <button type="button" 
-                    title="คอร์สวิปัสสนากรรมฐานสำหรับประชาชน (โมดูล 3)"
+                    title="คอร์สปฏิบัติธรรม (โมดูล 3)"
                     onclick="toggleSubmenu('submenu-public', 'chevron-public')" 
                     class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition gap-3 {{ $isPublicActive ? 'text-white font-semibold bg-[#223324]' : 'text-[#B8B1A2] hover:text-white' }}">
                     <span class="flex items-center gap-3">
                         <i data-lucide="heart-handshake" class="w-4.5 h-4.5 {{ $isPublicActive ? 'text-[#C5D7AF]' : 'text-[#A3B88C]' }} shrink-0"></i>
                         <span class="sidebar-text text-left whitespace-nowrap">
-                            <div class="leading-tight text-sm">วิปัสสนาสำหรับประชาชน</div>
-                            <div class="text-[11px] text-[#8C9B80] font-mono font-normal">Public Meditation</div>
+                            <div class="leading-tight text-sm">คอร์สปฏิบัติธรรม</div>
+                            <div class="text-[11px] text-[#8C9B80] font-mono font-normal">Meditation Courses</div>
                         </span>
                     </span>
                     <i id="chevron-public" data-lucide="chevron-down" class="sidebar-text w-4 h-4 text-[#8C9B80] transition-transform duration-200 {{ $isPublicActive ? 'rotate-180 text-[#C5D7AF]' : '' }}"></i>
@@ -479,6 +479,7 @@
         if (willOpen) {
             const allSubmenus = [
                 { menu: 'submenu-ug', chevron: 'chevron-ug' },
+                { menu: 'submenu-grad', chevron: 'chevron-grad' },
                 { menu: 'submenu-public', chevron: 'chevron-public' },
                 { menu: 'submenu-settings', chevron: 'chevron-settings' }
             ];

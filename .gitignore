@@ -22,3 +22,4 @@ mcuvms-laravel/storage/logs/*
 !mcuvms-laravel/storage/logs/.gitignore
 mcuvms-laravel/public/storage
 mcuvms-laravel/public/build
+vpsmcu-laravel/

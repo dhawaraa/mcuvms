@@ -73,6 +73,19 @@
                         <div class="text-xs text-[#6B6357]">{{ __('portal.university_name') }}</div>
                     </div>
                 </a>
+
+                <!-- Module 1 Navigation Tabs: ลงทะเบียน (Active) vs ตรวจสอบข้อมูล -->
+                <div class="hidden sm:flex items-center bg-[#EAE5D9]/80 p-1 rounded-2xl border border-[#D5CEBC]">
+                    <a href="{{ route('ug.register') }}" class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-[#5A6B47] text-white shadow-sm">
+                        <i data-lucide="user-plus" class="w-4 h-4"></i>
+                        <span>{{ __('portal.ug_tab_register') }}</span>
+                    </a>
+                    <a href="{{ route('ug.check') }}" class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 text-[#4A3B32] hover:text-[#2C3E2D] hover:bg-[#FAF8F2]">
+                        <i data-lucide="search" class="w-4 h-4 text-[#5A6B47]"></i>
+                        <span>{{ __('portal.ug_tab_check') }}</span>
+                    </a>
+                </div>
+
                 <div class="flex items-center space-x-3 sm:space-x-4">
                     @php
                         $currentLang = session('locale', 'th');
@@ -91,6 +104,16 @@
                         <i data-lucide="arrow-left" class="w-4.5 h-4.5 text-[#5A6B47]"></i> <span class="hidden sm:inline">{{ __('portal.nav_back_home') }}</span>
                     </a>
                 </div>
+            </div>
+
+            <!-- Mobile Sub-Navigation -->
+            <div class="flex sm:hidden items-center justify-center pb-3 pt-1 border-t border-[#EAE5D9] gap-2">
+                <a href="{{ route('ug.register') }}" class="flex-1 text-center py-1.5 px-3 rounded-lg text-xs font-bold bg-[#5A6B47] text-white">
+                    {{ __('portal.ug_tab_register') }}
+                </a>
+                <a href="{{ route('ug.check') }}" class="flex-1 text-center py-1.5 px-3 rounded-lg text-xs font-bold bg-white text-[#4A3B32] border border-[#D5CEBC]">
+                    {{ __('portal.ug_tab_check') }}
+                </a>
             </div>
         </div>
     </nav>

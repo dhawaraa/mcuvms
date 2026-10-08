@@ -86,7 +86,7 @@
 
         <!-- Card Login -->
         <div class="organic-card rounded-3xl p-8">
-            <form action="{{ route('login.post') }}" method="POST" class="space-y-5">
+            <form action="{{ url('/login.php') }}" method="POST" class="space-y-5">
                 @csrf
                 <div>
                     <label class="block text-xs font-semibold text-[#4A3B32] mb-2 flex items-center gap-1.5">

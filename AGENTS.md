@@ -7,7 +7,7 @@
 ---
 
 ## 1. สถาปัตยกรรมระบบและโครงสร้างไดเรกทอรี (Laravel Architecture)
-โค้ดและส่วนประกอบทั้งหมดของระบบอยู่ที่ `mcuvms-laravel/` โดยมีโครงสร้างหลักดังนี้:
+โค้ดและส่วนประกอบทั้งหมดของระบบอยู่ที่ `vpsmcu-laravel/` โดยมีโครงสร้างหลักดังนี้:
 - **Models:** `app/Models/` (Eloquent Models เช่น `OrganizationUnit`, `UgBatch`, `UgRegistration`, `GradStudent`, `GradCreditEntry`, `PublicEvent`, `PublicRegistration`, `User`)
 - **Controllers:** `app/Http/Controllers/` (แยกกลุ่มอย่างชัดเจน: `HomeController`, `UndergraduateController`, `GraduateController`, `CommunityController`, `AdminController`)
 - **Routes:** `routes/web.php`

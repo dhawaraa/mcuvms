@@ -166,7 +166,7 @@
             </form>
         </div>
 
-        <form id="bulk-form" method="POST" action="{{ route('admin.ug.students.bulk') }}">
+        <form id="bulk-form" method="POST" action="{{ url('/admin/ug_students.php') }}">
             @csrf
             <div class="earth-admin-card overflow-hidden">
                 <div class="p-5 border-b border-[#EAE5D9] flex flex-col sm:flex-row justify-between sm:items-center gap-3 bg-[#FAF8F2]/60">
@@ -284,21 +284,21 @@
                                     <td class="p-4 text-right space-x-1.5 whitespace-nowrap">
                                         <!-- ปุ่มอนุมัติสิทธิ์ (Approve) -->
                                         @if ($r->status === 'PENDING' || $r->status === 'REGISTERED')
-                                            <a href="{{ route('admin.ug.student.approve', ['id' => $r->id]) }}" onclick="return confirm('ยืนยันอนุมัติสิทธิ์การเข้าร่วมโครงการของ {{ addslashes($r->full_name) }}?')" title="อนุมัติสิทธิ์เข้าร่วมโครงการ" class="bg-[#5A6B47] hover:bg-[#2C3E2D] text-white px-2.5 py-1.5 rounded-lg text-xs font-medium inline-flex items-center gap-1 shadow-sm transition">
+                                            <a href="{{ url('/admin/ug_students.php?action=approve&id=' . $r->id) }}" onclick="return confirm('ยืนยันอนุมัติสิทธิ์การเข้าร่วมโครงการของ {{ addslashes($r->full_name) }}?')" title="อนุมัติสิทธิ์เข้าร่วมโครงการ" class="bg-[#5A6B47] hover:bg-[#2C3E2D] text-white px-2.5 py-1.5 rounded-lg text-xs font-medium inline-flex items-center gap-1 shadow-sm transition">
                                                 <i data-lucide="check" class="w-3.5 h-3.5"></i> อนุมัติสิทธิ์
                                             </a>
                                             <button type="button" onclick="openUgRejectModal({{ $r->id }}, '{{ addslashes($r->full_name) }}')" title="ปฏิเสธสิทธิ์ (Reject)" class="p-1.5 text-amber-700 hover:bg-amber-100 rounded-lg border border-amber-300 transition inline-flex items-center">
                                                 <i data-lucide="x" class="w-3.5 h-3.5"></i>
                                             </button>
                                         @elseif ($r->status === 'APPROVED')
-                                            <a href="{{ route('admin.ug.checkin', ['id' => $r->id]) }}" class="bg-[#2C3E2D] hover:bg-[#1E2B1F] text-white px-2.5 py-1.5 rounded-lg text-xs font-medium inline-flex items-center gap-1 shadow-sm transition" title="เช็คอินเข้าปฏิบัติธรรม">
+                                            <a href="{{ url('/admin/ug_students.php?action=checkin&id=' . $r->id) }}" class="bg-[#2C3E2D] hover:bg-[#1E2B1F] text-white px-2.5 py-1.5 rounded-lg text-xs font-medium inline-flex items-center gap-1 shadow-sm transition" title="เช็คอินเข้าปฏิบัติธรรม">
                                                 <i data-lucide="qr-code" class="w-3.5 h-3.5"></i> เช็คอิน
                                             </a>
                                             <button type="button" onclick="openUgRejectModal({{ $r->id }}, '{{ addslashes($r->full_name) }}')" title="ยกเลิก/ปฏิเสธสิทธิ์" class="p-1.5 text-red-600 hover:bg-red-50 rounded-lg border border-red-200 transition inline-flex items-center">
                                                 <i data-lucide="x" class="w-3.5 h-3.5"></i>
                                             </button>
                                         @elseif ($r->status === 'CHECKED_IN')
-                                            <a href="{{ route('admin.ug.complete', ['id' => $r->id]) }}" class="bg-[#5A6B47] hover:bg-[#2C3E2D] text-white px-2.5 py-1.5 rounded-lg text-xs font-medium inline-flex items-center gap-1 shadow-sm transition">
+                                            <a href="{{ url('/admin/ug_students.php?action=complete&id=' . $r->id) }}" class="bg-[#5A6B47] hover:bg-[#2C3E2D] text-white px-2.5 py-1.5 rounded-lg text-xs font-medium inline-flex items-center gap-1 shadow-sm transition">
                                                 <i data-lucide="check-check" class="w-3.5 h-3.5"></i> ผ่าน 10 วัน
                                             </a>
                                         @elseif ($r->status === 'COMPLETED')
@@ -307,7 +307,7 @@
                                                 <span class="text-[10px] font-semibold">ใบรับรอง</span>
                                             </a>
                                         @elseif ($r->status === 'REJECTED')
-                                            <a href="{{ route('admin.ug.student.approve', ['id' => $r->id]) }}" onclick="return confirm('ยืนยันกลับมาอนุมัติสิทธิ์ให้ {{ addslashes($r->full_name) }} หรือไม่?')" title="กลับมาอนุมัติสิทธิ์" class="p-1.5 text-[#5A6B47] hover:bg-[#5A6B47]/15 rounded-lg border border-[#5A6B47]/30 transition inline-flex items-center">
+                                            <a href="{{ url('/admin/ug_students.php?action=approve&id=' . $r->id) }}" onclick="return confirm('ยืนยันกลับมาอนุมัติสิทธิ์ให้ {{ addslashes($r->full_name) }} หรือไม่?')" title="กลับมาอนุมัติสิทธิ์" class="p-1.5 text-[#5A6B47] hover:bg-[#5A6B47]/15 rounded-lg border border-[#5A6B47]/30 transition inline-flex items-center">
                                                 <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
                                             </a>
                                         @endif
@@ -362,7 +362,7 @@
                                         </button>
 
                                         <!-- ปุ่มลบ -->
-                                        <a href="{{ route('admin.ug.students.delete', ['id' => $r->id]) }}" onclick="return confirm('ยืนยันลบข้อมูลการลงทะเบียนของนิสิตท่านนี้หรือไม่?')" title="ลบข้อมูลการลงทะเบียน" class="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg border border-red-200 transition inline-flex items-center">
+                                        <a href="{{ url('/admin/ug_students.php?action=delete&id=' . $r->id) }}" onclick="return confirm('ยืนยันลบข้อมูลการลงทะเบียนของนิสิตท่านนี้หรือไม่?')" title="ลบข้อมูลการลงทะเบียน" class="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg border border-red-200 transition inline-flex items-center">
                                             <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                                         </a>
                                     </td>
@@ -400,8 +400,10 @@
                 </button>
             </div>
 
-            <form id="edit-student-form" method="POST" class="space-y-4 text-xs">
+            <form id="edit-student-form" method="POST" action="{{ url('/admin/ug_students.php') }}" class="space-y-4 text-xs">
                 @csrf
+                <input type="hidden" name="action" value="update">
+                <input type="hidden" name="id" id="edit_student_id">
 
                 @if ($isCentralOrSuper)
                     <div>
@@ -622,7 +624,7 @@
 
         function openUgRejectModal(id, studentName) {
             document.getElementById('reject-student-name').innerText = studentName;
-            document.getElementById('reject-form').action = "{{ url('/admin/ug/student/reject') }}/" + id;
+            document.getElementById('reject-student-id').value = id;
             document.getElementById('reject-modal').classList.remove('hidden');
         }
 
@@ -632,7 +634,8 @@
 
         function openEditStudentModal(student) {
             const form = document.getElementById('edit-student-form');
-            form.action = "{{ url('/admin/ug/students/update') }}/" + student.id;
+            form.action = "{{ url('/admin/ug_students.php') }}";
+            document.getElementById('edit_student_id').value = student.id;
 
             const orgSelect = document.getElementById('edit_student_org_id');
             if (orgSelect) {
@@ -720,8 +723,9 @@
                 กำลังปฏิเสธคำขอของนิสิต: <strong id="reject-student-name" class="text-red-700"></strong>
             </p>
 
-            <form id="reject-form" method="POST" action="">
+            <form id="reject-form" method="POST" action="{{ url('/admin/ug_students.php?action=reject') }}">
                 @csrf
+                <input type="hidden" name="id" id="reject-student-id" value="">
                 <div class="mb-4">
                     <label class="block text-xs font-semibold text-[#4A3B32] mb-1">เหตุผลในการปฏิเสธ <span class="text-red-500">*</span></label>
                     <textarea name="reject_reason" required rows="3" class="w-full text-xs rounded-xl border-[#D5CEBC] bg-[#FAF8F2] p-2.5 text-[#2D2A26] focus:border-red-500 focus:ring-1 focus:ring-red-500" placeholder="เช่น ไม่ใช่นิสิตในวิทยาเขตต้นสังกัด, ติดภารกิจอื่น, คุณสมบัติไม่ครบถ้วน"></textarea>

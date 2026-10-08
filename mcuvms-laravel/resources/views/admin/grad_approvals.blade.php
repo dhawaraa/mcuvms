@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ตรวจสอบและอนุมัติวันสะสม บัณฑิตศึกษา (ป.โท/เอก) - VPSMCU Admin (Laravel)</title>
+    <title>ระบบหนังสือรับรองการปฏิบัติวิปัสสนากรรมฐาน (e-Document) - VPSMCU Admin</title>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -69,7 +69,7 @@
         <!-- Top bar -->
         <div class="flex flex-col sm:flex-row justify-between sm:items-center pb-6 mb-8 border-b border-[#D5CEBC] gap-4">
             <div>
-                <h1 class="text-2xl font-heading font-bold text-[#2C3E2D]">การอนุมัติคำร้อง e-Document และผลสะสมวัน บัณฑิตศึกษา</h1>
+                <h1 class="text-2xl font-heading font-bold text-[#2C3E2D]">ระบบหนังสือรับรองการปฏิบัติวิปัสสนากรรมฐาน (e-Document)</h1>
                 <p class="text-xs text-[#7B8D65] mt-1 font-medium">เกณฑ์: ป.โท 30 วัน / ป.เอก 45 วัน &bull; ตรวจสอบหลักฐาน 4 รายการ, สลิปโอนเงิน และอัปโหลดเอกสารตอบกลับ</p>
             </div>
             <div class="flex flex-wrap items-center gap-3">
@@ -154,8 +154,13 @@
 
                     <select name="degree_level" onchange="this.form.submit()" class="px-3 py-1.5 text-xs bg-[#FAF8F2] border border-[#EAE5D9] rounded-lg text-[#2C3E2D] font-medium focus:ring-1 focus:ring-[#5A6B47]">
                         <option value="">-- ระดับการศึกษา --</option>
-                        <option value="MASTER" {{ request('degree_level') === 'MASTER' ? 'selected' : '' }}>ป.โท (30 วัน)</option>
-                        <option value="DOCTORAL" {{ request('degree_level') === 'DOCTORAL' ? 'selected' : '' }}>ป.เอก (45 วัน)</option>
+                        <option value="ประกาศนียบัตร (7 วัน)" {{ request('degree_level') === 'ประกาศนียบัตร (7 วัน)' ? 'selected' : '' }}>ประกาศนียบัตร (7 วัน)</option>
+                        <option value="ประกาศนียบัตร (15 วัน)" {{ request('degree_level') === 'ประกาศนียบัตร (15 วัน)' ? 'selected' : '' }}>ประกาศนียบัตร (15 วัน)</option>
+                        <option value="ประกาศนียบัตร (30 วัน)" {{ request('degree_level') === 'ประกาศนียบัตร (30 วัน)' ? 'selected' : '' }}>ประกาศนียบัตร (30 วัน)</option>
+                        <option value="ประกาศนียบัตร (90วัน)" {{ request('degree_level') === 'ประกาศนียบัตร (90วัน)' ? 'selected' : '' }}>ประกาศนียบัตร (90วัน)</option>
+                        <option value="ปริญญาตรีปีละ (10วัน)" {{ request('degree_level') === 'ปริญญาตรีปีละ (10วัน)' ? 'selected' : '' }}>ปริญญาตรีปีละ (10วัน)</option>
+                        <option value="ปริญญาโท (30 วัน)" {{ request('degree_level') === 'ปริญญาโท (30 วัน)' || request('degree_level') === 'MASTER' ? 'selected' : '' }}>ปริญญาโท (30 วัน)</option>
+                        <option value="ปริญญาเอก (45 วัน)" {{ request('degree_level') === 'ปริญญาเอก (45 วัน)' || request('degree_level') === 'DOCTORAL' ? 'selected' : '' }}>ปริญญาเอก (45 วัน)</option>
                     </select>
 
                     <select name="status" onchange="this.form.submit()" class="px-3 py-1.5 text-xs bg-[#FAF8F2] border border-[#EAE5D9] rounded-lg text-[#2C3E2D] font-medium focus:ring-1 focus:ring-[#5A6B47]">
@@ -195,7 +200,7 @@
 
 
         <!-- Approval Table -->
-        <form id="bulk-form" method="POST" action="{{ route('admin.grad.approvals.bulk') }}">
+        <form id="bulk-form" method="POST" action="{{ url('/admin/grad_approvals.php') }}">
             @csrf
             <div class="earth-admin-card overflow-hidden">
                 <div class="p-5 border-b border-[#EAE5D9] flex flex-col sm:flex-row justify-between sm:items-center gap-3 bg-[#FAF8F2]/60">
@@ -289,8 +294,8 @@
                                         </div>
                                     </td>
                                     <td class="p-4">
-                                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold border {{ $s->degree_level === 'DOCTORAL' ? 'bg-[#5A6B47]/15 text-[#5A6B47] border-[#5A6B47]/30' : 'bg-[#2C3E2D]/10 text-[#2C3E2D] border-[#2C3E2D]/20' }}">
-                                            {{ $s->degree_level === 'DOCTORAL' ? 'ปริญญาเอก' : 'ปริญญาโท' }}
+                                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold border bg-[#5A6B47]/15 text-[#5A6B47] border-[#5A6B47]/30">
+                                            {{ $s->degree_level }}
                                         </span>
                                         <div class="text-[#2C3E2D] font-medium mt-1">{{ $s->organizationUnit->name_th ?? 'มจร' }}</div>
                                         <div class="text-[11px] text-[#7B8D65] line-clamp-1" title="{{ $s->program_name }}">{{ $s->program_name }}</div>
@@ -399,7 +404,7 @@
                                                 student_code: @js($s->student_code ?? $s->student_id),
                                                 citizen_id: @js($s->citizen_id ?? '-'),
                                                 full_name: @js($s->prefix . $s->first_name . ' ' . $s->last_name . (!empty($s->buddhist_name) && $s->buddhist_name !== '-' ? ' ' . $s->buddhist_name : '')),
-                                                degree_level: @js($s->degree_level === 'DOCTORAL' ? 'ปริญญาเอก (Doctoral)' : 'ปริญญาโท (Master)'),
+                                                degree_level: @js($s->degree_level),
                                                 faculty: @js($s->faculty ?? '-'),
                                                 program_name: @js($s->program_name ?? '-'),
                                                 org_name: @js($s->organizationUnit->name_th ?? 'มจร'),
@@ -678,8 +683,10 @@
                 </button>
             </div>
 
-            <form id="edit-grad-form" method="POST" enctype="multipart/form-data" class="space-y-6 text-xs">
+            <form id="edit-grad-form" method="POST" action="{{ url('/admin/grad_approvals.php') }}" enctype="multipart/form-data" class="space-y-6 text-xs">
                 @csrf
+                <input type="hidden" name="action" value="update">
+                <input type="hidden" name="id" id="edit_grad_id">
 
                 <!-- หมวด 1: ข้อมูลส่วนตัว -->
                 <div class="bg-[#FAF8F2] p-4 rounded-2xl border border-[#EAE5D9] space-y-3">
@@ -753,8 +760,13 @@
                         <div>
                             <label class="block font-semibold text-[#4A3B32] mb-1">ระดับการศึกษา <span class="text-[#C86D51]">*</span></label>
                             <select id="edit_grad_degree" name="degree_level" required onchange="updateGradTargetDays(this.value)" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
-                                <option value="MASTER">ปริญญาโท (มหาบัณฑิต - 30 วัน)</option>
-                                <option value="DOCTORAL">ปริญญาเอก (ดุษฎีบัณฑิต - 45 วัน)</option>
+                                <option value="ประกาศนียบัตร (7 วัน)">ประกาศนียบัตร (7 วัน)</option>
+                                <option value="ประกาศนียบัตร (15 วัน)">ประกาศนียบัตร (15 วัน)</option>
+                                <option value="ประกาศนียบัตร (30 วัน)">ประกาศนียบัตร (30 วัน)</option>
+                                <option value="ประกาศนียบัตร (90วัน)">ประกาศนียบัตร (90วัน)</option>
+                                <option value="ปริญญาตรีปีละ (10วัน)">ปริญญาตรีปีละ (10วัน)</option>
+                                <option value="ปริญญาโท (30 วัน)">ปริญญาโท (30 วัน)</option>
+                                <option value="ปริญญาเอก (45 วัน)">ปริญญาเอก (45 วัน)</option>
                             </select>
                         </div>
                         <div>
@@ -1037,7 +1049,8 @@
 
         function openEditGradModal(data) {
             const form = document.getElementById('edit-grad-form');
-            form.action = "{{ url('/admin/grad/student/update') }}/" + data.id;
+            form.action = "{{ url('/admin/grad_approvals.php') }}";
+            document.getElementById('edit_grad_id').value = data.id;
 
             // 1. ข้อมูลส่วนตัว
             document.getElementById('edit_grad_code').value = data.student_code || '';
@@ -1101,10 +1114,22 @@
             document.getElementById('edit-grad-modal').classList.remove('hidden');
         }
 
+        const degreeDaysMap = {
+            'ประกาศนียบัตร (7 วัน)': 7,
+            'ประกาศนียบัตร (15 วัน)': 15,
+            'ประกาศนียบัตร (30 วัน)': 30,
+            'ประกาศนียบัตร (90วัน)': 90,
+            'ปริญญาตรีปีละ (10วัน)': 10,
+            'ปริญญาโท (30 วัน)': 30,
+            'ปริญญาเอก (45 วัน)': 45,
+            'MASTER': 30,
+            'DOCTORAL': 45
+        };
+
         function updateGradTargetDays(degree) {
             const targetInput = document.getElementById('edit_grad_target');
             if (targetInput) {
-                targetInput.value = (degree === 'DOCTORAL') ? 45 : 30;
+                targetInput.value = degreeDaysMap[degree] || 30;
             }
         }
 

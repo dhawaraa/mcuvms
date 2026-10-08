@@ -8,7 +8,14 @@ class OrganizationUnit extends Model
 {
     protected $table = 'organization_units';
     protected $guarded = [];
-    public $timestamps = true;
+    public $timestamps = false;
+
+    public function scopeOrderedForSelect($query)
+    {
+        return $query->where('is_active', 1)
+            ->orderByRaw("CASE WHEN name_th LIKE '%สถาบันวิปัสสนาธุระ%' OR code = 'MCU-VIPASSANA' THEN 0 ELSE 1 END")
+            ->orderBy('id', 'asc');
+    }
 
     public function ugRegistrations()
     {

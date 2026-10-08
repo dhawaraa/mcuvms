@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "cd mcuvms-laravel && composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction"
+    "build": "cd vpsmcu-laravel && composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction"
   }
 }

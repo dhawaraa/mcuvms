@@ -62,11 +62,11 @@
                 <div class="hidden sm:flex items-center bg-[#EAE5D9]/80 p-1 rounded-2xl border border-[#D5CEBC]">
                     <a href="{{ route('grad.request') }}" class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-[#5A6B47] text-white shadow-sm">
                         <i data-lucide="file-text" class="w-4 h-4"></i>
-                        <span>ยื่นคำร้อง e-Document</span>
+                        <span>{{ __('portal.grad_req_tab_request') }}</span>
                     </a>
                     <a href="{{ route('grad.progress') }}" class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 text-[#4A3B32] hover:text-[#2C3E2D] hover:bg-[#FAF8F2]">
                         <i data-lucide="search" class="w-4 h-4 text-[#5A6B47]"></i>
-                        <span>ตรวจประวัติสะสมวัน</span>
+                        <span>{{ __('portal.grad_req_tab_progress') }}</span>
                     </a>
                 </div>
 
@@ -93,10 +93,10 @@
             <!-- Mobile Sub-Navigation -->
             <div class="flex sm:hidden items-center justify-center pb-3 pt-1 border-t border-[#EAE5D9] gap-2">
                 <a href="{{ route('grad.request') }}" class="flex-1 text-center py-1.5 px-3 rounded-lg text-xs font-bold bg-[#5A6B47] text-white">
-                    ยื่นคำร้อง
+                    {{ __('portal.grad_req_tab_request') }}
                 </a>
                 <a href="{{ route('grad.progress') }}" class="flex-1 text-center py-1.5 px-3 rounded-lg text-xs font-bold bg-white text-[#4A3B32] border border-[#D5CEBC]">
-                    ตรวจประวัติสะสมวัน
+                    {{ __('portal.grad_req_tab_progress') }}
                 </a>
             </div>
         </div>
@@ -109,11 +109,11 @@
         <div class="bg-gradient-to-r from-[#243325] via-[#4A3B32] to-[#2C3E2D] rounded-2xl p-6 md:p-8 text-white shadow-md mb-8 border border-[#3D523E]">
             <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/15 backdrop-blur-sm rounded-full text-xs font-semibold uppercase tracking-wider mb-2 border border-white/20">
                 <i data-lucide="file-text" class="w-3.5 h-3.5 text-[#EAE5D9]"></i>
-                <span>ระบบคำร้อง e-Document บัณฑิตศึกษา</span>
+                <span>{{ __('portal.grad_req_header_badge') }}</span>
             </div>
-            <h1 class="text-2xl md:text-3xl font-heading font-bold mb-2">ยื่นคำร้องขอหนังสือรับรองการปฏิบัติวิปัสสนากรรมฐาน (e-Document)</h1>
+            <h1 class="text-2xl md:text-3xl font-heading font-bold mb-2">{{ __('portal.grad_req_header_title') }}</h1>
             <p class="text-[#EAE5D9] text-sm leading-relaxed">
-                สำหรับนิสิตระดับมหาบัณฑิต (ป.โท 30 วัน) และดุษฎีบัณฑิต (ป.เอก 45 วัน) ยื่นคำร้องขอใบรับรอง พร้อมแนบหลักฐานการปฏิบัติธรรมและการชำระค่าธรรมเนียม
+                {{ __('portal.grad_req_header_desc') }}
             </p>
         </div>
 
@@ -122,12 +122,12 @@
                 <div class="flex items-start gap-3">
                     <i data-lucide="lock" class="w-6 h-6 text-[#C86D51] shrink-0 mt-0.5"></i>
                     <div>
-                        <h3 class="text-base font-heading font-bold text-[#A85238]">ขณะนี้ระบบปิดรับคำร้อง e-Document ชั่วคราว</h3>
+                        <h3 class="text-base font-heading font-bold text-[#A85238]">{{ __('portal.grad_req_closed_title') }}</h3>
                         <p class="text-xs text-[#6B6357] mt-1 leading-relaxed">
-                            ระบบรับคำร้องปิดตามกำหนดเวลาหรืออยู่ระหว่างการประมวลผลข้อมูลของเจ้าหน้าที่สถาบันวิปัสสนาธุระ มจร หากมีข้อสงสัยโปรดติดต่อเจ้าหน้าที่ส่วนงานต้นสังกัด
+                            {{ __('portal.grad_req_closed_desc') }}
                         </p>
                         <a href="{{ route('grad.progress') }}" class="inline-flex items-center gap-1.5 text-xs text-[#5A6B47] hover:underline font-semibold mt-3">
-                            <i data-lucide="search" class="w-3.5 h-3.5"></i> ไปที่หน้าตรวจสอบสถานะสะสมวันเดิม
+                            <i data-lucide="search" class="w-3.5 h-3.5"></i> {{ __('portal.grad_req_closed_back') }}
                         </a>
                     </div>
                 </div>
@@ -139,13 +139,13 @@
                     <div class="w-16 h-16 bg-[#E9EFE2] text-[#3D523E] rounded-full flex items-center justify-center mx-auto mb-4 border border-[#CADBC0]">
                         <i data-lucide="check-circle" class="w-8 h-8 text-[#5A6B47]"></i>
                     </div>
-                    <h2 class="text-2xl font-heading font-bold text-[#2C3E2D] mb-1">ส่งคำร้องขอหนังสือรับรองเรียบร้อยแล้ว</h2>
+                    <h2 class="text-2xl font-heading font-bold text-[#2C3E2D] mb-1">{{ __('portal.grad_req_success_title') }}</h2>
                     <p class="text-[#6B6357] text-xs max-w-lg mx-auto mb-4 leading-relaxed">
                         {{ session('success') }}
                     </p>
                     <div class="flex items-center justify-center gap-3">
                         <a href="{{ route('grad.progress', ['student_code' => session('student_code')]) }}" class="bg-[#2C3E2D] hover:bg-[#3D523E] text-white font-medium px-6 py-2.5 rounded-lg text-sm transition flex items-center gap-2 shadow-sm">
-                            <i data-lucide="search" class="w-4 h-4"></i> ตรวจสอบสถานะคำร้อง
+                            <i data-lucide="search" class="w-4 h-4"></i> {{ __('portal.grad_req_check_status') }}
                         </a>
                     </div>
                 </div>
@@ -167,20 +167,20 @@
                 <div>
                     <h2 class="text-base font-heading font-bold text-[#2C3E2D] flex items-center border-b border-[#E3DEC9] pb-3 mb-5">
                         <span class="w-6 h-6 rounded-full bg-[#5A6B47] text-white text-xs font-bold flex items-center justify-center mr-2">1</span>
-                        ข้อมูลส่วนตัวและประวัติผู้ยื่นคำร้อง
+                        {{ __('portal.grad_req_sec1_title') }}
                     </h2>
 
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">รหัสนิสิต <span class="text-[#C86D51]">*</span></label>
-                            <input type="text" id="txt_studentid" name="student_id" maxlength="15" required placeholder="เช่น 6501102001" value="{{ old('student_id') }}" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm font-mono focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
+                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">{{ __('portal.grad_req_student_id') }} <span class="text-[#C86D51]">*</span></label>
+                            <input type="text" id="txt_studentid" name="student_id" maxlength="15" required placeholder="{{ __('portal.grad_req_student_id_ph') }}" value="{{ old('student_id') }}" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm font-mono focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">เลขประจำตัวประชาชน / Passport <span class="text-[#C86D51]">*</span></label>
-                            <input type="text" id="txt_personalid" name="citizen_id" maxlength="13" required placeholder="เลข 13 หลัก" value="{{ old('citizen_id') }}" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm font-mono focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
+                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">{{ __('portal.grad_req_citizen_id') }} <span class="text-[#C86D51]">*</span></label>
+                            <input type="text" id="txt_personalid" name="citizen_id" maxlength="13" required placeholder="{{ __('portal.grad_req_citizen_id_ph') }}" value="{{ old('citizen_id') }}" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm font-mono focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">คำนำหน้าชื่อ <span class="text-[#C86D51]">*</span></label>
+                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">{{ __('portal.grad_req_prefix') }} <span class="text-[#C86D51]">*</span></label>
                             <select id="txt_titlename" name="prefix" required class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
                                 <option value="พระมหา">พระมหา</option>
                                 <option value="พระครู">พระครู</option>
@@ -195,29 +195,29 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">สัญชาติ <span class="text-[#C86D51]">*</span></label>
-                            <input type="text" id="txt_nation" name="nationality" value="{{ old('nationality', 'ไทย') }}" required class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
+                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">{{ __('portal.grad_req_nationality') }} <span class="text-[#C86D51]">*</span></label>
+                            <input type="text" id="txt_nation" name="nationality" value="{{ old('nationality', session('locale') === 'en' ? 'Thai' : 'ไทย') }}" required class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
                         </div>
 
                         <div>
-                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">ชื่อ <span class="text-[#C86D51]">*</span></label>
-                            <input type="text" id="txt_name" name="first_name" required placeholder="ชื่อจริง" value="{{ old('first_name') }}" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
+                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">{{ __('portal.grad_req_first_name') }} <span class="text-[#C86D51]">*</span></label>
+                            <input type="text" id="txt_name" name="first_name" required placeholder="{{ __('portal.grad_req_first_name_ph') }}" value="{{ old('first_name') }}" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">นามสกุล <span class="text-[#C86D51]">*</span></label>
-                            <input type="text" id="txt_lastname" name="last_name" required placeholder="นามสกุล" value="{{ old('last_name') }}" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
+                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">{{ __('portal.grad_req_last_name') }} <span class="text-[#C86D51]">*</span></label>
+                            <input type="text" id="txt_lastname" name="last_name" required placeholder="{{ __('portal.grad_req_last_name_ph') }}" value="{{ old('last_name') }}" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">ฉายาทางธรรม (ถ้าไม่มีใส่ -)</label>
-                            <input type="text" id="txt_buddhistname" name="buddhist_name" placeholder="เช่น ปุญฺญกาโม หรือ -" value="{{ old('buddhist_name', '-') }}" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
+                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">{{ __('portal.grad_req_buddhist_name') }}</label>
+                            <input type="text" id="txt_buddhistname" name="buddhist_name" placeholder="{{ __('portal.grad_req_buddhist_name_ph') }}" value="{{ old('buddhist_name', '-') }}" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-xs font-semibold text-[#4A3B32] mb-1">อายุ (ปี)</label>
-                                <input type="number" id="txt_age" name="age" min="15" max="120" placeholder="อายุ" value="{{ old('age') }}" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm font-mono focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
+                                <label class="block text-xs font-semibold text-[#4A3B32] mb-1">{{ __('portal.grad_req_age') }}</label>
+                                <input type="number" id="txt_age" name="age" min="15" max="120" placeholder="{{ __('portal.grad_req_age') }}" value="{{ old('age') }}" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm font-mono focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-[#4A3B32] mb-1">พรรษา</label>
+                                <label class="block text-xs font-semibold text-[#4A3B32] mb-1">{{ __('portal.grad_req_vassa') }}</label>
                                 <input type="number" id="txt_vassa" name="vassa" min="0" max="100" placeholder="0" value="{{ old('vassa', 0) }}" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm font-mono focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
                             </div>
                         </div>
@@ -228,46 +228,51 @@
                 <div>
                     <h2 class="text-base font-heading font-bold text-[#2C3E2D] flex items-center border-b border-[#E3DEC9] pb-3 mb-5">
                         <span class="w-6 h-6 rounded-full bg-[#5A6B47] text-white text-xs font-bold flex items-center justify-center mr-2">2</span>
-                        ข้อมูลการศึกษาและสังกัดใน มจร
+                        {{ __('portal.grad_req_sec2_title') }}
                     </h2>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">ระดับการศึกษา <span class="text-[#C86D51]">*</span></label>
+                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">{{ __('portal.grad_req_degree') }} <span class="text-[#C86D51]">*</span></label>
                             <select id="txt_status" name="degree_level" required onchange="handleDegreeChange(this.value)" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
-                                <option value="MASTER">ปริญญาโท (มหาบัณฑิต - เกณฑ์ 30 วัน)</option>
-                                <option value="DOCTORAL">ปริญญาเอก (ดุษฎีบัณฑิต - เกณฑ์ 45 วัน)</option>
+                                <option value="ประกาศนียบัตร (7 วัน)">ประกาศนียบัตร (7 วัน)</option>
+                                <option value="ประกาศนียบัตร (15 วัน)">ประกาศนียบัตร (15 วัน)</option>
+                                <option value="ประกาศนียบัตร (30 วัน)">ประกาศนียบัตร (30 วัน)</option>
+                                <option value="ประกาศนียบัตร (90วัน)">ประกาศนียบัตร (90วัน)</option>
+                                <option value="ปริญญาตรีปีละ (10วัน)">ปริญญาตรีปีละ (10วัน)</option>
+                                <option value="ปริญญาโท (30 วัน)" selected>ปริญญาโท (30 วัน)</option>
+                                <option value="ปริญญาเอก (45 วัน)">ปริญญาเอก (45 วัน)</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">คณะ <span class="text-[#C86D51]">*</span></label>
+                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">{{ __('portal.grad_req_faculty') }} <span class="text-[#C86D51]">*</span></label>
                             <select id="txt_faculty" name="faculty" required class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
-                                <option value="บัณฑิตวิทยาลัย">บัณฑิตวิทยาลัย</option>
-                                <option value="พุทธศาสตร์">พุทธศาสตร์</option>
-                                <option value="ครุศาสตร์">ครุศาสตร์</option>
-                                <option value="มนุษยศาสตร์">มนุษยศาสตร์</option>
-                                <option value="สังคมศาสตร์">สังคมศาสตร์</option>
+                                <option value="บัณฑิตวิทยาลัย">บัณฑิตวิทยาลัย (Graduate School)</option>
+                                <option value="พุทธศาสตร์">คณะพุทธศาสตร์ (Faculty of Buddhism)</option>
+                                <option value="ครุศาสตร์">คณะครุศาสตร์ (Faculty of Education)</option>
+                                <option value="มนุษยศาสตร์">คณะมนุษยศาสตร์ (Faculty of Humanities)</option>
+                                <option value="สังคมศาสตร์">คณะสังคมศาสตร์ (Faculty of Social Sciences)</option>
                                 <option value="IBSC">วิทยาลัยพุทธศาสตร์นานาชาติ (IBSC)</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">สาขาวิชา / หลักสูตร <span class="text-[#C86D51]">*</span></label>
-                            <input type="text" id="txt_subject" name="program_name" required placeholder="เช่น พุทธศาสตรมหาบัณฑิต สาขาวิชาการจัดการเชิงพุทธ" value="{{ old('program_name') }}" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
+                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">{{ __('portal.grad_req_program') }} <span class="text-[#C86D51]">*</span></label>
+                            <input type="text" id="txt_subject" name="program_name" required placeholder="{{ __('portal.grad_req_program_ph') }}" value="{{ old('program_name') }}" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
                         </div>
 
                         <div class="md:col-span-2">
-                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">วิทยาเขต / ส่วนงานสังกัด (มจร) <span class="text-[#C86D51]">*</span></label>
+                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">{{ __('portal.grad_req_campus') }} <span class="text-[#C86D51]">*</span></label>
                             <select id="txt_zone" name="org_unit_id" required class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
                                 @foreach ($orgUnits as $org)
                                     <option value="{{ $org->id }}" {{ old('org_unit_id', 1) == $org->id ? 'selected' : '' }}>
-                                        {{ $org->name_th }}
+                                        {{ session('locale') === 'en' && !empty($org->name_en) ? $org->name_en : $org->name_th }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">จำนวนวันสะสมรวม (วัน) <span class="text-[#C86D51]">*</span></label>
-                            <input type="number" id="txt_total" name="accumulated_days" min="1" max="100" required placeholder="ป.โท >= 30, ป.เอก >= 45" value="{{ old('accumulated_days') }}" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm font-mono font-bold text-[#5A6B47] focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
+                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">{{ __('portal.grad_req_accumulated_days') }} <span class="text-[#C86D51]">*</span></label>
+                            <input type="number" id="txt_total" name="accumulated_days" min="1" max="100" required placeholder="{{ __('portal.grad_req_days_ph') }}" value="{{ old('accumulated_days') }}" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm font-mono font-bold text-[#5A6B47] focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
                         </div>
                     </div>
                 </div>
@@ -276,34 +281,34 @@
                 <div>
                     <h2 class="text-base font-heading font-bold text-[#2C3E2D] flex items-center border-b border-[#E3DEC9] pb-3 mb-5">
                         <span class="w-6 h-6 rounded-full bg-[#5A6B47] text-white text-xs font-bold flex items-center justify-center mr-2">3</span>
-                        ข้อมูลที่อยู่และการติดต่อ
+                        {{ __('portal.grad_req_sec3_title') }}
                     </h2>
 
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div class="md:col-span-2">
-                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">ที่อยู่ / วัด / สังกัด (บ้านเลขที่, หมู่, ถนน) <span class="text-[#C86D51]">*</span></label>
-                            <input type="text" id="txt_address" name="address" required placeholder="เช่น 79 หมู่ 1 ต.ลำไทร หรือ วัดมหาธาตุฯ" value="{{ old('address') }}" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
+                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">{{ __('portal.grad_req_address') }} <span class="text-[#C86D51]">*</span></label>
+                            <input type="text" id="txt_address" name="address" required placeholder="{{ __('portal.grad_req_address_ph') }}" value="{{ old('address') }}" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">ตำบล / แขวง <span class="text-[#C86D51]">*</span></label>
-                            <input type="text" name="subdistrict" required placeholder="ตำบล/แขวง" value="{{ old('subdistrict') }}" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
+                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">{{ __('portal.grad_req_subdistrict') }} <span class="text-[#C86D51]">*</span></label>
+                            <input type="text" name="subdistrict" required placeholder="{{ __('portal.grad_req_subdistrict') }}" value="{{ old('subdistrict') }}" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">อำเภอ / เขต <span class="text-[#C86D51]">*</span></label>
-                            <input type="text" name="district" required placeholder="อำเภอ/เขต" value="{{ old('district') }}" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
+                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">{{ __('portal.grad_req_district') }} <span class="text-[#C86D51]">*</span></label>
+                            <input type="text" name="district" required placeholder="{{ __('portal.grad_req_district') }}" value="{{ old('district') }}" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
                         </div>
 
                         <div>
-                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">จังหวัด <span class="text-[#C86D51]">*</span></label>
-                            <input type="text" name="province" required placeholder="จังหวัด" value="{{ old('province') }}" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
+                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">{{ __('portal.grad_req_province') }} <span class="text-[#C86D51]">*</span></label>
+                            <input type="text" name="province" required placeholder="{{ __('portal.grad_req_province') }}" value="{{ old('province') }}" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">รหัสไปรษณีย์ <span class="text-[#C86D51]">*</span></label>
-                            <input type="text" id="txt_postcode" name="postcode" maxlength="5" required placeholder="5 หลัก" value="{{ old('postcode') }}" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm font-mono focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
+                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">{{ __('portal.grad_req_postcode') }} <span class="text-[#C86D51]">*</span></label>
+                            <input type="text" id="txt_postcode" name="postcode" maxlength="5" required placeholder="5 digits" value="{{ old('postcode') }}" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm font-mono focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
                         </div>
                         <div class="md:col-span-2">
-                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">หมายเลขโทรศัพท์มือถือ <span class="text-[#C86D51]">*</span></label>
-                            <input type="tel" id="txt_tel" name="phone" required placeholder="เช่น 0812345678" value="{{ old('phone') }}" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm font-mono focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
+                            <label class="block text-xs font-semibold text-[#4A3B32] mb-1">{{ __('portal.grad_req_phone') }} <span class="text-[#C86D51]">*</span></label>
+                            <input type="tel" id="txt_tel" name="phone" required placeholder="0812345678" value="{{ old('phone') }}" class="w-full px-3 py-2 border border-[#D5CEBC] rounded-lg text-sm font-mono focus:ring-2 focus:ring-[#5A6B47] bg-[#FAF8F2]">
                         </div>
                     </div>
                 </div>
@@ -312,7 +317,7 @@
                 <div>
                     <h2 class="text-base font-heading font-bold text-[#2C3E2D] flex items-center border-b border-[#E3DEC9] pb-3 mb-5">
                         <span class="w-6 h-6 rounded-full bg-[#5A6B47] text-white text-xs font-bold flex items-center justify-center mr-2">4</span>
-                        ไฟล์เอกสารแนบและหลักฐาน (4 รายการ)
+                        {{ __('portal.grad_req_sec4_title') }}
                     </h2>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -320,9 +325,9 @@
                         <div class="p-4 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl space-y-2">
                             <div class="flex items-center gap-2">
                                 <i data-lucide="image" class="w-4 h-4 text-[#5A6B47]"></i>
-                                <label class="text-xs font-bold text-[#2C3E2D]">1. รูปถ่ายนิสิต ขนาด 2x2 นิ้ว พื้นหลังสีฟ้า <span class="text-[#C86D51]">*</span></label>
+                                <label class="text-xs font-bold text-[#2C3E2D]">{{ __('portal.grad_req_f1_title') }} <span class="text-[#C86D51]">*</span></label>
                             </div>
-                            <p class="text-[11px] text-[#8C8275]">สำหรับจัดทำหนังสือรับรอง (ไฟล์ JPG, PNG ขนาดไม่เกิน 5MB)</p>
+                            <p class="text-[11px] text-[#8C8275]">{{ __('portal.grad_req_f1_desc') }}</p>
                             <input type="file" name="file_photo" accept="image/jpeg,image/png" required class="w-full text-xs text-[#4A3B32] file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#5A6B47] file:text-white hover:file:bg-[#2C3E2D]">
                         </div>
 
@@ -330,9 +335,9 @@
                         <div class="p-4 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl space-y-2">
                             <div class="flex items-center gap-2">
                                 <i data-lucide="file-check" class="w-4 h-4 text-[#5A6B47]"></i>
-                                <label class="text-xs font-bold text-[#2C3E2D]">2. ใบบันทึกการส่ง-สอบอารมณ์กรรมฐาน (PDF) <span class="text-[#C86D51]">*</span></label>
+                                <label class="text-xs font-bold text-[#2C3E2D]">{{ __('portal.grad_req_f2_title') }} <span class="text-[#C86D51]">*</span></label>
                             </div>
-                            <p class="text-[11px] text-[#8C8275]">ลงนามรับรองโดยพระวิปัสสนาจารย์ (ไฟล์ PDF ขนาดไม่เกิน 10MB)</p>
+                            <p class="text-[11px] text-[#8C8275]">{{ __('portal.grad_req_f2_desc') }}</p>
                             <input type="file" name="file_interview" accept="application/pdf" required class="w-full text-xs text-[#4A3B32] file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#2C3E2D] file:text-white hover:file:bg-[#1E2B1F]">
                         </div>
 
@@ -340,9 +345,9 @@
                         <div class="p-4 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl space-y-2">
                             <div class="flex items-center gap-2">
                                 <i data-lucide="calendar" class="w-4 h-4 text-[#5A6B47]"></i>
-                                <label class="text-xs font-bold text-[#2C3E2D]">3. ใบลงเวลาการปฏิบัติกรรมฐาน (PDF) <span class="text-[#C86D51]">*</span></label>
+                                <label class="text-xs font-bold text-[#2C3E2D]">{{ __('portal.grad_req_f3_title') }} <span class="text-[#C86D51]">*</span></label>
                             </div>
-                            <p class="text-[11px] text-[#8C8275]">ใบบันทึกเวลาการเดินจงกรม-นั่งสมาธิครบตามเกณฑ์ (ไฟล์ PDF ไม่เกิน 10MB)</p>
+                            <p class="text-[11px] text-[#8C8275]">{{ __('portal.grad_req_f3_desc') }}</p>
                             <input type="file" name="file_attendance" accept="application/pdf" required class="w-full text-xs text-[#4A3B32] file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#2C3E2D] file:text-white hover:file:bg-[#1E2B1F]">
                         </div>
 
@@ -350,18 +355,18 @@
                         <div class="p-4 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl space-y-2">
                             <div class="flex items-center gap-2">
                                 <i data-lucide="receipt" class="w-4 h-4 text-[#C86D51]"></i>
-                                <label class="text-xs font-bold text-[#2C3E2D]">4. สลิปหลักฐานการโอนเงินค่าธรรมเนียม <span class="text-[#C86D51]">*</span></label>
+                                <label class="text-xs font-bold text-[#2C3E2D]">{{ __('portal.grad_req_f4_title') }} <span class="text-[#C86D51]">*</span></label>
                             </div>
-                            <p class="text-[11px] text-[#8C8275]">รูปสลิปหลักฐานโอนเงินค่าธรรมเนียมออกเอกสาร (JPG, PNG หรือ PDF)</p>
+                            <p class="text-[11px] text-[#8C8275]">{{ __('portal.grad_req_f4_desc') }}</p>
                             <input type="file" name="file_slip" accept="image/jpeg,image/png,application/pdf" required class="w-full text-xs text-[#4A3B32] file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#C86D51] file:text-white hover:file:bg-[#A85238]">
 
                             <div class="grid grid-cols-2 gap-2 pt-2 border-t border-[#EAE5D9]">
                                 <div>
-                                    <label class="block text-[11px] font-semibold text-[#4A3B32] mb-1">วันที่โอนในสลิป <span class="text-[#C86D51]">*</span></label>
+                                    <label class="block text-[11px] font-semibold text-[#4A3B32] mb-1">{{ __('portal.grad_req_transfer_date') }} <span class="text-[#C86D51]">*</span></label>
                                     <input type="date" id="sdatepickert" name="transfer_date" required value="{{ old('transfer_date', date('Y-m-d')) }}" class="w-full px-2.5 py-1.5 border border-[#D5CEBC] rounded-lg text-xs bg-white">
                                 </div>
                                 <div>
-                                    <label class="block text-[11px] font-semibold text-[#4A3B32] mb-1">เวลาที่โอนในสลิป <span class="text-[#C86D51]">*</span></label>
+                                    <label class="block text-[11px] font-semibold text-[#4A3B32] mb-1">{{ __('portal.grad_req_transfer_time') }} <span class="text-[#C86D51]">*</span></label>
                                     <input type="time" id="timet" name="transfer_time" required value="{{ old('transfer_time', date('H:i')) }}" class="w-full px-2.5 py-1.5 border border-[#D5CEBC] rounded-lg text-xs bg-white font-mono">
                                 </div>
                             </div>
@@ -373,12 +378,12 @@
                 <div class="pt-6 border-t border-[#E3DEC9] flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div class="text-xs text-[#8C8275] flex items-center gap-1.5">
                         <i data-lucide="shield-check" class="w-4 h-4 text-[#5A6B47]"></i>
-                        <span>ข้อมูลและเอกสารจะถูกส่งเข้าสู่ระบบตรวจสอบหลังบ้าน e-Document สถาบันวิปัสสนาธุระ มจร</span>
+                        <span>{{ __('portal.grad_req_footer_note') }}</span>
                     </div>
 
                     <button type="submit" class="w-full sm:w-auto bg-[#5A6B47] hover:bg-[#2C3E2D] text-white font-medium px-8 py-3 rounded-xl text-sm transition shadow-md flex items-center justify-center gap-2">
                         <i data-lucide="send" class="w-4 h-4"></i>
-                        <span>ส่งคำร้อง e-Document (Submit Request)</span>
+                        <span>{{ __('portal.grad_req_submit_btn') }}</span>
                     </button>
                 </div>
 
@@ -393,14 +398,31 @@
     </footer>
 
     <script>
+        const degreeDaysMap = {
+            'ประกาศนียบัตร (7 วัน)': 7,
+            'ประกาศนียบัตร (15 วัน)': 15,
+            'ประกาศนียบัตร (30 วัน)': 30,
+            'ประกาศนียบัตร (90วัน)': 90,
+            'ปริญญาตรีปีละ (10วัน)': 10,
+            'ปริญญาโท (30 วัน)': 30,
+            'ปริญญาเอก (45 วัน)': 45
+        };
+
         function handleDegreeChange(val) {
             const totalInput = document.getElementById('txt_total');
-            if (val === 'DOCTORAL') {
-                totalInput.placeholder = 'เกณฑ์ขั้นต่ำ 45 วัน';
-            } else {
-                totalInput.placeholder = 'เกณฑ์ขั้นต่ำ 30 วัน';
-            }
+            const target = degreeDaysMap[val] || 30;
+            totalInput.placeholder = 'เกณฑ์ขั้นต่ำ ' + target + ' วัน';
+            totalInput.min = target;
         }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const statusSelect = document.getElementById('txt_status');
+            if (statusSelect) {
+                handleDegreeChange(statusSelect.value);
+            }
+        });
+
         lucide.createIcons();
     </script>
 </body>

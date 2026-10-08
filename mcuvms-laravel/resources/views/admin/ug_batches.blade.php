@@ -201,12 +201,23 @@
                                     <div class="text-[#7B8D65] text-[11px]">ปฏิบัติธรรมปีละ 1 ครั้ง</div>
                                 </td>
                                 <td class="p-4">
-                                    <div class="font-heading font-semibold text-[#2C3E2D] text-sm">
-                                        {{ $b->title }}
-                                    </div>
-                                    <div class="text-[#7B8D65] text-[11px] flex items-center gap-1 mt-0.5">
-                                        <i data-lucide="map-pin" class="w-3 h-3 text-[#C86D51]"></i>
-                                        <span>{{ $b->location }}</span>
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-12 h-12 rounded-xl bg-[#EAE5D9] border border-[#D5CEBC] overflow-hidden shrink-0 flex items-center justify-center">
+                                            @if (!empty($b->cover_image))
+                                                <img src="{{ $b->cover_image }}" alt="{{ $b->title }}" class="w-full h-full object-cover">
+                                            @else
+                                                <i data-lucide="image" class="w-5 h-5 text-[#8C8275]"></i>
+                                            @endif
+                                        </div>
+                                        <div>
+                                            <div class="font-heading font-semibold text-[#2C3E2D] text-sm">
+                                                {{ $b->title }}
+                                            </div>
+                                            <div class="text-[#7B8D65] text-[11px] flex items-center gap-1 mt-0.5">
+                                                <i data-lucide="map-pin" class="w-3 h-3 text-[#C86D51]"></i>
+                                                <span>{{ $b->location }}</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </td>
                                 <td class="p-4">
@@ -260,13 +271,13 @@
                                     <div class="flex items-center justify-end gap-1.5">
                                         <!-- Quick Status Switch (วางไว้หน้าสุด) -->
                                         @if ($b->status === 'OPEN')
-                                            <a href="{{ route('admin.ug.batches.status', ['id' => $b->id, 'status' => 'CLOSED']) }}"
+                                            <a href="{{ url('/admin/ug_batches.php?action=status&id=' . $b->id . '&status_val=CLOSED') }}"
                                                 title="กดเพื่อปิดรับสมัครชั่วคราว"
                                                 class="p-1.5 bg-[#FAF8F2] hover:bg-[#EAE5D9] text-[#4A3B32] rounded-lg border border-[#EAE5D9] transition">
                                                 <i data-lucide="pause-circle" class="w-3.5 h-3.5"></i>
                                             </a>
                                         @else
-                                            <a href="{{ route('admin.ug.batches.status', ['id' => $b->id, 'status' => 'OPEN']) }}"
+                                            <a href="{{ url('/admin/ug_batches.php?action=status&id=' . $b->id . '&status_val=OPEN') }}"
                                                 title="กดเพื่อเปิดรับสมัคร"
                                                 class="p-1.5 bg-[#5A6B47]/10 hover:bg-[#5A6B47]/20 text-[#5A6B47] rounded-lg border border-[#5A6B47]/30 transition">
                                                 <i data-lucide="play-circle" class="w-3.5 h-3.5"></i>
@@ -290,7 +301,7 @@
                                         </button>
 
                                         <!-- Delete -->
-                                        <a href="{{ route('admin.ug.batches.delete', $b->id) }}"
+                                        <a href="{{ url('/admin/ug_batches.php?action=delete&id=' . $b->id) }}"
                                             onclick="return confirm('ยืนยันลบรอบโครงการนี้หรือไม่? ข้อมูลการลงทะเบียนของนิสิตในรอบนี้จะถูกลบด้วย')"
                                             title="ลบรอบโครงการ"
                                             class="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg border border-red-200 transition">
@@ -337,8 +348,9 @@
                 </button>
             </div>
 
-            <form action="{{ route('admin.ug.batches.store') }}" method="POST" class="space-y-4 text-xs">
+            <form action="{{ url('/admin/ug_batches.php') }}" method="POST" enctype="multipart/form-data" class="space-y-4 text-xs">
                 @csrf
+                <input type="hidden" name="action" value="store">
 
                 @if ($isCentralOrSuper)
                     <div>
@@ -377,6 +389,27 @@
                     <input type="text" name="location" placeholder="เช่น อาคาร 72 พรรษา ศูนย์พัฒนาศาสนศึกษา หรือ วัด..."
                         required
                         class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                </div>
+
+                <!-- ช่องใส่ภาพปกโครงการ (Cover Image) -->
+                <div class="p-3 bg-[#FAF8F2] rounded-2xl border border-[#EAE5D9]">
+                    <label class="block font-semibold text-[#4A3B32] mb-1.5 flex items-center gap-1.5">
+                        <i data-lucide="image" class="w-3.5 h-3.5 text-[#5A6B47]"></i>
+                        <span>ภาพปกโครงการ (Cover Image / Banner)</span>
+                        <span class="text-[10px] text-[#7B8D65] font-normal">(แสดงบนปฏิทินและรายการหน้า Portal)</span>
+                    </label>
+                    <div class="space-y-2">
+                        <div>
+                            <input type="file" name="cover_file" accept="image/*"
+                                class="w-full text-xs text-[#4A3B32] file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-medium file:bg-[#5A6B47] file:text-white hover:file:bg-[#2C3E2D] file:cursor-pointer cursor-pointer">
+                            <span class="text-[10px] text-[#8C8275] mt-0.5 block">อัปโหลดไฟล์ภาพ (JPG, PNG, WebP ขนาดไม่เกิน 10MB)</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] text-[#8C8275]">หรือระบุ URL:</span>
+                            <input type="text" name="cover_image" placeholder="https://... หรือ /images/..."
+                                class="flex-grow px-2.5 py-1 bg-white border border-[#EAE5D9] rounded-lg text-xs font-mono text-[#4A3B32]">
+                        </div>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
@@ -443,8 +476,10 @@
                 </button>
             </div>
 
-            <form id="edit-batch-form" method="POST" class="space-y-4 text-xs">
+            <form id="edit-batch-form" action="{{ url('/admin/ug_batches.php') }}" method="POST" enctype="multipart/form-data" class="space-y-4 text-xs">
                 @csrf
+                <input type="hidden" name="action" value="update">
+                <input type="hidden" id="edit_batch_id" name="id" value="">
 
                 @if ($isCentralOrSuper)
                     <div>
@@ -478,6 +513,37 @@
                             class="text-[#C86D51]">*</span></label>
                     <input type="text" id="edit_location" name="location" required
                         class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                </div>
+
+                <!-- ช่องใส่ภาพปกโครงการ (Cover Image) -->
+                <div class="p-3 bg-[#FAF8F2] rounded-2xl border border-[#EAE5D9]">
+                    <label class="block font-semibold text-[#4A3B32] mb-1.5 flex items-center gap-1.5">
+                        <i data-lucide="image" class="w-3.5 h-3.5 text-[#5A6B47]"></i>
+                        <span>ภาพปกโครงการ (Cover Image / Banner)</span>
+                    </label>
+                    
+                    <div id="edit_cover_preview_container" class="mb-2 hidden">
+                        <div class="flex items-center gap-3 p-2 bg-white rounded-xl border border-[#D5CEBC]">
+                            <img id="edit_cover_preview" src="" alt="Cover Preview" class="w-16 h-12 object-cover rounded-lg border border-[#EAE5D9]">
+                            <div class="text-[11px] text-[#6B6357] flex-grow">
+                                <div class="font-medium text-[#2C3E2D]">ภาพปัจจุบัน</div>
+                                <div id="edit_cover_url_text" class="text-[10px] text-[#8C8275] truncate max-w-xs font-mono"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <div>
+                            <input type="file" name="cover_file" accept="image/*"
+                                class="w-full text-xs text-[#4A3B32] file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-medium file:bg-[#5A6B47] file:text-white hover:file:bg-[#2C3E2D] file:cursor-pointer cursor-pointer">
+                            <span class="text-[10px] text-[#8C8275] mt-0.5 block">อัปโหลดภาพใหม่ (JPG, PNG, WebP ขนาดไม่เกิน 10MB)</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] text-[#8C8275]">หรือระบุ URL:</span>
+                            <input type="text" id="edit_cover_image" name="cover_image" placeholder="https://... หรือ /images/..."
+                                class="flex-grow px-2.5 py-1 bg-white border border-[#EAE5D9] rounded-lg text-xs font-mono text-[#4A3B32]">
+                        </div>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
@@ -530,7 +596,8 @@
     <script>
         function openEditBatchModal(batch) {
             const form = document.getElementById('edit-batch-form');
-            form.action = "{{ url('/admin/ug/batches/update') }}/" + batch.id;
+            form.action = "{{ url('/admin/ug_batches.php') }}";
+            document.getElementById('edit_batch_id').value = batch.id;
 
             const orgSelect = document.getElementById('edit_org_unit_id');
             if (orgSelect) {
@@ -544,6 +611,22 @@
             document.getElementById('edit_end_date').value = batch.end_date;
             document.getElementById('edit_max_quota').value = batch.max_quota;
             document.getElementById('edit_status').value = batch.status;
+
+            // Handle cover image preview and input
+            const coverInput = document.getElementById('edit_cover_image');
+            const previewContainer = document.getElementById('edit_cover_preview_container');
+            const previewImg = document.getElementById('edit_cover_preview');
+            const previewUrlText = document.getElementById('edit_cover_url_text');
+
+            if (batch.cover_image) {
+                coverInput.value = batch.cover_image;
+                previewImg.src = batch.cover_image;
+                previewUrlText.textContent = batch.cover_image;
+                previewContainer.classList.remove('hidden');
+            } else {
+                coverInput.value = '';
+                previewContainer.classList.add('hidden');
+            }
 
             document.getElementById('edit-batch-modal').classList.remove('hidden');
         }

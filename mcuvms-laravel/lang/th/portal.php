@@ -3,6 +3,9 @@
 return [
     // Navbar & Common Header
     'nav_calendar' => 'ปฏิทิน',
+    'nav_verify_days' => 'ตรวจสอบวัน',
+    'nav_request_cert' => 'ยื่นคำร้อง',
+    'nav_database' => 'ฐานข้อมูล',
     'nav_all_schedules' => 'กำหนดการทั้งหมด',
     'nav_all_schedules_desc' => 'รวม ป.ตรี และ ภาคประชาชน',
     'nav_ug_schedules' => 'กำหนดการ ระดับปริญญาตรี',
@@ -20,9 +23,23 @@ return [
     'nav_login' => 'เข้าสู่ระบบ',
     'nav_back_home' => 'กลับหน้าหลัก',
 
+    // Action Cards (Hero 4 Cards)
+    'card_register_title' => 'สมัครปฏิบัติธรรม',
+    'card_register_desc' => 'ลงทะเบียนเข้าร่วมโครงการปฏิบัติธรรม',
+    'card_register_btn' => 'ลงทะเบียน',
+    'card_database_title' => 'ฐานข้อมูลนิสิต',
+    'card_database_desc' => 'ตรวจสอบข้อมูลและประวัตินิสิต',
+    'card_database_btn' => 'ระบบฐานข้อมูล',
+    'card_verify_days_title' => 'ตรวจสอบจำนวนวัน',
+    'card_verify_days_desc' => 'ตรวจสอบประวัติการปฏิบัติธรรม',
+    'card_verify_days_btn' => 'ตรวจสอบวันสะสม',
+    'card_request_cert_title' => 'ขอหนังสือรับรอง',
+    'card_request_cert_desc' => 'ยื่นขอหนังสือรับรองการปฏิบัติธรรม',
+    'card_request_cert_btn' => 'ยื่นคำร้อง',
+
     // System Branding & Top Announcement
     'system_title' => 'ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน',
-    'system_subtitle' => 'ศูนย์ประสานงานวิปัสสนากรรมฐาน มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย',
+    'system_subtitle' => 'สถาบันวิปัสสนาธุระ มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย',
     'university_name' => 'มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย',
     'mcu_short' => 'มจร',
     'top_announcement' => 'มหาจุฬาลงกรณราชวิทยาลัย — ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน (VPSMCU)',
@@ -32,7 +49,8 @@ return [
 
     // Hero Section
     'hero_title_1' => 'ระบบสารสนเทศ',
-    'hero_title_2' => 'การปฏิบัติวิปัสสนากรรมฐาน มจร',
+    'hero_title_2' => 'การปฏิบัติวิปัสสนากรรมฐาน',
+    'hero_subtitle' => 'สถาบันวิปัสสนาธุระ มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย',
     'hero_desc' => 'สร้างเสริมความสงบ สติ และปัญญาตามหลักพระพุทธศาสนา บูรณาการการลงทะเบียน ตรวจสอบประวัติการสะสมวันวิปัสสนา สำหรับนิสิตระดับปริญญาตรี บัณฑิตศึกษา และประชาชนทั่วไปอย่างยั่งยืน',
 
     // 3 Main Modules (Index)
@@ -81,7 +99,8 @@ return [
 
     // News Section (Index & Index Page)
     'news_badge' => 'ข่าวสาร & ประชาสัมพันธ์',
-    'news_title' => 'ข่าวสารประชาสัมพันธ์',
+    'news_title' => 'ข่าวประชาสัมพันธ์',
+    'news_sub' => 'ติดตามข่าวสาร กิจกรรม และประกาศล่าสุด',
     'news_view_all' => 'ดูข่าวทั้งหมด',
     'news_read_more' => 'อ่านต่อ',
     'news_views' => 'เข้าชม',
@@ -331,6 +350,14 @@ return [
     'public_food_jay' => 'อาหารเจ',
     'public_food_halal' => 'ฮาลาล / มุสลิม',
     'public_special_needs' => 'ความต้องการพิเศษ / ข้อจำกัดทางร่างกาย (ถ้ามี)',
+    'public_step1_label' => 'เลือกรีวิวโครงการ',
+    'public_step2_label' => 'กรอกข้อมูลผู้สมัคร',
+    'public_step3_label' => 'ระเบียบและยืนยัน',
+    'public_step1_badge' => 'ขั้นตอนที่ 1 จาก 3',
+    'public_step2_badge' => 'ขั้นตอนที่ 2 จาก 3',
+    'public_step3_badge' => 'ขั้นตอนที่ 3 จาก 3',
+    'public_btn_next' => 'ถัดไป',
+    'public_btn_prev' => 'ย้อนกลับ',
     'public_btn_submit' => 'ยืนยันการลงทะเบียน (Confirm Registration)',
     'public_btn_cancel' => 'ยกเลิก',
 
@@ -407,6 +434,9 @@ return [
     'donation_acc_name' => 'ชื่อบัญชี',
     'donation_acc_num' => 'เลขที่บัญชีเงินฝาก',
     'donation_copy' => 'คัดลอก',
+    'donation_qr_title' => 'สแกน QR Code เพื่อร่วมทำบุญ',
+    'donation_qr_desc' => 'รองรับ Mobile Banking ทุกธนาคาร สะดวก รวดเร็ว ถูกต้อง แม่นยำ',
+    'donation_qr_save' => 'ดูภาพขยาย / บันทึก QR Code',
     'donation_promptpay_edonation' => 'พร้อมเพย์ e-Donation (เลขประจำตัวผู้เสียภาษี)',
     'donation_tax_info_title' => 'การลดหย่อนภาษี (Tax Deduction)',
     'donation_recent_donors' => 'รายนามผู้ร่วมบริจาคล่าสุด',
@@ -433,6 +463,9 @@ return [
     'donation_slip_upload_label' => 'แนบสลิปหลักฐานการโอนเงิน',
     'donation_slip_select_file' => 'คลิกเพื่อเลือกไฟล์รูปภาพสลิป หรือลากไฟล์มาวางที่นี่',
     'donation_slip_ready' => 'พร้อมส่ง',
+    'donation_avatar_label' => 'ภาพถ่าย/ภาพประจำตัวผู้บริจาค (สำหรับจัดทำโปสเตอร์อนุโมทนาบุญ)',
+    'donation_avatar_hint' => 'อัปโหลดภาพถ่ายเดี่ยว ภาพครอบครัว หรือโลโก้หน่วยงานเพื่อนำไปจัดทำโปสเตอร์ประกาศอนุโมทนาบุญ (ไม่บังคับ)',
+    'donation_avatar_select_file' => 'คลิกเพื่อเลือกภาพถ่าย หรือลากไฟล์มาวางที่นี่ (JPG, PNG)',
     'donation_address_label' => 'ที่อยู่สำหรับออกและจัดส่งใบอนุโมทนาบัตร (ถ้ามี)',
     'donation_address_placeholder' => 'ระบุเลขที่ ถนน ตำบล อำเภอ จังหวัด รหัสไปรษณีย์ หากต้องการให้จัดส่งเอกสารทางไปรษณีย์...',
     'donation_note_label' => 'ข้อความคำอธิษฐานจิต / เจตจำนงในการทำบุญ (ถ้ามี)',

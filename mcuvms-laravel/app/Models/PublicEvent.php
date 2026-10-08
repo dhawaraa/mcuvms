@@ -35,4 +35,12 @@ class PublicEvent extends Model
         }
         return $this->location_name;
     }
+
+    public function getCoverImageAttribute($value)
+    {
+        if (!empty($value) && str_starts_with($value, '/storage/')) {
+            return '/storage.php/' . substr($value, 9);
+        }
+        return $value;
+    }
 }
