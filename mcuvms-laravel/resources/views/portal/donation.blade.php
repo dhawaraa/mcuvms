@@ -69,25 +69,25 @@
 </head>
 <body class="antialiased min-h-screen flex flex-col justify-between selection:bg-[#5A6B47] selection:text-white">
 
-    <!-- Top Announcement Bar -->
-    <div class="bg-[#2C3E2D] text-[#EAE5D9] text-xs py-2 px-4 border-b border-[#3D523E]">
+    <!-- Top Announcement Bar (Deep Forest) -->
+    <div class="bg-[#243325] text-[#D5CEBC] text-xs py-2 px-4 border-b border-[#1E2B1F]">
         <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-1 font-medium">
             <div class="flex items-center space-x-2">
-                <span class="inline-block w-2 h-2 rounded-full bg-[#7B8D65] animate-pulse"></span>
-                <span>{{ __('portal.top_announcement') }}</span>
+                <span class="inline-block w-2 h-2 rounded-full bg-[#7B8D65]"></span>
+                <span class="text-[#EAE5D9]">{{ __('portal.top_announcement') }}</span>
             </div>
             <div class="flex items-center space-x-4 text-[#D8D2C2] text-[11px]">
-                <span class="flex items-center gap-1.5"><i data-lucide="heart" class="w-3.5 h-3.5 text-[#C86D51]"></i> {{ __('portal.institute_name') }}</span>
+                <span class="flex items-center gap-1.5"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#A3B88C]"></i> {{ __('portal.institute_name') }}</span>
             </div>
         </div>
     </div>
 
     <!-- Main Navigation Header -->
-    <header class="sticky top-0 z-50 bg-[#FAF8F2]/90 backdrop-blur-xl border-b border-[#E3DEC9] shadow-sm transition">
+    <header class="sticky top-0 z-50 bg-[#FAF8F2]/95 backdrop-blur-xl border-b border-[#E3DEC9] shadow-xs transition">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 
-                <!-- Logo & Brand -->
+                <!-- Logo & Brand (Matching Reference) -->
                 <div class="flex items-center space-x-3.5">
                     <a href="{{ route('home') }}" class="shrink-0 flex items-center">
                         <img src="{{ asset('images/mcu-logo.png') }}" alt="MCU Logo" class="w-12 h-12 object-contain drop-shadow-sm hover:scale-105 transition">
@@ -95,51 +95,96 @@
                     <div>
                         <a href="{{ route('home') }}" class="font-heading font-extrabold text-xl text-[#2C3E2D] tracking-tight leading-tight flex items-center gap-2">
                             VPSMCU
-                            <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-[#EAE5D9] text-[#4A3B32] border border-[#D5CEBC]">{{ __('portal.mcu_short') }}</span>
+                            <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#EAE5D9] text-[#4A3B32] border border-[#D5CEBC]">{{ __('portal.mcu_short') }}</span>
                         </a>
                         <p class="text-xs text-[#6B6357] font-medium">{{ __('portal.system_title') }}</p>
                     </div>
                 </div>
 
-                <!-- Nav Links: ปฏิทิน, ปริญญาตรี, บัณฑิตศึกษา, ประชาชนทั่วไป, ติดต่อ, ร่วมบริจาค -->
+                <!-- Nav Links: ปฏิทิน (Dropdown), ตรวจสอบวัน, ยื่นคำร้อง, ฐานข้อมูล, ติดต่อ, ร่วมบริจาค -->
                 <nav class="hidden xl:flex items-center space-x-6 text-[15px] font-semibold text-[#4A3B32]">
-                    <a href="{{ route('home') }}#calendar" class="hover:text-[#C86D51] transition flex items-center gap-1.5 whitespace-nowrap py-1">
-                        <i data-lucide="calendar" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
-                        <span>{{ __('portal.nav_calendar') }}</span>
+                    <!-- Schedule Dropdown Menu -->
+                    <div class="relative group py-2">
+                        <a href="{{ route('home') }}#calendar" class="hover:text-[#5A6B47] transition flex items-center gap-1.5 focus:outline-none whitespace-nowrap py-1">
+                            <i data-lucide="calendar" class="w-4 h-4 text-[#4A3B32]"></i>
+                            <span>{{ __('portal.nav_calendar') }}</span>
+                            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-[#8C8275] group-hover:rotate-180 transition-transform duration-200"></i>
+                        </a>
+                        <!-- Dropdown Panel -->
+                        <div class="absolute left-0 top-full pt-2 w-64 hidden group-hover:block z-50 transition-all">
+                            <div class="bg-white/95 backdrop-blur-md border border-[#D5CEBC] rounded-2xl shadow-xl p-2 space-y-1">
+                                <a href="{{ route('home') }}#calendar" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-[#2C3E2D] hover:bg-[#FAF8F2] transition">
+                                    <span class="w-8 h-8 rounded-lg bg-[#5A6B47]/10 flex items-center justify-center text-[#5A6B47] shrink-0">
+                                        <i data-lucide="calendar-range" class="w-4 h-4"></i>
+                                    </span>
+                                    <div>
+                                        <div class="font-semibold text-sm">{{ __('portal.nav_all_schedules') }}</div>
+                                        <div class="text-xs text-[#7B8D65]">{{ __('portal.nav_all_schedules_desc') }}</div>
+                                    </div>
+                                </a>
+                                <a href="{{ route('home') }}#calendar" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-[#2C3E2D] hover:bg-[#FAF8F2] transition">
+                                    <span class="w-8 h-8 rounded-lg bg-[#5A6B47]/15 flex items-center justify-center text-[#5A6B47] shrink-0">
+                                        <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                                    </span>
+                                    <div>
+                                        <div class="font-semibold text-sm text-[#5A6B47]">{{ __('portal.nav_ug_schedules') }}</div>
+                                        <div class="text-xs text-[#7B8D65]">{{ __('portal.nav_ug_schedules_desc') }}</div>
+                                    </div>
+                                </a>
+                                <a href="{{ route('home') }}#calendar" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-[#2C3E2D] hover:bg-[#FAF8F2] transition">
+                                    <span class="w-8 h-8 rounded-lg bg-[#C86D51]/15 flex items-center justify-center text-[#C86D51] shrink-0">
+                                        <i data-lucide="users" class="w-4 h-4"></i>
+                                    </span>
+                                    <div>
+                                        <div class="font-semibold text-sm text-[#C86D51]">{{ __('portal.nav_public_schedules') }}</div>
+                                        <div class="text-xs text-[#7B8D65]">{{ __('portal.nav_public_schedules_desc') }}</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ตรวจสอบวัน -->
+                    <a href="{{ route('grad.progress') }}" class="hover:text-[#5A6B47] transition flex items-center gap-1.5 whitespace-nowrap py-1">
+                        <i data-lucide="graduation-cap" class="w-4.5 h-4.5 text-[#4A3B32]"></i>
+                        <span>{{ __('portal.nav_verify_days') }}</span>
                     </a>
-                    <a href="{{ route('ug.register') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5 whitespace-nowrap py-1">
-                        <i data-lucide="graduation-cap" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
-                        <span>{{ __('portal.nav_ug') }}</span>
+
+                    <!-- ยื่นคำร้อง -->
+                    <a href="{{ route('grad.request') }}" class="hover:text-[#5A6B47] transition flex items-center gap-1.5 whitespace-nowrap py-1">
+                        <i data-lucide="file-text" class="w-4.5 h-4.5 text-[#4A3B32]"></i>
+                        <span>{{ __('portal.nav_request_cert') }}</span>
                     </a>
-                    <a href="{{ route('grad.request') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5 whitespace-nowrap py-1">
-                        <i data-lucide="scroll" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
-                        <span>{{ __('portal.nav_grad') }}</span>
+
+                    <!-- ฐานข้อมูล -->
+                    <a href="{{ route('ug.check') }}" class="hover:text-[#5A6B47] transition flex items-center gap-1.5 whitespace-nowrap py-1">
+                        <i data-lucide="users" class="w-4.5 h-4.5 text-[#4A3B32]"></i>
+                        <span>{{ __('portal.nav_database') }}</span>
                     </a>
-                    <a href="{{ route('public.register') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5 whitespace-nowrap py-1">
-                        <i data-lucide="users" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
-                        <span>{{ __('portal.nav_public') }}</span>
-                    </a>
-                    <a href="{{ route('contact') }}" class="hover:text-[#C86D51] transition flex items-center gap-1.5 whitespace-nowrap py-1">
-                        <i data-lucide="phone-call" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
+
+                    <!-- ติดต่อ -->
+                    <a href="{{ route('contact') }}" class="hover:text-[#5A6B47] transition flex items-center gap-1.5 whitespace-nowrap py-1">
+                        <i data-lucide="phone" class="w-4.5 h-4.5 text-[#4A3B32]"></i>
                         <span>{{ __('portal.nav_contact') }}</span>
                     </a>
-                    <a href="{{ route('donation') }}" class="text-[#C86D51] font-bold transition flex items-center gap-1.5 whitespace-nowrap py-1">
+
+                    <!-- ร่วมบริจาค -->
+                    <a href="{{ route('donation') }}" class="hover:text-[#A85238] transition flex items-center gap-1.5 text-[#C86D51] font-bold whitespace-nowrap py-1">
                         <i data-lucide="gift" class="w-4.5 h-4.5 text-[#C86D51]"></i>
                         <span>{{ __('portal.nav_donation') }}</span>
                     </a>
                 </nav>
 
-                <!-- Actions: Language Switcher & Auth / Admin Button -->
+                <!-- Actions: Language Switcher (TH / EN in Pill Style as in Reference) -->
                 <div class="flex items-center space-x-2.5">
                     @php
                         $currentLang = session('locale', 'th');
                     @endphp
-                    <!-- Language Switcher (TH / EN) -->
-                    <div class="flex items-center bg-[#EAE5D9] p-0.5 rounded-xl border border-[#D5CEBC] text-xs font-bold font-mono">
-                        <a href="{{ route('lang.switch', 'th') }}" title="ภาษาไทย" class="px-2 py-1 rounded-lg transition {{ $currentLang === 'th' ? 'bg-[#5A6B47] text-white shadow-sm' : 'text-[#6B6357] hover:text-[#2C3E2D]' }}">
+                    <div class="flex items-center bg-[#D8D2C2] p-1 rounded-full text-xs font-bold font-mono">
+                        <a href="{{ route('lang.switch', 'th') }}" title="ภาษาไทย" class="px-2.5 py-1 rounded-full transition {{ $currentLang === 'th' ? 'bg-[#5A6B47] text-white shadow-xs' : 'text-[#5A544A] hover:text-[#2C3E2D]' }}">
                             TH
                         </a>
-                        <a href="{{ route('lang.switch', 'en') }}" title="English" class="px-2 py-1 rounded-lg transition {{ $currentLang === 'en' ? 'bg-[#5A6B47] text-white shadow-sm' : 'text-[#6B6357] hover:text-[#2C3E2D]' }}">
+                        <a href="{{ route('lang.switch', 'en') }}" title="English" class="px-2.5 py-1 rounded-full transition {{ $currentLang === 'en' ? 'bg-[#5A6B47] text-white shadow-xs' : 'text-[#5A544A] hover:text-[#2C3E2D]' }}">
                             EN
                         </a>
                     </div>
