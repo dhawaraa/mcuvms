@@ -48,10 +48,11 @@
         }
         h1, h2, h3, h4, .font-heading { font-family: 'Prompt', sans-serif; }
         .hero-banner-card {
-            background-image: linear-gradient(to right, rgba(21, 87, 36, 0.96) 0%, rgba(21, 87, 36, 0.88) 52%, rgba(21, 87, 36, 0.15) 85%, transparent 100%), url('{{ asset("images/hero2image.png") }}');
+            background-image: linear-gradient(to right, rgba(21, 87, 36, 0.96) 0%, rgba(21, 87, 36, 0.88) 50%, rgba(21, 87, 36, 0.20) 82%, transparent 100%), url('{{ asset("images/hero2image.png") }}');
             background-size: cover;
-            background-position: right center;
+            background-position: right 15%;
             background-repeat: no-repeat;
+            min-height: 220px;
         }
         .main-card {
             background: #FFFFFF;
