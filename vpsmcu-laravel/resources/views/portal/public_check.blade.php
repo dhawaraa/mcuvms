@@ -183,41 +183,41 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="bg-[#FAF8F2] p-4 rounded-xl border border-[#EAE5D9]">
-                            <div class="text-[11px] text-[#7B8D65]">ชื่อ-นามสกุล ผู้สมัคร</div>
+                            <div class="text-[11px] text-[#7B8D65]">{{ __('portal.public_check_profile_name') }}</div>
                             <div class="text-base font-bold text-[#2C3E2D]">{{ $firstReg->full_name }}</div>
                             <div class="text-xs text-[#6B6357] mt-0.5">
-                                {{ $firstReg->applicant_type === 'STUDENT' ? 'นิสิต มจร' : 'ประชาชนทั่วไป' }} 
-                                &bull; เพศ {{ $firstReg->gender === 'FEMALE' ? 'หญิง' : ($firstReg->gender === 'MALE' ? 'ชาย' : '-') }}
+                                {{ $firstReg->applicant_type === 'STUDENT' ? __('portal.public_app_type_student') : __('portal.public_app_type_people') }} 
+                                &bull; {{ __('portal.public_check_profile_gender') }} {{ $firstReg->gender === 'FEMALE' ? __('portal.public_gender_female') : ($firstReg->gender === 'MALE' ? __('portal.public_gender_male') : '-') }}
                             </div>
                             @if ($firstReg->applicant_type === 'STUDENT')
                                 <div class="mt-2 pt-2 border-t border-[#EAE5D9] text-[11px] space-y-0.5 text-[#5A6B47]">
-                                    <div>รหัสนิสิต: <strong class="font-mono text-[#2C3E2D]">{{ $firstReg->student_id ?: '-' }}</strong></div>
+                                    <div>{{ __('portal.public_check_profile_student_code') }} <strong class="font-mono text-[#2C3E2D]">{{ $firstReg->student_id ?: '-' }}</strong></div>
                                     @if ($firstReg->degree_level || $firstReg->faculty)
-                                        <div>ระดับ: {{ $firstReg->degree_level ?: '-' }} &bull; คณะ: {{ $firstReg->faculty ?: '-' }}</div>
+                                        <div>{{ __('portal.public_check_profile_degree') }} {{ $firstReg->degree_level ?: '-' }} &bull; {{ __('portal.public_check_profile_faculty') }} {{ $firstReg->faculty ?: '-' }}</div>
                                     @endif
                                     @if ($firstReg->program_name)
-                                        <div>หลักสูตร: {{ $firstReg->program_name }}</div>
+                                        <div>{{ __('portal.public_check_profile_program') }} {{ $firstReg->program_name }}</div>
                                     @endif
                                     @if ($firstReg->organizationUnit)
-                                        <div class="text-[#7B8D65]">สังกัด: {{ $firstReg->organizationUnit->name_th }}</div>
+                                        <div class="text-[#7B8D65]">{{ __('portal.public_check_profile_org') }} {{ $firstReg->organizationUnit->name_th }}</div>
                                     @endif
                                 </div>
                             @endif
                         </div>
 
                         <div class="bg-[#FAF8F2] p-4 rounded-xl border border-[#EAE5D9]">
-                            <div class="text-[11px] text-[#7B8D65]">เบอร์โทรศัพท์ติดต่อ</div>
+                            <div class="text-[11px] text-[#7B8D65]">{{ __('portal.public_check_profile_phone') }}</div>
                             <div class="text-base font-mono font-bold text-[#2C3E2D]">{{ $firstReg->phone }}</div>
                             <div class="text-xs text-[#6B6357] mt-0.5">
-                                จังหวัด: {{ $firstReg->province ?? '-' }}
+                                {{ __('portal.public_check_profile_province') }} {{ $firstReg->province ?? '-' }}
                             </div>
                         </div>
 
                         <div class="bg-[#FAF8F2] p-4 rounded-xl border border-[#EAE5D9]">
-                            <div class="text-[11px] text-[#7B8D65]">ประเภทอาหาร / ความต้องการพิเศษ</div>
-                            <div class="text-sm font-semibold text-[#C86D51]">{{ $firstReg->dietary_restriction ?? 'อาหารทั่วไป' }}</div>
+                            <div class="text-[11px] text-[#7B8D65]">{{ __('portal.public_check_profile_food') }}</div>
+                            <div class="text-sm font-semibold text-[#C86D51]">{{ $firstReg->dietary_restriction ?? __('portal.public_food_normal') }}</div>
                             <div class="text-xs text-[#6B6357] mt-0.5">
-                                ข้อจำกัด/ความต้องการ: {{ $firstReg->congenital_disease ?? 'ไม่มี' }}
+                                {{ __('portal.public_check_profile_special') }} {{ $firstReg->congenital_disease ?? __('portal.public_none') }}
                             </div>
                         </div>
                     </div>
@@ -312,9 +312,9 @@
                                             <div class="flex items-center justify-center gap-2">
                                                 <!-- Edit Button: Allowed for PENDING and REJECTED status (Option 2) -->
                                                 @if (in_array($reg->status, ['PENDING', 'REJECTED']))
-                                                    <button type="button" onclick="openEditModal({{ json_encode($reg) }})" class="bg-white hover:bg-amber-50 text-amber-700 border border-amber-300 px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 shadow-2xs" title="แก้ไขข้อมูลใบสมัคร">
+                                                    <button type="button" onclick="openEditModal({{ json_encode($reg) }})" class="bg-white hover:bg-amber-50 text-amber-700 border border-amber-300 px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 shadow-2xs" title="{{ __('portal.public_check_btn_edit') }}">
                                                         <i data-lucide="edit-3" class="w-3.5 h-3.5 text-amber-600"></i>
-                                                        <span>แก้ไขข้อมูล</span>
+                                                        <span>{{ __('portal.public_check_btn_edit') }}</span>
                                                     </button>
                                                 @endif
 
@@ -337,7 +337,7 @@
                     <i data-lucide="phone-missed" class="w-12 h-12 text-[#8C8275] mx-auto mb-3"></i>
                     <h3 class="text-base font-heading font-bold text-[#2C3E2D]">{{ __('portal.public_check_no_result') }}</h3>
                     <p class="text-xs text-[#8C8275] mt-1 max-w-md mx-auto">
-                        กรุณาตรวจสอบหมายเลขโทรศัพท์ (ตัวเลข 10 หลักโดยไม่ต้องมีเครื่องหมายขีด) หรือเลือกลงทะเบียนสมัครคอร์สใหม่
+                        {{ __('portal.public_check_no_result_desc') }}
                     </p>
                     <a href="{{ route('public.register') }}" class="mt-4 inline-flex items-center gap-1.5 bg-[#5A6B47] hover:bg-[#2C3E2D] text-white px-5 py-2.5 rounded-xl text-xs font-semibold shadow-sm transition">
                         <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
@@ -351,9 +351,9 @@
                 <div class="w-16 h-16 bg-[#FAF8F2] text-[#5A6B47] rounded-full flex items-center justify-center mx-auto mb-4 border border-[#EAE5D9]">
                     <i data-lucide="search" class="w-8 h-8"></i>
                 </div>
-                <h3 class="text-lg font-heading font-bold text-[#2C3E2D] mb-1">กรอกเบอร์โทรศัพท์เพื่อตรวจสอบสถานะ</h3>
+                <h3 class="text-lg font-heading font-bold text-[#2C3E2D] mb-1">{{ __('portal.public_check_init_title') }}</h3>
                 <p class="text-xs text-[#6B6357] max-w-md mx-auto leading-relaxed">
-                    ค้นหาด้วยเบอร์โทรศัพท์มือถือ (เช่น 0818889999) หรือรหัสใบสมัคร เพื่อดูผลการอนุมัติสิทธิ์ ลำดับคิว และพิมพ์ใบยืนยันการเข้าร่วมโครงการ
+                    {{ __('portal.public_check_init_desc') }}
                 </p>
             </div>
         @endif
@@ -373,8 +373,8 @@
                         <i data-lucide="edit-3" class="w-4 h-4"></i>
                     </div>
                     <div>
-                        <h3 class="text-base font-heading font-bold">แก้ไขข้อมูลใบสมัคร</h3>
-                        <p class="text-xs text-[#7B8D65]">รหัสใบสมัคร: <span id="editRegNoLabel" class="font-mono font-bold text-[#2C3E2D]">-</span></p>
+                        <h3 class="text-base font-heading font-bold">{{ __('portal.public_check_edit_title') }}</h3>
+                        <p class="text-xs text-[#7B8D65]">{{ __('portal.public_check_edit_code') }} <span id="editRegNoLabel" class="font-mono font-bold text-[#2C3E2D]">-</span></p>
                     </div>
                 </div>
             </div>
@@ -428,8 +428,6 @@
                             <label class="block text-[#6B6357] mb-1">หลักสูตร / สาขา</label>
                             <input type="text" name="program_name" id="edit_program_name" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs">
                         </div>
-                    </div>
-
                     </div>
                 </div>
 
@@ -578,48 +576,48 @@
             
             <div class="text-center pb-4 border-b border-[#EAE5D9]">
                 <img src="{{ asset('images/mcu-logo.png') }}" alt="MCU Logo" class="w-12 h-12 mx-auto mb-2 object-contain">
-                <h3 class="text-base font-heading font-bold text-[#2C3E2D]">ใบยืนยันการสมัครปฏิบัติธรรม มจร</h3>
-                <p class="text-xs text-[#7B8D65]">โครงการคอร์สวิปัสสนากรรมฐานสำหรับประชาชน</p>
+                <h3 class="text-base font-heading font-bold text-[#2C3E2D]">{{ __('portal.public_check_slip_mcu_title') }}</h3>
+                <p class="text-xs text-[#7B8D65]">{{ __('portal.public_check_slip_subtitle') }}</p>
             </div>
 
             <div class="my-4 space-y-2.5 text-xs">
                 <div class="flex justify-between py-1 border-b border-[#FAF8F2]">
-                    <span class="text-[#7B8D65]">รหัสการสมัคร:</span>
+                    <span class="text-[#7B8D65]">{{ __('portal.public_check_slip_reg_code') }}</span>
                     <strong class="font-mono text-[#2C3E2D]" id="modalRegNo">-</strong>
                 </div>
                 <div class="flex justify-between py-1 border-b border-[#FAF8F2]">
-                    <span class="text-[#7B8D65]">ชื่อ-นามสกุล:</span>
+                    <span class="text-[#7B8D65]">{{ __('portal.public_check_slip_fullname') }}</span>
                     <strong class="text-[#2C3E2D]" id="modalName">-</strong>
                 </div>
                 <div class="flex justify-between py-1 border-b border-[#FAF8F2]">
-                    <span class="text-[#7B8D65]">คอร์สที่สมัคร:</span>
+                    <span class="text-[#7B8D65]">{{ __('portal.public_check_slip_course') }}</span>
                     <strong class="text-[#2C3E2D] text-right" id="modalCourse">-</strong>
                 </div>
                 <div class="flex justify-between py-1 border-b border-[#FAF8F2]">
-                    <span class="text-[#7B8D65]">ลำดับคิว / ลำดับที่:</span>
+                    <span class="text-[#7B8D65]">{{ __('portal.public_check_slip_queue') }}</span>
                     <strong class="font-mono text-[#5A6B47] text-sm" id="modalQueue">-</strong>
                 </div>
                 <div class="flex justify-between py-1 border-b border-[#FAF8F2]">
-                    <span class="text-[#7B8D65]">สถานะ:</span>
+                    <span class="text-[#7B8D65]">{{ __('portal.public_check_slip_status') }}</span>
                     <span id="modalStatus">-</span>
                 </div>
                 <div class="flex justify-between py-1">
-                    <span class="text-[#7B8D65]">ประเภทอาหาร:</span>
+                    <span class="text-[#7B8D65]">{{ __('portal.public_check_slip_food') }}</span>
                     <span id="modalFood" class="text-[#4A3B32]">-</span>
                 </div>
             </div>
 
             <div class="p-3 bg-[#FAF8F2] rounded-xl border border-[#EAE5D9] text-[11px] text-[#6B6357] leading-relaxed">
-                กรุณานำเอกสารฉบับนี้ หรือภาพถ่ายหน้าจอ แสดงต่อเจ้าหน้าที่ในวันเปิดโครงการเพื่อรายงานตัวเข้าปฏิบัติธรรม
+                {{ __('portal.public_check_slip_notice') }}
             </div>
 
             <div class="flex items-center gap-2 mt-5">
                 <button type="button" onclick="window.print()" class="flex-1 bg-[#5A6B47] hover:bg-[#2C3E2D] text-white text-xs font-semibold py-2.5 px-4 rounded-xl shadow-sm transition flex items-center justify-center gap-1.5">
                     <i data-lucide="printer" class="w-4 h-4"></i>
-                    <span>พิมพ์ใบสมัคร</span>
+                    <span>{{ __('portal.public_check_slip_btn_print') }}</span>
                 </button>
                 <button type="button" onclick="closeSlipModal()" class="bg-[#FAF8F2] hover:bg-[#EAE5D9] text-[#4A3B32] text-xs font-semibold py-2.5 px-4 rounded-xl border border-[#D5CEBC] transition">
-                    ปิด
+                    {{ __('portal.public_check_slip_btn_close') }}
                 </button>
             </div>
         </div>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>สมัครปฏิบัติวิปัสสนากรรมฐาน - VPSMCU มจร</title>
+    <title>{{ __('portal.public_register_browser_title') }}</title>
     
     <!-- Fonts: Sarabun & Prompt -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -135,14 +135,13 @@
         <div class="hero-banner-card rounded-2xl p-6 sm:p-9 text-white shadow-sm border border-[#205C29]/40 relative overflow-hidden">
             <div class="max-w-xl">
                 <h1 id="banner_title" class="text-2xl sm:text-3xl font-heading font-extrabold text-white tracking-tight leading-snug">
-                    สมัครปฏิบัติวิปัสสนากรรมฐาน
+                    {{ __('portal.public_banner_step1_title') }}
                 </h1>
                 <p id="banner_subtitle" class="text-base sm:text-lg font-heading font-medium text-white/95 mt-0.5">
-                    เลือกโครงการที่ต้องการสมัคร
+                    {{ __('portal.public_banner_step1_subtitle') }}
                 </p>
                 <p id="banner_desc" class="text-xs sm:text-sm text-white/85 mt-3 leading-relaxed">
-                    กรุณาเลือกโครงการที่ท่านสนใจและอยู่ในช่วงเปิดรับสมัคร<br class="hidden sm:inline">
-                    จากนั้นคลิก "ถัดไป" เพื่อกรอกข้อมูลผู้สมัครในขั้นตอนต่อไป
+                    {!! __('portal.public_banner_step1_desc') !!}
                 </p>
             </div>
         </div>
@@ -163,7 +162,7 @@
                         <span id="step-num-1">1</span>
                     </div>
                     <span id="step-text-1" class="text-xs sm:text-sm font-heading font-bold text-[#2D2A26] mt-2 text-center whitespace-nowrap">
-                        เลือกโครงการ
+                        {{ __('portal.public_stepper_step1') }}
                     </span>
                 </div>
 
@@ -174,7 +173,7 @@
                         <span id="step-num-2">2</span>
                     </div>
                     <span id="step-text-2" class="text-xs sm:text-sm font-heading font-medium text-[#7A7367] mt-2 text-center whitespace-nowrap">
-                        กรอกข้อมูลผู้สมัคร
+                        {{ __('portal.public_stepper_step2') }}
                     </span>
                 </div>
 
@@ -185,7 +184,7 @@
                         <span id="step-num-3">3</span>
                     </div>
                     <span id="step-text-3" class="text-xs sm:text-sm font-heading font-medium text-[#7A7367] mt-2 text-center whitespace-nowrap">
-                        ยืนยันการสมัคร
+                        {{ __('portal.public_stepper_step3') }}
                     </span>
                 </div>
             </div>
@@ -261,8 +260,8 @@
                             <i data-lucide="calendar" class="w-5 h-5"></i>
                         </div>
                         <div>
-                            <h2 class="text-lg sm:text-xl font-heading font-bold text-[#2D2A26]">โครงการที่เปิดรับสมัคร</h2>
-                            <p class="text-xs text-[#7A7367] mt-0.5">เลือกโครงการปฏิบัติวิปัสสนากรรมฐานที่ท่านสนใจ</p>
+                            <h2 class="text-lg sm:text-xl font-heading font-bold text-[#2D2A26]">{{ __('portal.public_sec1_heading') }}</h2>
+                            <p class="text-xs text-[#7A7367] mt-0.5">{{ __('portal.public_sec1_subheading') }}</p>
                         </div>
                     </div>
 
@@ -295,15 +294,15 @@
                                         <div class="flex items-center gap-2">
                                             @if ($ev->status === 'OPEN' && !$isFull)
                                                 <span class="px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-[#2C7338] text-white">
-                                                    เปิดรับสมัคร
+                                                    {{ __('portal.public_status_open') }}
                                                 </span>
                                             @elseif ($isFull)
                                                 <span class="px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-[#A3432B] text-white">
-                                                    ที่นั่งเต็ม (คิวสำรอง)
+                                                    {{ __('portal.public_status_full_waitlist') }}
                                                 </span>
                                             @else
                                                 <span class="px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-[#A3432B] text-white">
-                                                    เร็ว ๆ นี้
+                                                    {{ __('portal.public_status_coming_soon') }}
                                                 </span>
                                             @endif
                                         </div>
@@ -312,7 +311,7 @@
                                             {{ $ev->localized_title }}
                                         </h3>
                                         <p class="text-xs text-[#7A7367] event-target">
-                                            สำหรับนิสิต บุคลากร และประชาชนทั่วไป
+                                            {{ __('portal.public_target_audience') }}
                                         </p>
 
                                         <div class="pt-1 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs text-[#6B6357]">
@@ -323,19 +322,25 @@
                                             <div class="flex items-center gap-1.5 shrink-0">
                                                 <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#7A7367] shrink-0"></i>
                                                 @php
+                                                    $isEn = app()->getLocale() === 'en';
                                                     $sDate = \Carbon\Carbon::parse($ev->start_date);
                                                     $eDate = \Carbon\Carbon::parse($ev->end_date);
                                                     $thMonths = ['', 'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+                                                    $enMonths = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                                                    $months = $isEn ? $enMonths : $thMonths;
+                                                    $yearS = $isEn ? $sDate->year : ($sDate->year + 543);
+                                                    $yearE = $isEn ? $eDate->year : ($eDate->year + 543);
                                                     $nights = $sDate->diffInDays($eDate);
                                                     $days = $nights + 1;
                                                     $dateStr = ($sDate->format('Y-m') === $eDate->format('Y-m'))
-                                                        ? ($sDate->day . ' - ' . $eDate->day . ' ' . $thMonths[$sDate->month] . ' ' . ($sDate->year + 543))
-                                                        : ($sDate->day . ' ' . $thMonths[$sDate->month] . ' ' . ($sDate->year + 543) . ' - ' . $eDate->day . ' ' . $thMonths[$eDate->month] . ' ' . ($eDate->year + 543));
+                                                        ? ($sDate->day . ' - ' . $eDate->day . ' ' . $months[$sDate->month] . ' ' . $yearS)
+                                                        : ($sDate->day . ' ' . $months[$sDate->month] . ' ' . $yearS . ' - ' . $eDate->day . ' ' . $months[$eDate->month] . ' ' . $yearE);
                                                     
                                                     $deadlineDate = $sDate->copy()->subDays(3);
-                                                    $deadlineStr = $deadlineDate->day . ' ' . $thMonths[$deadlineDate->month] . ' ' . ($deadlineDate->year + 543);
+                                                    $deadlineYear = $isEn ? $deadlineDate->year : ($deadlineDate->year + 543);
+                                                    $deadlineStr = $deadlineDate->day . ' ' . $months[$deadlineDate->month] . ' ' . $deadlineYear;
                                                 @endphp
-                                                <span class="event-dates">{{ $dateStr }} ({{ $nights }} คืน {{ $days }} วัน)</span>
+                                                <span class="event-dates">{{ $dateStr }} ({{ $nights }} {{ __('portal.public_nights') }} {{ $days }} {{ __('portal.public_days') }})</span>
                                             </div>
                                         </div>
                                     </div>
@@ -344,16 +349,16 @@
                                     <div class="w-full sm:w-44 shrink-0 bg-[#FBF9F4] rounded-xl p-3 border border-[#EFECE5] text-xs space-y-2 mt-2 sm:mt-0">
                                         <div class="flex items-center gap-1.5 text-[#6B6357]">
                                             <i data-lucide="calendar-check" class="w-3.5 h-3.5 text-[#7A7367]"></i>
-                                            <span>รับสมัครถึง</span>
+                                            <span>{{ __('portal.public_deadline_label') }}</span>
                                             <strong class="text-[#2D2A26]">{{ $deadlineStr }}</strong>
                                         </div>
 
                                         <div class="flex items-center gap-1.5 text-[#6B6357]">
                                             <i data-lucide="users" class="w-3.5 h-3.5 text-[#2C7338]"></i>
-                                            <span>เหลือ <strong>{{ $available }}</strong> ที่นั่ง</span>
+                                            <span>{{ __('portal.public_remaining_seats') }} <strong>{{ $available }}</strong> {{ __('portal.public_total_seats_suffix') }}</span>
                                         </div>
                                         <div class="text-[10px] text-[#8C8275]">
-                                            จากทั้งหมด {{ $quota }} ที่นั่ง
+                                            {{ __('portal.public_total_seats_prefix') }} {{ $quota }} {{ __('portal.public_total_seats_suffix') }}
                                         </div>
 
                                         <!-- Progress Bar -->
@@ -369,7 +374,7 @@
                             </label>
                         @empty
                             <div class="text-center py-10 text-[#7B8D65] bg-[#FAF8F2] rounded-xl border border-dashed border-[#EAE5D9]">
-                                ยังไม่มีโครงการเปิดรับสมัครในขณะนี้
+                                {{ __('portal.public_no_courses') }}
                             </div>
                         @endforelse
                     </div>
@@ -377,10 +382,10 @@
                     <!-- Step 1 Footer Buttons -->
                     <div class="pt-6 border-t border-[#EAE5D9] flex items-center justify-end gap-4">
                         <a href="{{ route('home') }}" class="text-xs font-semibold text-[#6B6357] hover:text-[#2D2A26] transition">
-                            ยกเลิก
+                            {{ __('portal.public_btn_cancel') }}
                         </a>
                         <button type="button" onclick="nextToStep(2)" class="bg-[#2C7338] hover:bg-[#235D2E] text-white font-semibold px-6 py-2.5 rounded-xl text-xs sm:text-sm shadow-xs transition flex items-center gap-2">
-                            <span>ถัดไป : กรอกข้อมูลผู้สมัคร</span>
+                            <span>{{ __('portal.public_btn_next_step2') }}</span>
                             <i data-lucide="arrow-right" class="w-4 h-4"></i>
                         </button>
                     </div>
@@ -396,7 +401,7 @@
                         <div class="w-10 h-10 rounded-xl bg-[#E8F3EA] text-[#2C7338] flex items-center justify-center shrink-0">
                             <i data-lucide="layout-list" class="w-5 h-5"></i>
                         </div>
-                        <h2 class="text-lg sm:text-xl font-heading font-bold text-[#2D2A26]">โครงการที่ท่านเลือกเข้าร่วม</h2>
+                        <h2 class="text-lg sm:text-xl font-heading font-bold text-[#2D2A26]">{{ __('portal.public_selected_course_title') }}</h2>
                     </div>
 
                     <!-- Selected Project Preview Box (Matches Screenshot 2) -->
@@ -406,13 +411,13 @@
                         </div>
                         <div class="flex-grow space-y-1.5">
                             <span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-[#2C7338] text-white inline-block">
-                                เปิดรับสมัคร
+                                {{ __('portal.public_status_open') }}
                             </span>
                             <h3 id="selected_ev_title" class="font-heading font-bold text-base text-[#2D2A26] leading-snug">
                                 --
                             </h3>
                             <p class="text-xs text-[#7A7367]">
-                                สำหรับนิสิต บุคลากร และประชาชนทั่วไป
+                                {{ __('portal.public_target_audience') }}
                             </p>
                         </div>
                         <div class="w-full sm:w-56 shrink-0 bg-[#F4FBF5] rounded-xl p-3 border border-[#D7EED9] text-xs space-y-1.5">
@@ -431,20 +436,20 @@
                     <div class="space-y-4">
                         <div class="flex items-center gap-2">
                             <span class="w-6 h-6 rounded-full bg-[#2C7338] text-white flex items-center justify-center text-xs font-bold font-mono">1</span>
-                            <h3 class="font-heading font-bold text-sm sm:text-base text-[#2D2A26]">ข้อมูลผู้สมัครเข้าร่วมโครงการ (Personal Information)</h3>
+                            <h3 class="font-heading font-bold text-sm sm:text-base text-[#2D2A26]">{{ __('portal.public_sec2_title') }}</h3>
                         </div>
 
                         <!-- Status Selector Radio Box -->
                         <div class="p-4 rounded-xl bg-[#FBF9F4] border border-[#EFECE5]">
-                            <div class="text-xs text-[#7A7367] mb-2 font-medium">สถานะผู้สมัคร (Applicant Status)</div>
+                            <div class="text-xs text-[#7A7367] mb-2 font-medium">{{ __('portal.public_applicant_status') }}</div>
                             <div class="flex flex-wrap gap-6 text-xs text-[#2D2A26]">
                                 <label class="flex items-center gap-2 cursor-pointer">
                                     <input type="radio" name="applicant_type" value="PEOPLE" checked class="w-4 h-4 text-[#2C7338] focus:ring-[#2C7338]" onchange="toggleStudentField(this.value)">
-                                    <span>ประชาชนทั่วไป (General Public)</span>
+                                    <span>{{ __('portal.public_status_people') }}</span>
                                 </label>
                                 <label class="flex items-center gap-2 cursor-pointer">
                                     <input type="radio" name="applicant_type" value="STUDENT" class="w-4 h-4 text-[#2C7338] focus:ring-[#2C7338]" onchange="toggleStudentField(this.value)">
-                                    <span>นิสิต มจร (MCU Student)</span>
+                                    <span>{{ __('portal.public_status_student') }}</span>
                                 </label>
                             </div>
                         </div>
@@ -453,40 +458,40 @@
                         <div id="studentIdContainer" class="hidden p-4 rounded-xl bg-[#FBF9F4] border border-[#EFECE5] space-y-3">
                             <div class="flex items-center gap-2 text-xs font-bold text-[#2C7338]">
                                 <i data-lucide="graduation-cap" class="w-4 h-4"></i>
-                                <span>ข้อมูลการศึกษาใน มจร (MCU Academic Information)</span>
+                                <span>{{ __('portal.public_academic_info_title') }}</span>
                             </div>
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
                                 <div>
-                                    <label class="block text-[#6B6357] mb-1">รหัสนิสิต มจร (Student ID) <span class="text-red-500">*</span></label>
+                                    <label class="block text-[#6B6357] mb-1">{{ __('portal.public_student_id') }} <span class="text-red-500">*</span></label>
                                     <input type="text" name="student_id" id="txt_studentid" placeholder="เช่น 6401201001" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs font-mono">
                                 </div>
                                 <div>
-                                    <label class="block text-[#6B6357] mb-1">ระดับการศึกษา <span class="text-red-500">*</span></label>
+                                    <label class="block text-[#6B6357] mb-1">{{ __('portal.public_degree_level') }} <span class="text-red-500">*</span></label>
                                     <select name="degree_level" id="select_degree_level" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs">
-                                        <option value="">-- เลือกระดับการศึกษา --</option>
-                                        <option value="ปริญญาตรี">ปริญญาตรี</option>
-                                        <option value="ปริญญาโท">ปริญญาโท</option>
-                                        <option value="ปริญญาเอก">ปริญญาเอก</option>
-                                        <option value="ประกาศนียบัตร">ประกาศนียบัตร</option>
+                                        <option value="">{{ __('portal.public_select_degree') }}</option>
+                                        <option value="ปริญญาตรี">{{ __('portal.public_degree_bachelor') }}</option>
+                                        <option value="ปริญญาโท">{{ __('portal.public_degree_master') }}</option>
+                                        <option value="ปริญญาเอก">{{ __('portal.public_degree_doctoral') }}</option>
+                                        <option value="ประกาศนียบัตร">{{ __('portal.public_degree_cert') }}</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-[#6B6357] mb-1">คณะ <span class="text-red-500">*</span></label>
+                                    <label class="block text-[#6B6357] mb-1">{{ __('portal.public_faculty') }} <span class="text-red-500">*</span></label>
                                     <select name="faculty" id="txt_faculty" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs">
-                                        <option value="">-- เลือกคณะ --</option>
-                                        <option value="พุทธศาสตร์">พุทธศาสตร์</option>
-                                        <option value="ครุศาสตร์">ครุศาสตร์</option>
-                                        <option value="สังคมศาสตร์">สังคมศาสตร์</option>
-                                        <option value="มนุษยศาสตร์">มนุษยศาสตร์</option>
-                                        <option value="บัณฑิตวิทยาลัย">บัณฑิตวิทยาลัย</option>
-                                        <option value="IBSC">IBSC</option>
-                                        <option value="วิทยาลัยสงฆ์/วิทยาเขต">วิทยาลัยสงฆ์/วิทยาเขต</option>
+                                        <option value="">{{ __('portal.public_select_faculty') }}</option>
+                                        <option value="พุทธศาสตร์">{{ __('portal.public_fac_buddhism') }}</option>
+                                        <option value="ครุศาสตร์">{{ __('portal.public_fac_education') }}</option>
+                                        <option value="สังคมศาสตร์">{{ __('portal.public_fac_social') }}</option>
+                                        <option value="มนุษยศาสตร์">{{ __('portal.public_fac_humanities') }}</option>
+                                        <option value="บัณฑิตวิทยาลัย">{{ __('portal.public_fac_grad') }}</option>
+                                        <option value="IBSC">{{ __('portal.public_fac_ibsc') }}</option>
+                                        <option value="วิทยาลัยสงฆ์/วิทยาเขต">{{ __('portal.public_fac_campuses') }}</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-[#6B6357] mb-1">หลักสูตร / สาขาวิชา <span class="text-red-500">*</span></label>
-                                    <input type="text" name="program_name" id="txt_program_name" placeholder="เช่น พุทธศาสตรบัณฑิต, การสอนภาษาไทย" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs">
+                                    <label class="block text-[#6B6357] mb-1">{{ __('portal.public_program_name') }} <span class="text-red-500">*</span></label>
+                                    <input type="text" name="program_name" id="txt_program_name" placeholder="{{ __('portal.public_program_placeholder') }}" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs">
                                 </div>
                             </div>
                         </div>
@@ -494,12 +499,12 @@
                         <!-- Personal Fields Grid -->
                         <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 text-xs">
                             <div class="sm:col-span-4">
-                                <label class="block text-[#6B6357] mb-1">เลขบัตร ปชช. / Passport <span class="text-red-500">*</span></label>
-                                <input type="text" name="citizen_id" id="inp_citizen_id" placeholder="13 หลัก หรือเลข Passport" required class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs font-mono">
+                                <label class="block text-[#6B6357] mb-1">{{ __('portal.public_citizen_id') }} <span class="text-red-500">*</span></label>
+                                <input type="text" name="citizen_id" id="inp_citizen_id" placeholder="{{ __('portal.public_citizen_id_placeholder') }}" required class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs font-mono">
                             </div>
                             <div class="sm:col-span-3">
-                                <label class="block text-[#6B6357] mb-1">คำนำหน้าชื่อ <span class="text-red-500">*</span></label>
-                                <input type="text" name="prefix" id="prefix_select" list="prefix_datalist" placeholder="เช่น นาย, พระ, นางสาว" required class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs">
+                                <label class="block text-[#6B6357] mb-1">{{ __('portal.public_prefix') }} <span class="text-red-500">*</span></label>
+                                <input type="text" name="prefix" id="prefix_select" list="prefix_datalist" placeholder="{{ __('portal.public_prefix_placeholder') }}" required class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs">
                                 <datalist id="prefix_datalist">
                                     <option value="นาย">
                                     <option value="นาง">
@@ -513,37 +518,37 @@
                                 </datalist>
                             </div>
                             <div class="sm:col-span-5">
-                                <label class="block text-[#6B6357] mb-1">ชื่อ <span class="text-red-500">*</span></label>
+                                <label class="block text-[#6B6357] mb-1">{{ __('portal.public_first_name') }} <span class="text-red-500">*</span></label>
                                 <input type="text" name="first_name" id="inp_first_name" required class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs">
                             </div>
 
                             <div class="sm:col-span-4">
-                                <label class="block text-[#6B6357] mb-1">นามสกุล <span class="text-red-500">*</span></label>
+                                <label class="block text-[#6B6357] mb-1">{{ __('portal.public_last_name') }} <span class="text-red-500">*</span></label>
                                 <input type="text" name="last_name" id="inp_last_name" required class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs">
                             </div>
                             <div class="sm:col-span-4">
-                                <label class="block text-[#6B6357] mb-1">ฉายา (เฉพาะพระภิกษุ)</label>
-                                <input type="text" name="buddhist_name" id="inp_buddhist_name" placeholder="เช่น เขมธมฺโม หรือเว้นว่าง" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs">
+                                <label class="block text-[#6B6357] mb-1">{{ __('portal.public_buddhist_name_label') }}</label>
+                                <input type="text" name="buddhist_name" id="inp_buddhist_name" placeholder="{{ __('portal.public_buddhist_name_placeholder') }}" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs">
                             </div>
                             <div class="sm:col-span-2" id="vassaWrapper">
-                                <label class="block text-[#6B6357] mb-1">พรรษา (เฉพาะพระภิกษุ)</label>
+                                <label class="block text-[#6B6357] mb-1">{{ __('portal.public_vassa_label') }}</label>
                                 <input type="number" name="vassa" id="inp_vassa" value="0" min="0" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs">
                             </div>
                             <div class="sm:col-span-2">
-                                <label class="block text-[#6B6357] mb-1">อายุ (ปี)</label>
+                                <label class="block text-[#6B6357] mb-1">{{ __('portal.public_age') }}</label>
                                 <input type="number" name="age" id="inp_age" placeholder="เช่น 45" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs">
                             </div>
 
                             <div class="sm:col-span-4">
-                                <label class="block text-[#6B6357] mb-1">เบอร์โทรศัพท์ติดต่อ <span class="text-red-500">*</span></label>
-                                <input type="tel" name="phone" id="inp_phone" placeholder="08xxxxxxxx" required class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs font-mono">
+                                <label class="block text-[#6B6357] mb-1">{{ __('portal.public_phone') }} <span class="text-red-500">*</span></label>
+                                <input type="tel" name="phone" id="inp_phone" placeholder="{{ __('portal.public_phone_placeholder') }}" required class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs font-mono">
                             </div>
                             <div class="sm:col-span-4">
-                                <label class="block text-[#6B6357] mb-1">อีเมล (ถ้ามี)</label>
+                                <label class="block text-[#6B6357] mb-1">{{ __('portal.public_email') }}</label>
                                 <input type="email" name="email" id="inp_email" placeholder="example@gmail.com" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs">
                             </div>
                             <div class="sm:col-span-4">
-                                <label class="block text-[#6B6357] mb-1">ไลน์ (Line ID)</label>
+                                <label class="block text-[#6B6357] mb-1">{{ __('portal.public_line') }}</label>
                                 <input type="text" name="line_id" id="inp_line" placeholder="Line ID หรือเบอร์ไลน์" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs">
                             </div>
                         </div>
@@ -553,36 +558,36 @@
                     <div class="space-y-4 pt-3 border-t border-[#EAE5D9]">
                         <div class="flex items-center gap-2">
                             <span class="w-6 h-6 rounded-full bg-[#2C7338] text-white flex items-center justify-center text-xs font-bold font-mono">2</span>
-                            <h3 class="font-heading font-bold text-sm sm:text-base text-[#2D2A26]">ที่อยู่ (Address)</h3>
+                            <h3 class="font-heading font-bold text-sm sm:text-base text-[#2D2A26]">{{ __('portal.public_sec3_title') }}</h3>
                         </div>
 
                         <div class="space-y-3 text-xs">
                             <div>
-                                <label class="block text-[#6B6357] mb-1">ที่อยู่ / วัดต้นสังกัด / บ้านเลขที่ หมู่ ซอย ถนน</label>
-                                <input type="text" name="address" id="inp_address" placeholder="เช่น 99/1 หมู่ 2 หรือ วัดมหาธาตุยุวราชรังสฤษฎิ์" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs">
+                                <label class="block text-[#6B6357] mb-1">{{ __('portal.public_address') }}</label>
+                                <input type="text" name="address" id="inp_address" placeholder="{{ __('portal.public_address_placeholder') }}" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs">
                             </div>
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                                 <div>
-                                    <label class="block text-[#6B6357] mb-1">จังหวัด (Province) <span class="text-red-500">*</span></label>
+                                    <label class="block text-[#6B6357] mb-1">{{ __('portal.public_province') }} <span class="text-red-500">*</span></label>
                                     <select id="province_select" name="province" required onchange="onProvinceChange(this.value)" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs">
-                                        <option value="">-- กรุณาเลือกจังหวัด --</option>
+                                        <option value="">{{ __('portal.public_select_province') }}</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-[#6B6357] mb-1">อำเภอ / เขต (District) <span class="text-red-500">*</span></label>
+                                    <label class="block text-[#6B6357] mb-1">{{ __('portal.public_district') }} <span class="text-red-500">*</span></label>
                                     <select id="district_select" name="district" required disabled onchange="onDistrictChange(this.value)" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs disabled:bg-stone-100">
-                                        <option value="">-- เลือกจังหวัดก่อน --</option>
+                                        <option value="">{{ __('portal.public_select_district_first') }}</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-[#6B6357] mb-1">ตำบล / แขวง (Subdistrict) <span class="text-red-500">*</span></label>
+                                    <label class="block text-[#6B6357] mb-1">{{ __('portal.public_subdistrict') }} <span class="text-red-500">*</span></label>
                                     <select id="subdistrict_select" name="subdistrict" required disabled onchange="onSubdistrictChange(this.value)" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs disabled:bg-stone-100">
-                                        <option value="">-- เลือกอำเภอก่อน --</option>
+                                        <option value="">{{ __('portal.public_select_subdistrict_first') }}</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-[#6B6357] mb-1">รหัสไปรษณีย์ (Postal Code)</label>
+                                    <label class="block text-[#6B6357] mb-1">{{ __('portal.public_postal_code') }}</label>
                                     <input type="text" id="postal_code_input" name="postal_code" maxlength="5" placeholder="เช่น 13170" class="w-full px-3 py-2 bg-[#FBF9F4] border border-[#D5CEBC] rounded-lg text-xs font-mono">
                                 </div>
                             </div>
@@ -593,43 +598,43 @@
                     <div class="space-y-4 pt-3 border-t border-[#EAE5D9]">
                         <div class="flex items-center gap-2">
                             <span class="w-6 h-6 rounded-full bg-[#2C7338] text-white flex items-center justify-center text-xs font-bold font-mono">3</span>
-                            <h3 class="font-heading font-bold text-sm sm:text-base text-[#2D2A26]">ข้อมูลห้องพัก ยานพาหนะ และอาหาร (Accommodations & Preferences)</h3>
+                            <h3 class="font-heading font-bold text-sm sm:text-base text-[#2D2A26]">{{ __('portal.public_sec4_title') }}</h3>
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                             <div>
-                                <label class="block text-[#6B6357] mb-1">ข้อมูลห้องพัก / อาคารที่ต้องการ (Room / Building Request)</label>
+                                <label class="block text-[#6B6357] mb-1">{{ __('portal.public_room') }}</label>
                                 <select name="room_info" id="inp_room_info" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs">
-                                    <option value="แบบตัวเลือก - ขอที่พักเอง / พักรวมตามที่สถาบันจัดให้">แบบตัวเลือก - ขอที่พักเอง / พักรวมตามที่สถาบันจัดให้</option>
-                                    <option value="พักรวมตามที่สถาบันจัดให้">พักรวมตามที่สถาบันจัดให้</option>
-                                    <option value="ขอพักเดี่ยว (กรณีมีข้อจำกัดด้านสุขภาพ)">ขอพักเดี่ยว (กรณีมีข้อจำกัดด้านสุขภาพ)</option>
-                                    <option value="เดินทางไป-กลับ ไม่ค้างคืน">เดินทางไป-กลับ ไม่ค้างคืน</option>
+                                    <option value="แบบตัวเลือก - ขอที่พักเอง / พักรวมตามที่สถาบันจัดให้">{{ __('portal.public_room_option_any') }}</option>
+                                    <option value="พักรวมตามที่สถาบันจัดให้">{{ __('portal.public_room_option_shared') }}</option>
+                                    <option value="ขอพักเดี่ยว (กรณีมีข้อจำกัดด้านสุขภาพ)">{{ __('portal.public_room_option_single') }}</option>
+                                    <option value="เดินทางไป-กลับ ไม่ค้างคืน">{{ __('portal.public_room_option_commute') }}</option>
                                 </select>
                             </div>
 
                             <div>
-                                <label class="block text-[#6B6357] mb-1">การเดินทาง / ยานพาหนะ</label>
+                                <label class="block text-[#6B6357] mb-1">{{ __('portal.public_vehicle') }}</label>
                                 <select name="vehicle_info" id="inp_vehicle_info" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs">
-                                    <option value="แบบตัวเลือก - เดินทางไป-กลับเอง / ขึ้นรถตามที่สถาบันจัดให้">แบบตัวเลือก - เดินทางไป-กลับเอง / ขึ้นรถตามที่สถาบันจัดให้</option>
-                                    <option value="เดินทางโดยรถยนต์ส่วนตัว">เดินทางโดยรถยนต์ส่วนตัว</option>
-                                    <option value="เดินทางโดยรถตู้/รถบัสของสถาบัน">เดินทางโดยรถตู้/รถบัสของสถาบัน</option>
-                                    <option value="เดินทางโดยรถโดยสารสาธารณะ">เดินทางโดยรถโดยสารสาธารณะ</option>
+                                    <option value="แบบตัวเลือก - เดินทางไป-กลับเอง / ขึ้นรถตามที่สถาบันจัดให้">{{ __('portal.public_travel_option_any') }}</option>
+                                    <option value="เดินทางโดยรถยนต์ส่วนตัว">{{ __('portal.public_travel_option_car') }}</option>
+                                    <option value="เดินทางโดยรถตู้/รถบัสของสถาบัน">{{ __('portal.public_travel_option_bus') }}</option>
+                                    <option value="เดินทางโดยรถโดยสารสาธารณะ">{{ __('portal.public_travel_option_public') }}</option>
                                 </select>
                             </div>
 
                             <div>
-                                <label class="block text-[#6B6357] mb-1">ประเภทอาหาร <span class="text-red-500">*</span></label>
+                                <label class="block text-[#6B6357] mb-1">{{ __('portal.public_food') }} <span class="text-red-500">*</span></label>
                                 <select name="food_type" id="inp_food_type" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs">
-                                    <option value="NORMAL">อาหารทั่วไป</option>
-                                    <option value="VEGETARIAN">มังสวิรัติ (Vegetarian)</option>
-                                    <option value="JAY">อาหารเจ</option>
-                                    <option value="HALAL">ฮาลาล / มุสลิม</option>
+                                    <option value="NORMAL">{{ __('portal.public_food_normal') }}</option>
+                                    <option value="VEGETARIAN">{{ __('portal.public_food_veg') }}</option>
+                                    <option value="JAY">{{ __('portal.public_food_jay') }}</option>
+                                    <option value="HALAL">{{ __('portal.public_food_halal') }}</option>
                                 </select>
                             </div>
 
                             <div>
-                                <label class="block text-[#6B6357] mb-1">ความต้องการพิเศษ / ข้อจำกัดทางร่างกาย (ถ้ามี)</label>
-                                <input type="text" name="special_needs" id="inp_special_needs" placeholder="เช่น ขอห้องพักชั้นล่างเนื่องจากหัวเข่า, แพ้อาหาร..." class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs">
+                                <label class="block text-[#6B6357] mb-1">{{ __('portal.public_special_needs') }}</label>
+                                <input type="text" name="special_needs" id="inp_special_needs" placeholder="{{ __('portal.public_special_needs_placeholder') }}" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs">
                             </div>
                         </div>
                     </div>
@@ -638,11 +643,11 @@
                     <div class="pt-6 border-t border-[#EAE5D9] flex items-center justify-end gap-3">
                         <button type="button" onclick="goToStep(1)" class="px-5 py-2.5 rounded-xl border border-[#D5CEBC] text-[#4A3B32] hover:bg-[#FAF8F2] text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition">
                             <i data-lucide="arrow-left" class="w-4 h-4"></i>
-                            <span>ย้อนกลับ</span>
+                            <span>{{ __('portal.public_btn_prev') }}</span>
                         </button>
                         <button type="button" onclick="validateAndGoToStep3()" class="bg-[#2C7338] hover:bg-[#235D2E] text-white font-semibold px-6 py-2.5 rounded-xl text-xs sm:text-sm shadow-xs transition flex items-center gap-2">
                             <i data-lucide="check" class="w-4 h-4"></i>
-                            <span>ยืนยันการลงทะเบียน</span>
+                            <span>{{ __('portal.public_btn_submit') }}</span>
                         </button>
                     </div>
                 </div>
@@ -658,8 +663,8 @@
                             <i data-lucide="file-text" class="w-5 h-5"></i>
                         </div>
                         <div>
-                            <h2 class="text-lg sm:text-xl font-heading font-bold text-[#2D2A26]">สรุปข้อมูลก่อนยืนยัน</h2>
-                            <p class="text-xs text-[#7A7367] mt-0.5">กรุณาตรวจสอบความถูกต้องของข้อมูลทั้งหมดก่อนยืนยันการสมัคร</p>
+                            <h2 class="text-lg sm:text-xl font-heading font-bold text-[#2D2A26]">{{ __('portal.public_summary_title') }}</h2>
+                            <p class="text-xs text-[#7A7367] mt-0.5">{{ __('portal.public_summary_desc') }}</p>
                         </div>
                     </div>
 
@@ -669,7 +674,7 @@
                             <span class="w-5 h-5 rounded-md bg-[#2C7338] text-white flex items-center justify-center text-[10px]">
                                 <i data-lucide="list" class="w-3.5 h-3.5"></i>
                             </span>
-                            <span>ข้อมูลโครงการที่ท่านเลือก</span>
+                            <span>{{ __('portal.public_summary_course_title') }}</span>
                         </div>
 
                         <div class="p-4 sm:p-5 border border-[#E8E3D7] rounded-2xl bg-white flex flex-col sm:flex-row items-start sm:items-center gap-4">
@@ -707,45 +712,45 @@
                                 <span class="w-5 h-5 rounded-md bg-[#2C7338] text-white flex items-center justify-center text-[10px]">
                                     <i data-lucide="user" class="w-3.5 h-3.5"></i>
                                 </span>
-                                <span>ข้อมูลผู้สมัครโดยสรุป</span>
+                                <span>{{ __('portal.public_summary_applicant_title') }}</span>
                             </div>
                             <button type="button" onclick="goToStep(2)" class="text-xs text-[#2C7338] hover:underline font-semibold flex items-center gap-1">
                                 <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
-                                <span>แก้ไขข้อมูลผู้สมัคร</span>
+                                <span>{{ __('portal.public_summary_edit_btn') }}</span>
                             </button>
                         </div>
 
                         <div class="p-4 sm:p-5 border border-[#E8E3D7] rounded-2xl bg-[#FBF9F4] grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-8 text-xs">
                             <div class="flex justify-between sm:justify-start gap-4">
-                                <span class="text-[#7A7367] w-28 shrink-0">ชื่อ - สกุล</span>
+                                <span class="text-[#7A7367] w-28 shrink-0">{{ __('portal.public_sum_name') }}</span>
                                 <span class="text-[#2D2A26] font-semibold">: <span id="sum_name">--</span></span>
                             </div>
                             <div class="flex justify-between sm:justify-start gap-4">
-                                <span class="text-[#7A7367] w-28 shrink-0">จังหวัด</span>
+                                <span class="text-[#7A7367] w-28 shrink-0">{{ __('portal.public_sum_province') }}</span>
                                 <span class="text-[#2D2A26] font-semibold">: <span id="sum_province">--</span></span>
                             </div>
                             <div class="flex justify-between sm:justify-start gap-4">
-                                <span class="text-[#7A7367] w-28 shrink-0">สถานะผู้สมัคร</span>
+                                <span class="text-[#7A7367] w-28 shrink-0">{{ __('portal.public_sum_status') }}</span>
                                 <span class="text-[#2D2A26] font-semibold">: <span id="sum_status">ประชาชนทั่วไป</span></span>
                             </div>
                             <div class="flex justify-between sm:justify-start gap-4">
-                                <span class="text-[#7A7367] w-28 shrink-0">ประเภทอาหาร</span>
+                                <span class="text-[#7A7367] w-28 shrink-0">{{ __('portal.public_sum_food') }}</span>
                                 <span class="text-[#2D2A26] font-semibold">: <span id="sum_food">อาหารทั่วไป</span></span>
                             </div>
                             <div class="flex justify-between sm:justify-start gap-4">
-                                <span class="text-[#7A7367] w-28 shrink-0">เบอร์โทรศัพท์</span>
+                                <span class="text-[#7A7367] w-28 shrink-0">{{ __('portal.public_sum_phone') }}</span>
                                 <span class="text-[#2D2A26] font-semibold font-mono">: <span id="sum_phone">--</span></span>
                             </div>
                             <div class="flex justify-between sm:justify-start gap-4">
-                                <span class="text-[#7A7367] w-28 shrink-0">การเดินทาง</span>
+                                <span class="text-[#7A7367] w-28 shrink-0">{{ __('portal.public_sum_travel') }}</span>
                                 <span class="text-[#2D2A26] font-semibold">: <span id="sum_travel">รถยนต์ส่วนตัว</span></span>
                             </div>
                             <div class="flex justify-between sm:justify-start gap-4">
-                                <span class="text-[#7A7367] w-28 shrink-0">อีเมล</span>
+                                <span class="text-[#7A7367] w-28 shrink-0">{{ __('portal.public_sum_email') }}</span>
                                 <span class="text-[#2D2A26] font-semibold">: <span id="sum_email">-</span></span>
                             </div>
                             <div class="flex justify-between sm:justify-start gap-4">
-                                <span class="text-[#7A7367] w-28 shrink-0">ความต้องการพิเศษ</span>
+                                <span class="text-[#7A7367] w-28 shrink-0">{{ __('portal.public_sum_special') }}</span>
                                 <span class="text-[#2D2A26] font-semibold">: <span id="sum_special">-</span></span>
                             </div>
                         </div>
@@ -755,42 +760,42 @@
                     <div class="space-y-3">
                         <div class="flex items-center gap-2">
                             <span class="w-6 h-6 rounded-full bg-[#1F6B30] text-white flex items-center justify-center text-xs font-bold font-mono">1</span>
-                            <h3 class="font-heading font-bold text-sm sm:text-base text-[#2D2A26]">กฎ ระเบียบ และข้อปฏิบัติในการเข้าร่วม</h3>
+                            <h3 class="font-heading font-bold text-sm sm:text-base text-[#2D2A26]">{{ __('portal.public_rules_title') }}</h3>
                         </div>
 
                         <div class="p-5 border border-[#E8E3D7] rounded-2xl bg-white grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 text-xs text-[#2D2A26]">
                             <!-- Col 1 -->
                             <div class="flex items-start gap-2.5">
                                 <span class="w-5 h-5 rounded-full bg-[#E8F3EA] text-[#2C7338] flex items-center justify-center text-[10px] font-bold font-mono shrink-0 mt-0.5">1</span>
-                                <span class="leading-relaxed">ผู้เข้าร่วมต้องลงทะเบียนและรายงานตัวตามวันและเวลาที่โครงการกำหนด</span>
+                                <span class="leading-relaxed">{{ __('portal.public_rules_item_1') }}</span>
                             </div>
                             <div class="flex items-start gap-2.5">
                                 <span class="w-5 h-5 rounded-full bg-[#E8F3EA] text-[#2C7338] flex items-center justify-center text-[10px] font-bold font-mono shrink-0 mt-0.5">5</span>
-                                <span class="leading-relaxed">งดใช้โทรศัพท์มือถือหรืออุปกรณ์สื่อสารระหว่างการปฏิบัติธรรม เว้นแต่ได้รับอนุญาต</span>
+                                <span class="leading-relaxed">{{ __('portal.public_rules_item_2') }}</span>
                             </div>
                             <div class="flex items-start gap-2.5">
                                 <span class="w-5 h-5 rounded-full bg-[#E8F3EA] text-[#2C7338] flex items-center justify-center text-[10px] font-bold font-mono shrink-0 mt-0.5">2</span>
-                                <span class="leading-relaxed">แต่งกายสุภาพเรียบร้อย เหมาะสมกับการปฏิบัติธรรม</span>
+                                <span class="leading-relaxed">{{ __('portal.public_rules_item_3') }}</span>
                             </div>
                             <div class="flex items-start gap-2.5">
                                 <span class="w-5 h-5 rounded-full bg-[#E8F3EA] text-[#2C7338] flex items-center justify-center text-[10px] font-bold font-mono shrink-0 mt-0.5">6</span>
-                                <span class="leading-relaxed">รักษาความสงบ สำรวมกาย วาจา ใจ และเคารพสิทธิของผู้เข้าร่วมท่านอื่น</span>
+                                <span class="leading-relaxed">{{ __('portal.public_rules_item_4') }}</span>
                             </div>
                             <div class="flex items-start gap-2.5">
                                 <span class="w-5 h-5 rounded-full bg-[#E8F3EA] text-[#2C7338] flex items-center justify-center text-[10px] font-bold font-mono shrink-0 mt-0.5">3</span>
-                                <span class="leading-relaxed">งดนำสุรา บุหรี่ สิ่งเสพติด และสิ่งอบายมุขทุกชนิดเข้าพื้นที่</span>
+                                <span class="leading-relaxed">{{ __('portal.public_rules_item_5') }}</span>
                             </div>
                             <div class="flex items-start gap-2.5">
                                 <span class="w-5 h-5 rounded-full bg-[#E8F3EA] text-[#2C7338] flex items-center justify-center text-[10px] font-bold font-mono shrink-0 mt-0.5">7</span>
-                                <span class="leading-relaxed">หากมีโรคประจำตัวหรือข้อจำกัดด้านสุขภาพ กรุณาแจ้งเจ้าหน้าที่ล่วงหน้า</span>
+                                <span class="leading-relaxed">{{ __('portal.public_rules_item_6') }}</span>
                             </div>
                             <div class="flex items-start gap-2.5">
                                 <span class="w-5 h-5 rounded-full bg-[#E8F3EA] text-[#2C7338] flex items-center justify-center text-[10px] font-bold font-mono shrink-0 mt-0.5">4</span>
-                                <span class="leading-relaxed">ปฏิบัติตามตารางกิจกรรม คำแนะนำของวิปัสสนาจารย์ และเจ้าหน้าที่อย่างเคร่งครัด</span>
+                                <span class="leading-relaxed">{{ __('portal.public_rules_item_7') }}</span>
                             </div>
                             <div class="flex items-start gap-2.5">
                                 <span class="w-5 h-5 rounded-full bg-[#E8F3EA] text-[#2C7338] flex items-center justify-center text-[10px] font-bold font-mono shrink-0 mt-0.5">8</span>
-                                <span class="leading-relaxed">หากฝ่าฝืนกฎระเบียบ สถาบันขอสงวนสิทธิ์ในการพิจารณาให้ออกจากโครงการ</span>
+                                <span class="leading-relaxed">{{ __('portal.public_rules_item_8') }}</span>
                             </div>
                         </div>
                     </div>
@@ -799,7 +804,7 @@
                     <div class="space-y-3">
                         <div class="flex items-center gap-2">
                             <span class="w-6 h-6 rounded-full bg-[#1F6B30] text-white flex items-center justify-center text-xs font-bold font-mono">2</span>
-                            <h3 class="font-heading font-bold text-sm sm:text-base text-[#2D2A26]">ข้อควรทราบเพิ่มเติม</h3>
+                            <h3 class="font-heading font-bold text-sm sm:text-base text-[#2D2A26]">{{ __('portal.public_notes_title') }}</h3>
                         </div>
 
                         <div class="p-4 sm:p-5 border border-[#F4E3C8] rounded-2xl bg-[#FFFDF9] flex flex-col sm:flex-row items-start sm:items-center gap-4">
@@ -811,19 +816,19 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-xs text-[#2D2A26] flex-grow">
                                 <div class="flex items-start gap-2">
                                     <span class="w-4 h-4 rounded-full bg-[#F3ECE0] text-[#7A7367] flex items-center justify-center text-[9px] font-mono shrink-0 mt-0.5">1</span>
-                                    <span>ผู้สมัครควรนำบัตรประชาชนและของใช้ส่วนตัวที่จำเป็นมาด้วย</span>
+                                    <span>{{ __('portal.public_notes_item_1') }}</span>
                                 </div>
                                 <div class="flex items-start gap-2">
                                     <span class="w-4 h-4 rounded-full bg-[#F3ECE0] text-[#7A7367] flex items-center justify-center text-[9px] font-mono shrink-0 mt-0.5">3</span>
-                                    <span>ข้อมูลที่ท่านกรอกจะใช้เพื่อการบริหารจัดการโครงการเท่านั้น</span>
+                                    <span>{{ __('portal.public_notes_item_2') }}</span>
                                 </div>
                                 <div class="flex items-start gap-2">
                                     <span class="w-4 h-4 rounded-full bg-[#F3ECE0] text-[#7A7367] flex items-center justify-center text-[9px] font-mono shrink-0 mt-0.5">2</span>
-                                    <span>ที่พักแยกชาย–หญิง และจัดตามความเหมาะสมของโครงการ</span>
+                                    <span>{{ __('portal.public_notes_item_3') }}</span>
                                 </div>
                                 <div class="flex items-start gap-2">
                                     <span class="w-4 h-4 rounded-full bg-[#F3ECE0] text-[#7A7367] flex items-center justify-center text-[9px] font-mono shrink-0 mt-0.5">4</span>
-                                    <span>เมื่อกดยืนยันการสมัครแล้ว ระบบจะบันทึกข้อมูลทันที</span>
+                                    <span>{{ __('portal.public_notes_item_4') }}</span>
                                 </div>
                             </div>
                         </div>
@@ -834,13 +839,13 @@
                         <label class="flex items-start gap-2.5 cursor-pointer">
                             <input type="checkbox" id="chk_agree_rules" required class="w-4 h-4 text-[#2C7338] border-[#D5CEBC] rounded focus:ring-[#2C7338] mt-0.5">
                             <span class="text-xs text-[#2D2A26] leading-relaxed">
-                                ข้าพเจ้าได้อ่านและยอมรับกฎ ระเบียบ และเงื่อนไขการเข้าร่วมโครงการแล้ว <span class="text-red-500">*</span>
+                                {{ __('portal.public_agree_rules_chk') }} <span class="text-red-500">*</span>
                             </span>
                         </label>
                         <label class="flex items-start gap-2.5 cursor-pointer">
                             <input type="checkbox" id="chk_certify_info" required class="w-4 h-4 text-[#2C7338] border-[#D5CEBC] rounded focus:ring-[#2C7338] mt-0.5">
                             <span class="text-xs text-[#2D2A26] leading-relaxed">
-                                ข้าพเจ้าขอยืนยันว่าข้อมูลที่กรอกไว้เป็นความจริงและถูกต้อง <span class="text-red-500">*</span>
+                                {{ __('portal.public_certify_info_chk') }} <span class="text-red-500">*</span>
                             </span>
                         </label>
                     </div>
@@ -849,17 +854,17 @@
                     <div class="pt-6 border-t border-[#EAE5D9] flex flex-col sm:flex-row items-center justify-between gap-4">
                         <div class="flex items-center gap-1.5 text-xs text-[#C86D51] order-2 sm:order-1">
                             <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
-                            <span>เมื่อกดยืนยันแล้ว จะไม่สามารถแก้ไขข้อมูลได้ทันที</span>
+                            <span>{{ __('portal.public_cannot_edit_warning') }}</span>
                         </div>
 
                         <div class="flex items-center gap-3 w-full sm:w-auto justify-end order-1 sm:order-2">
                             <button type="button" onclick="goToStep(2)" class="px-5 py-2.5 rounded-xl border border-[#D5CEBC] text-[#4A3B32] hover:bg-[#FAF8F2] text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition">
                                 <i data-lucide="arrow-left" class="w-4 h-4"></i>
-                                <span>ย้อนกลับ</span>
+                                <span>{{ __('portal.public_btn_prev') }}</span>
                             </button>
                             <button type="submit" id="btn_final_submit" class="bg-[#2C7338] hover:bg-[#235D2E] text-white font-semibold px-7 py-2.5 rounded-xl text-xs sm:text-sm shadow-xs transition flex items-center gap-2">
                                 <i data-lucide="check" class="w-4 h-4"></i>
-                                <span>ยืนยันการสมัคร</span>
+                                <span>{{ __('portal.public_btn_submit') }}</span>
                             </button>
                         </div>
                     </div>
@@ -874,7 +879,7 @@
 
     <!-- Footer -->
     <footer class="bg-white border-t border-[#EAE5D9] py-5 text-center text-xs text-[#7B8D65]">
-        มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย &bull; ระบบสารสนเทศการปฏิบัติวิปัสสนากรรมฐาน (VPSMCU)
+        {{ __('portal.footer_brand') }}
     </footer>
 
     <!-- Scripts Engine -->
@@ -884,19 +889,19 @@
         // Step Configs for Header Banner
         const stepBannerData = {
             1: {
-                title: 'สมัครปฏิบัติวิปัสสนากรรมฐาน',
-                subtitle: 'เลือกโครงการที่ต้องการสมัคร',
-                desc: 'กรุณาเลือกโครงการที่ท่านสนใจและอยู่ในช่วงเปิดรับสมัคร<br class="hidden sm:inline">จากนั้นคลิก "ถัดไป" เพื่อกรอกข้อมูลผู้สมัครในขั้นตอนต่อไป'
+                title: @json(__('portal.public_banner_step1_title')),
+                subtitle: @json(__('portal.public_banner_step1_subtitle')),
+                desc: @json(__('portal.public_banner_step1_desc'))
             },
             2: {
-                title: 'กรอกข้อมูลผู้สมัคร',
-                subtitle: 'กรุณากรอกข้อมูลให้ครบถ้วนและถูกต้อง',
-                desc: 'ข้อมูลของท่านจะถูกใช้สำหรับการลงทะเบียนเข้าร่วมโครงการ<br class="hidden sm:inline">กรุณาตรวจสอบความถูกต้องก่อนยืนยันการลงทะเบียน'
+                title: @json(__('portal.public_banner_step2_title')),
+                subtitle: @json(__('portal.public_banner_step2_subtitle')),
+                desc: @json(__('portal.public_banner_step2_desc'))
             },
             3: {
-                title: 'ตรวจสอบกฎ ระเบียบก่อนสมัคร',
-                subtitle: 'กรุณาอ่านและยอมรับข้อกำหนดการเข้าร่วมโครงการก่อนยืนยันการสมัคร',
-                desc: 'โปรดตรวจสอบรายละเอียดโครงการ ข้อมูลผู้สมัคร และกฎระเบียบการเข้าร่วม<br class="hidden sm:inline">ให้ครบถ้วน เพื่อให้การสมัครเป็นไปอย่างถูกต้อง'
+                title: @json(__('portal.public_banner_step3_title')),
+                subtitle: @json(__('portal.public_banner_step3_subtitle')),
+                desc: @json(__('portal.public_banner_step3_desc'))
             }
         };
 
@@ -982,7 +987,7 @@
             if (step === 2) {
                 const selected = document.querySelector('input[name="event_id"]:checked');
                 if (!selected) {
-                    alert('กรุณาเลือกโครงการที่ต้องการสมัคร');
+                    alert(@json(__('portal.public_alert_select_event')));
                     return;
                 }
                 syncSelectedEventCard(selected);
@@ -1034,37 +1039,37 @@
             const subdist = document.getElementById('subdistrict_select');
 
             if (!citizenId.value.trim()) {
-                alert('กรุณากรอกเลขบัตรประชาชน หรือ Passport');
+                alert(@json(__('portal.public_alert_citizen_id')));
                 citizenId.focus();
                 return false;
             }
             if (!firstName.value.trim()) {
-                alert('กรุณากรอกชื่อจริง');
+                alert(@json(__('portal.public_alert_first_name')));
                 firstName.focus();
                 return false;
             }
             if (!lastName.value.trim()) {
-                alert('กรุณากรอกนามสกุล');
+                alert(@json(__('portal.public_alert_last_name')));
                 lastName.focus();
                 return false;
             }
             if (!phone.value.trim()) {
-                alert('กรุณากรอกเบอร์โทรศัพท์ติดต่อ');
+                alert(@json(__('portal.public_alert_phone')));
                 phone.focus();
                 return false;
             }
             if (!prov.value) {
-                alert('กรุณาเลือกจังหวัด');
+                alert(@json(__('portal.public_alert_province')));
                 prov.focus();
                 return false;
             }
             if (!dist.value) {
-                alert('กรุณาเลือกอำเภอ');
+                alert(@json(__('portal.public_alert_district')));
                 dist.focus();
                 return false;
             }
             if (!subdist.value) {
-                alert('กรุณาเลือกตำบล');
+                alert(@json(__('portal.public_alert_subdistrict')));
                 subdist.focus();
                 return false;
             }
@@ -1077,7 +1082,7 @@
                 const prog = document.getElementById('txt_program_name');
 
                 if (!stdId.value.trim() || !deg.value || !fac.value.trim() || !prog.value.trim()) {
-                    alert('กรุณากรอกข้อมูลการศึกษาใน มจร ให้ครบถ้วน');
+                    alert(@json(__('portal.public_alert_student_info')));
                     return false;
                 }
             }
@@ -1103,7 +1108,7 @@
             document.getElementById('sum_province').textContent = document.getElementById('province_select').value || '-';
             
             const appType = document.querySelector('input[name="applicant_type"]:checked').value;
-            document.getElementById('sum_status').textContent = appType === 'STUDENT' ? 'นิสิต มจร' : 'ประชาชนทั่วไป';
+            document.getElementById('sum_status').textContent = appType === 'STUDENT' ? @json(__('portal.public_status_student')) : @json(__('portal.public_status_people'));
 
             const foodSel = document.getElementById('inp_food_type');
             document.getElementById('sum_food').textContent = foodSel.options[foodSel.selectedIndex].text;
@@ -1114,7 +1119,7 @@
             document.getElementById('sum_travel').textContent = vehicle.includes('รถยนต์') ? 'รถยนต์ส่วนตัว' : (vehicle.includes('รถตู้') ? 'รถตู้สถาบัน' : vehicle);
 
             document.getElementById('sum_email').textContent = document.getElementById('inp_email').value.trim() || '-';
-            document.getElementById('sum_special').textContent = document.getElementById('inp_special_needs').value.trim() || 'ไม่มี';
+            document.getElementById('sum_special').textContent = document.getElementById('inp_special_needs').value.trim() || @json(__('portal.public_none'));
 
             const selected = document.querySelector('input[name="event_id"]:checked');
             if (selected) {

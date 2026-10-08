@@ -6,20 +6,19 @@ SERVER_ACCESS.md
 cloudflared.log
 
 # Laravel paths
-# mcuvms-laravel/vendor/ (bundled for serverless deployment on Vercel)
-mcuvms-laravel/node_modules/
-mcuvms-laravel/.env
-mcuvms-laravel/.env.backup
-mcuvms-laravel/.env.production
-mcuvms-laravel/storage/*.key
-mcuvms-laravel/storage/framework/cache/*
-!mcuvms-laravel/storage/framework/cache/.gitignore
-mcuvms-laravel/storage/framework/sessions/*
-!mcuvms-laravel/storage/framework/sessions/.gitignore
-mcuvms-laravel/storage/framework/views/*
-!mcuvms-laravel/storage/framework/views/.gitignore
-mcuvms-laravel/storage/logs/*
-!mcuvms-laravel/storage/logs/.gitignore
-mcuvms-laravel/public/storage
-mcuvms-laravel/public/build
-vpsmcu-laravel/
+# vpsmcu-laravel/vendor/ (bundled for deployment)
+vpsmcu-laravel/node_modules/
+vpsmcu-laravel/.env
+vpsmcu-laravel/.env.backup
+vpsmcu-laravel/.env.production
+vpsmcu-laravel/storage/*.key
+vpsmcu-laravel/storage/framework/cache/*
+!vpsmcu-laravel/storage/framework/cache/.gitignore
+vpsmcu-laravel/storage/framework/sessions/*
+!vpsmcu-laravel/storage/framework/sessions/.gitignore
+vpsmcu-laravel/storage/framework/views/*
+!vpsmcu-laravel/storage/framework/views/.gitignore
+vpsmcu-laravel/storage/logs/*
+!vpsmcu-laravel/storage/logs/.gitignore
+vpsmcu-laravel/public/storage
+vpsmcu-laravel/public/build
