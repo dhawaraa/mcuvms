@@ -241,6 +241,25 @@
   - อัปโหลดและเชื่อมโยงไฟล์ภาพ QR Code Payment (`/images/qr-codepayment.jpg`) บนเซิร์ฟเวอร์จริง แสดงผลสมบูรณ์ 100%
   - ปรับปรุงเมนูส่วนหัว (Header Navigation) ของหน้า `donation.php` และ `contact.php` ให้ตรงตามหน้าหลักของระบบ
 
+- **ยุบรวมโฟลเดอร์โครงการเป็นโฟลเดอร์ทางการเดียว (`vpsmcu-laravel/`):**
+  - นำโฟลเดอร์ซ้ำซ้อน `mcuvms-laravel/` ออกจากระบบอย่างสมบูรณ์ เพื่อป้องกันความสับสนและการแก้ไขผิดตำแหน่ง
+  - กำหนดให้โฟลเดอร์ `vpsmcu-laravel/` เป็น Canonical Project Codebase ตัวจริงเพียงหนึ่งเดียวที่แมปเข้าสู่ Podman Container และระบบ Production
+  - ปรับปรุงไฟล์ `.gitignore` ให้ปกป้องโฟลเดอร์ `vpsmcu-laravel/` แทนที่พาธเดิม
+- **ระบบสองภาษา (TH/EN Dual Localization) ในโมดูลคอร์สปฏิบัติธรรมภาคประชาชน:**
+  - แปลข้อความภาษาไทยและอังกฤษครบถ้วน 100% ทั้งในหน้าลงทะเบียน ([public_register.blade.php](file:///home/dhawara/APPDEV/VPSMCU/vpsmcu-laravel/resources/views/portal/public_register.blade.php)) และหน้าตรวจสอบสถานะ/แก้ไข ([public_check.blade.php](file:///home/dhawara/APPDEV/VPSMCU/vpsmcu-laravel/resources/views/portal/public_check.blade.php))
+  - เพิ่มคีย์แปลภาษาใน `lang/th/portal.php` และ `lang/en/portal.php` ครอบคลุมขั้นตอนการสมัคร (Steps), รายละเอียดโครงการ, ข้อมูลสุขภาพ, ติดต่อฉุกเฉิน, และเงื่อนไขการเข้าร่วม
+  - แก้ไขปัญหากดสลับภาษา EN แล้วข้อความยังเป็นภาษาไทย ให้แสดงผลภาษาอังกฤษครบทุกจุด
+  - แปลงประเภทอาหาร (`dietary_restriction`) จากรหัสภาษาอังกฤษดิบ (`NORMAL`, `VEGETARIAN`, `JAY`, `HALAL`) ให้แสดงผลเป็นภาษาไทย/อังกฤษตามภาษาที่เลือก ด้วย Dynamic Accessor `localized_dietary` ใน `PublicRegistration.php`
+  - แก้ไขข้อผิดพลาดคีย์ภาษาตกหล่น `portal.public_app_type_people` ให้แสดงเป็นภาษาไทย "ประชาชนทั่วไป" / อังกฤษ "General Public" ถูกต้องสมบูรณ์
+- **แก้ไขโครงสร้าง HTML โมดอลแก้ไขข้อมูลผู้สมัคร (Edit Modal Layout Fix):**
+  - แก้ไขข้อผิดพลาดแท็กปิด `</div>` เกินในส่วนข้อมูลที่อยู่ ส่งผลให้ฟิลด์ข้อมูลการติดต่อฉุกเฉินและข้อมูลสุขภาพหลุดออกจากฟอร์ม
+  - จัดระเบียบโครงสร้าง Grid ภายในโมดอลให้สมมาตร รองรับการแก้ไขข้อมูลและบันทึกผลได้ 100% ทั้งบน Local และ Production
+- **ปรับปรุงแบนเนอร์ส่วนหัวด้วยภาพทางการ (`hero2image.png`):**
+  - ติดตั้งภาพแบนเนอร์ใหม่ `hero2image.png` ในหน้าลงทะเบียนและหน้าตรวจสอบสถานะภาคประชาชน พร้อมจัดตำแหน่งภาพพระพุทธรูปให้อยู่ในมุมมองที่สงบงาม
+- **ทดสอบระบบลงทะเบียนจริงบน Production (E2E Live Verification):**
+  - ทดสอบสมัครโครงการปฏิบัติธรรมจริงบนโดเมน [https://vps.mcu.ac.th](https://vps.mcu.ac.th) ได้รับรหัสการสมัคร `PUB-20261008-0001` และ `PUB-20261008-0002`
+  - ตรวจสอบการค้นหาด้วยเบอร์โทรศัพท์และรหัสการสมัคร แสดงผลข้อมูลตรงตามฐานข้อมูล 100%
+
 ---
 
 ## 🌐 การติดตั้งและทำงานบนระบบจริง (Production Environment on vps.mcu.ac.th)
