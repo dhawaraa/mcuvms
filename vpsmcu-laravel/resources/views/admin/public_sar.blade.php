@@ -405,7 +405,10 @@
                     <tbody class="divide-y divide-[#EAE5D9]">
                         @forelse ($eventsSummary as $ev)
                             @php
-                                $fillRate = $ev->max_quota > 0 ? min(100, round(($ev->confirmed_applicants / $ev->max_quota) * 100, 1)) : 0;
+                                // จำนวนผู้ครองสิทธิ์/ผู้สมัครที่ยังไม่ถูกยกเลิก (CONFIRMED + PENDING + ATTENDED)
+                                $activeEnrolled = ($ev->confirmed_applicants ?? 0) + ($ev->pending_applicants ?? 0) + ($ev->attended_applicants ?? 0);
+                                $fillRate = $ev->max_quota > 0 ? min(100, round(($activeEnrolled / $ev->max_quota) * 100, 1)) : 0;
+                                $confirmedRate = $ev->max_quota > 0 ? min(100, round((($ev->confirmed_applicants ?? 0) / $ev->max_quota) * 100, 1)) : 0;
                             @endphp
                             <tr class="hover:bg-[#FAF8F2]/80 transition">
                                 <td class="p-4">
@@ -436,17 +439,23 @@
                                 </td>
                                 <td class="p-4 text-center font-bold font-mono text-[#2C7338]">
                                     {{ number_format($ev->confirmed_applicants) }}
+                                    @if (($ev->pending_applicants ?? 0) > 0)
+                                        <div class="text-[10px] text-amber-700 font-normal">รอตรวจ {{ $ev->pending_applicants }}</div>
+                                    @endif
                                 </td>
                                 <td class="p-4 text-center font-bold font-mono text-[#C86D51]">
                                     {{ number_format($ev->waiting_applicants) }}
                                 </td>
                                 <td class="p-4 text-center">
                                     <div class="flex items-center justify-center gap-2">
-                                        <div class="w-16 bg-[#FAF8F2] border border-[#EAE5D9] rounded-full h-2 overflow-hidden">
+                                        <div class="w-16 bg-[#FAF8F2] border border-[#EAE5D9] rounded-full h-2 overflow-hidden" title="อนุมัติแล้ว: {{ $confirmedRate }}% | สมัครรวม: {{ $fillRate }}%">
                                             <div class="h-2 rounded-full {{ $fillRate >= 100 ? 'bg-[#C86D51]' : 'bg-[#5A6B47]' }}" style="width: {{ $fillRate }}%"></div>
                                         </div>
                                         <span class="font-mono text-[11px] font-bold text-[#2C3E2D]">{{ $fillRate }}%</span>
                                     </div>
+                                    @if ($fillRate > $confirmedRate)
+                                        <div class="text-[9px] text-[#7B8D65] mt-0.5 font-mono">อนุมัติ {{ $confirmedRate }}%</div>
+                                    @endif
                                 </td>
                                 <td class="p-4 text-center">
                                     @if ($ev->status === 'OPEN')

@@ -1821,6 +1821,9 @@ class AdminController extends Controller
             'registrations as confirmed_applicants' => function ($q) {
                 $q->where('status', 'CONFIRMED');
             },
+            'registrations as pending_applicants' => function ($q) {
+                $q->where('status', 'PENDING');
+            },
             'registrations as attended_applicants' => function ($q) {
                 $q->where('status', 'ATTENDED');
             },
