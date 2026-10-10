@@ -319,7 +319,12 @@
                         <label class="block text-xs font-semibold text-[#4A3B32] mb-1">
                             รหัสผ่าน (Password) <span class="text-[#C86D51]">*</span>
                         </label>
-                        <input type="password" name="password" required minlength="6" placeholder="ขั้นต่ำ 6 ตัวอักษร" class="w-full px-3.5 py-2 bg-[#FAF8F2] border border-[#D5CEBC] rounded-xl text-xs focus:ring-2 focus:ring-[#5A6B47] focus:outline-none">
+                        <div class="relative">
+                            <input type="password" id="create_password" name="password" required minlength="6" placeholder="ขั้นต่ำ 6 ตัวอักษร" class="w-full pl-3.5 pr-10 py-2 bg-[#FAF8F2] border border-[#D5CEBC] rounded-xl text-xs focus:ring-2 focus:ring-[#5A6B47] focus:outline-none font-mono">
+                            <button type="button" onclick="togglePasswordVisibility('create_password', 'create_pass_icon')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-[#8C8275] hover:text-[#2C3E2D]" title="ดูรหัสผ่าน">
+                                <i id="create_pass_icon" data-lucide="eye" class="w-4 h-4"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -400,7 +405,12 @@
                         <label class="block text-xs font-semibold text-[#4A3B32] mb-1">
                             เปลี่ยนรหัสผ่านใหม่ (ว่างไว้ถ้าไม่เปลี่ยน)
                         </label>
-                        <input type="password" name="password" minlength="6" placeholder="ปล่อยว่างหากไม่ต้องการเปลี่ยน" class="w-full px-3.5 py-2 bg-[#FAF8F2] border border-[#D5CEBC] rounded-xl text-xs focus:ring-2 focus:ring-[#5A6B47] focus:outline-none">
+                        <div class="relative">
+                            <input type="password" id="edit_password" name="password" minlength="6" placeholder="ปล่อยว่างหากไม่ต้องการเปลี่ยน" class="w-full pl-3.5 pr-10 py-2 bg-[#FAF8F2] border border-[#D5CEBC] rounded-xl text-xs focus:ring-2 focus:ring-[#5A6B47] focus:outline-none font-mono">
+                            <button type="button" onclick="togglePasswordVisibility('edit_password', 'edit_pass_icon')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-[#8C8275] hover:text-[#2C3E2D]" title="ดูรหัสผ่าน">
+                                <i id="edit_pass_icon" data-lucide="eye" class="w-4 h-4"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -494,6 +504,25 @@
             } else {
                 orgBox.style.display = 'none';
             }
+        }
+
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (!input) return;
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                if (icon) {
+                    icon.setAttribute('data-lucide', 'eye-off');
+                }
+            } else {
+                input.type = 'password';
+                if (icon) {
+                    icon.setAttribute('data-lucide', 'eye');
+                }
+            }
+            lucide.createIcons();
         }
 
         // Initialize Lucide Icons
