@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Models\SiteSetting;
 use App\Models\ContactInquiry;
 use App\Models\Donation;
+use App\Models\Student;
 use App\Services\TranslationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -1747,17 +1748,40 @@ class AdminController extends Controller
             return $this->publicSarUpdate($request, $request->input('id'));
         }
 
-        $total_registered = PublicRegistration::count();
-        $pending_count = PublicRegistration::where('status', 'PENDING')->count();
-        $confirmed_count = PublicRegistration::where('status', 'CONFIRMED')->count();
-        $waiting_count = PublicRegistration::where('status', 'WAITING_LIST')->count();
-        $rejected_count = PublicRegistration::where('status', 'REJECTED')->count();
+        $baseQuery = PublicRegistration::query();
 
-        $gender_stats = PublicRegistration::select('gender', DB::raw('count(*) as count'))
+        // สิทธิ์การเข้าถึงตามส่วนงาน
+        if (!$isCentralOrSuper && !empty($admin['org_unit_id'])) {
+            $baseQuery->whereHas('event', function ($q) use ($admin) {
+                $q->where('org_unit_id', $admin['org_unit_id']);
+            });
+        } elseif ($request->filled('filter_org')) {
+            $orgId = $request->input('filter_org');
+            $baseQuery->whereHas('event', function ($q) use ($orgId) {
+                $q->where('org_unit_id', $orgId);
+            });
+        }
+
+        if ($request->filled('event_id')) {
+            $baseQuery->where('event_id', $request->input('event_id'));
+        }
+
+        // 1. KPI Cards Summary
+        $total_registered = (clone $baseQuery)->count();
+        $confirmed_count = (clone $baseQuery)->where('status', 'CONFIRMED')->count();
+        $attended_count = (clone $baseQuery)->where('status', 'ATTENDED')->count();
+        $waiting_count = (clone $baseQuery)->where('status', 'WAITING_LIST')->count();
+        $pending_count = (clone $baseQuery)->where('status', 'PENDING')->count();
+        $rejected_count = (clone $baseQuery)->where('status', 'REJECTED')->count();
+        $cancelled_count = (clone $baseQuery)->where('status', 'CANCELLED')->count();
+
+        // 2. Gender distribution
+        $gender_stats = (clone $baseQuery)->select('gender', DB::raw('count(*) as count'))
             ->groupBy('gender')
             ->get();
 
-        $age_stats = PublicRegistration::select(
+        // 3. Age groups
+        $age_stats = (clone $baseQuery)->select(
             DB::raw("CASE 
                 WHEN age < 25 THEN 'เยาวชน (< 25 ปี)'
                 WHEN age BETWEEN 25 AND 45 THEN 'วัยทำงาน (25 - 45 ปี)'
@@ -1767,49 +1791,63 @@ class AdminController extends Controller
             DB::raw('count(*) as count')
         )->groupBy('age_group')->get();
 
-        $query = PublicRegistration::with(['event.organizationUnit'])->orderBy('registered_at', 'desc');
+        // 4. Applicant Types (ประชาชนทั่วไป vs นิสิต มจร)
+        $type_stats = (clone $baseQuery)->select(
+            DB::raw("CASE 
+                WHEN applicant_type = 'STUDENT' THEN 'นิสิต มจร'
+                ELSE 'ประชาชนทั่วไป'
+            END as type_label"),
+            DB::raw('count(*) as count')
+        )->groupBy('type_label')->get();
 
-        // สิทธิ์การเข้าถึงตามส่วนงาน
+        // 5. Dietary restrictions
+        $dietary_stats = (clone $baseQuery)->select(
+            DB::raw("COALESCE(dietary_restriction, 'NORMAL') as diet_type"),
+            DB::raw('count(*) as count')
+        )->groupBy('diet_type')->get();
+
+        // 6. Top Provinces
+        $province_stats = (clone $baseQuery)->select('province', DB::raw('count(*) as count'))
+            ->whereNotNull('province')
+            ->where('province', '!=', '')
+            ->groupBy('province')
+            ->orderBy('count', 'desc')
+            ->limit(7)
+            ->get();
+
+        // 7. Course/Event Breakdown Summary Table (สถิติเปรียบเทียบแยกตามคอร์ส)
+        $eventsQuery = PublicEvent::with(['organizationUnit'])->withCount([
+            'registrations as total_applicants',
+            'registrations as confirmed_applicants' => function ($q) {
+                $q->where('status', 'CONFIRMED');
+            },
+            'registrations as attended_applicants' => function ($q) {
+                $q->where('status', 'ATTENDED');
+            },
+            'registrations as waiting_applicants' => function ($q) {
+                $q->where('status', 'WAITING_LIST');
+            },
+            'registrations as student_applicants' => function ($q) {
+                $q->where('applicant_type', 'STUDENT');
+            },
+        ])->orderBy('start_date', 'desc');
+
         if (!$isCentralOrSuper && !empty($admin['org_unit_id'])) {
-            $query->whereHas('event', function ($q) use ($admin) {
-                $q->where('org_unit_id', $admin['org_unit_id']);
-            });
+            $eventsQuery->where('org_unit_id', $admin['org_unit_id']);
         } elseif ($request->filled('filter_org')) {
-            $orgId = $request->input('filter_org');
-            $query->whereHas('event', function ($q) use ($orgId) {
-                $q->where('org_unit_id', $orgId);
-            });
+            $eventsQuery->where('org_unit_id', $request->input('filter_org'));
         }
 
-        // ค้นหาตามชื่อ-สกุล, เบอร์โทร, หรือคิว
-        if ($request->filled('search')) {
-            $s = trim($request->input('search'));
-            $cleanQueue = preg_replace('/[^0-9]/', '', $s);
-            $query->where(function ($q) use ($s, $cleanQueue) {
-                $q->where('full_name', 'LIKE', "%{$s}%")
-                  ->orWhere('phone', 'LIKE', "%{$s}%");
-                if ($cleanQueue) {
-                    $q->orWhere('queue_no', intval($cleanQueue));
-                }
-            });
-        }
-
-        // กรองตามโครงการอบรมประชาชน
-        if ($request->filled('event_id')) {
-            $query->where('event_id', $request->input('event_id'));
-        }
-
-        // กรองตามสถานะ
-        if ($request->filled('status')) {
-            $query->where('status', $request->input('status'));
-        }
-
-        $perPage = $this->getPerPage($request);
-        $registrations = $query->paginate($perPage)->withQueryString();
+        $eventsSummary = $eventsQuery->get();
         $events = PublicEvent::orderBy('start_date', 'desc')->get();
         $orgUnits = OrganizationUnit::orderedForSelect()->get();
 
-        return view('admin.public_sar', compact('total_registered', 'pending_count', 'confirmed_count', 'waiting_count', 'rejected_count', 'gender_stats', 'age_stats', 'registrations', 'events', 'orgUnits', 'isCentralOrSuper'));
+        return view('admin.public_sar', compact(
+            'total_registered', 'pending_count', 'confirmed_count', 'attended_count',
+            'waiting_count', 'rejected_count', 'cancelled_count',
+            'gender_stats', 'age_stats', 'type_stats', 'dietary_stats', 'province_stats',
+            'eventsSummary', 'events', 'orgUnits', 'isCentralOrSuper'
+        ));
     }
 
     // จัดการจำนวนมาก (Bulk Action) สำหรับการอนุมัติบัณฑิตศึกษา (Module 2)
@@ -1939,6 +1977,46 @@ class AdminController extends Controller
         }
     }
 
+    public function publicStudentStatus($id, $status)
+    {
+        $this->checkAuth();
+        $admin = Session::get('admin_user');
+        $isCentralOrSuper = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
+
+        $reg = PublicRegistration::with('event')->findOrFail($id);
+
+        if (!$isCentralOrSuper && !empty($admin['org_unit_id']) && $reg->event->org_unit_id != $admin['org_unit_id']) {
+            return back()->with('error', 'ท่านไม่มีสิทธิ์ปรับสถานะผู้สมัครของส่วนงานอื่น');
+        }
+
+        $validStatuses = ['PENDING', 'CONFIRMED', 'WAITING_LIST', 'ATTENDED', 'REJECTED', 'CANCELLED'];
+        if (!in_array($status, $validStatuses)) {
+            return back()->with('error', 'สถานะไม่ถูกต้อง');
+        }
+
+        $reg->status = $status;
+        if ($status === 'CONFIRMED') {
+            $reg->reject_reason = null;
+        }
+        $reg->save();
+
+        // Update event confirmed count
+        $cnt = PublicRegistration::where('event_id', $reg->event_id)->where('status', 'CONFIRMED')->count();
+        PublicEvent::where('id', $reg->event_id)->update(['confirmed_count' => $cnt]);
+
+        $statusLabels = [
+            'PENDING' => 'รอการตรวจสอบ',
+            'CONFIRMED' => 'อนุมัติสิทธิ์แล้ว',
+            'WAITING_LIST' => 'รายชื่อสำรอง',
+            'ATTENDED' => 'เข้าร่วมอบรมแล้ว',
+            'REJECTED' => 'ไม่อนุมัติ/ปฏิเสธ',
+            'CANCELLED' => 'ยกเลิกสิทธิ์'
+        ];
+        $label = $statusLabels[$status] ?? $status;
+
+        return redirect(url('/admin/public_students.php'))->with('success', "เปลี่ยนสถานะผู้สมัคร ({$reg->full_name}) เป็น \"{$label}\" เรียบร้อยแล้ว");
+    }
+
     public function publicStudentApprove($id)
     {
         $this->checkAuth();
@@ -1984,6 +2062,69 @@ class AdminController extends Controller
         PublicEvent::where('id', $reg->event_id)->update(['confirmed_count' => $cnt]);
 
         return back()->with('success', "ปฏิเสธคำขอการเข้าร่วมของ ({$reg->full_name}) เรียบร้อยแล้ว (เหตุผล: {$reason})");
+    }
+
+    public function publicStudentUpdate(Request $request, $id)
+    {
+        $this->checkAuth();
+        $admin = Session::get('admin_user');
+        $isCentralOrSuper = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
+
+        $reg = PublicRegistration::with('event')->findOrFail($id);
+
+        if (!$isCentralOrSuper && !empty($admin['org_unit_id']) && $reg->event->org_unit_id != $admin['org_unit_id']) {
+            return back()->with('error', 'ท่านไม่มีสิทธิ์แก้ไขข้อมูลผู้สมัครของส่วนงานอื่น');
+        }
+
+        $validated = $request->validate([
+            'event_id' => 'required|exists:public_events,id',
+            'applicant_type' => 'required|in:PEOPLE,GENERAL,STUDENT',
+            'student_id' => 'nullable|string|max:50',
+            'degree_level' => 'nullable|string|max:50',
+            'faculty' => 'nullable|string|max:100',
+            'org_unit_id' => 'nullable|exists:organization_units,id',
+            'program_name' => 'nullable|string|max:150',
+            'citizen_id' => 'nullable|string|max:30',
+            'prefix' => 'nullable|string|max:50',
+            'first_name' => 'required|string|max:100',
+            'last_name' => 'required|string|max:100',
+            'buddhist_name' => 'nullable|string|max:100',
+            'gender' => 'required|in:MALE,FEMALE,MONK,NOVICE,OTHER',
+            'age' => 'nullable|integer|min:0|max:120',
+            'vassa' => 'nullable|integer|min:0|max:100',
+            'phone' => 'required|string|max:50',
+            'email' => 'nullable|email|max:100',
+            'line_id' => 'nullable|string|max:100',
+            'address' => 'nullable|string|max:255',
+            'subdistrict' => 'nullable|string|max:100',
+            'district' => 'nullable|string|max:100',
+            'province' => 'nullable|string|max:100',
+            'postal_code' => 'nullable|string|max:20',
+            'emergency_contact' => 'nullable|string|max:150',
+            'emergency_phone' => 'nullable|string|max:50',
+            'congenital_disease' => 'nullable|string|max:255',
+            'dietary_restriction' => 'nullable|string|max:100',
+            'room_info' => 'nullable|string|max:150',
+            'vehicle_info' => 'nullable|string|max:150',
+            'status' => 'required|in:PENDING,CONFIRMED,WAITING_LIST,ATTENDED,REJECTED,CANCELLED',
+            'reject_reason' => 'nullable|string|max:255',
+        ]);
+
+        $buddhistPart = !empty($validated['buddhist_name']) ? ' (' . trim($validated['buddhist_name']) . ')' : '';
+        $fullName = trim(($validated['prefix'] ?? '') . ' ' . $validated['first_name'] . ' ' . $validated['last_name'] . $buddhistPart);
+        $validated['full_name'] = $fullName;
+
+        $oldEventId = $reg->event_id;
+        $reg->update($validated);
+
+        // Update confirmed count on events
+        $eventsToUpdate = array_unique([$oldEventId, $reg->event_id]);
+        foreach ($eventsToUpdate as $evId) {
+            $cnt = PublicRegistration::where('event_id', $evId)->where('status', 'CONFIRMED')->count();
+            PublicEvent::where('id', $evId)->update(['confirmed_count' => $cnt]);
+        }
+
+        return back()->with('success', "แก้ไขข้อมูลผู้สมัคร ({$fullName}) สำเร็จเรียบร้อยแล้ว");
     }
 
     public function publicSarUpdate(Request $request, $id)
@@ -2090,6 +2231,7 @@ class AdminController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'location_name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:3000',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'max_quota' => 'required|integer|min:1',
@@ -2112,6 +2254,7 @@ class AdminController extends Controller
         // Auto-translate to English
         $titleEn = TranslationService::translateToEnglish($validated['title']);
         $locationEn = TranslationService::translateToEnglish($validated['location_name']);
+        $descriptionEn = !empty($validated['description']) ? TranslationService::translateToEnglish($validated['description']) : null;
 
         PublicEvent::create([
             'org_unit_id' => $orgUnitId,
@@ -2119,6 +2262,8 @@ class AdminController extends Controller
             'title_en' => $titleEn,
             'location_name' => $validated['location_name'],
             'location_name_en' => $locationEn,
+            'description' => $validated['description'] ?? null,
+            'description_en' => $descriptionEn,
             'cover_image' => $coverImageUrl,
             'start_date' => $validated['start_date'],
             'end_date' => $validated['end_date'],
@@ -2146,6 +2291,7 @@ class AdminController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'location_name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:3000',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'max_quota' => 'required|integer|min:1',
@@ -2172,9 +2318,15 @@ class AdminController extends Controller
         if ($event->location_name !== $validated['location_name'] || empty($event->location_name_en)) {
             $event->location_name_en = TranslationService::translateToEnglish($validated['location_name']);
         }
+        if (!empty($validated['description']) && ($event->description !== $validated['description'] || empty($event->description_en))) {
+            $event->description_en = TranslationService::translateToEnglish($validated['description']);
+        } elseif (empty($validated['description'])) {
+            $event->description_en = null;
+        }
 
         $event->title = $validated['title'];
         $event->location_name = $validated['location_name'];
+        $event->description = $validated['description'] ?? null;
         $event->cover_image = $coverImageUrl;
         $event->start_date = $validated['start_date'];
         $event->end_date = $validated['end_date'];
@@ -2233,6 +2385,15 @@ class AdminController extends Controller
 
         // Action Dispatcher for Shared Hosting Compatibility (via /admin/public_students.php?action=... or POST)
         $action = $request->input('action');
+        if ($action === 'export') {
+            return $this->publicExport($request);
+        }
+        if ($action === 'update') {
+            return $this->publicStudentUpdate($request, $request->input('id'));
+        }
+        if ($action === 'status') {
+            return $this->publicStudentStatus($request->input('id'), $request->input('status_val'));
+        }
         if ($action === 'approve') {
             return $this->publicStudentApprove($request->input('id'));
         }
@@ -2392,6 +2553,207 @@ class AdminController extends Controller
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    private function seedSamplePublicStudents()
+    {
+        $firstEvent = PublicEvent::first();
+        $eventId = $firstEvent ? $firstEvent->id : 1;
+        $orgUnitId = $firstEvent ? ($firstEvent->org_unit_id ?: 1) : 1;
+
+        $samples = [
+            [
+                'registration_no' => 'PUB-20261023-0001',
+                'event_id' => $eventId,
+                'applicant_type' => 'GENERAL',
+                'citizen_id' => '1100200876541',
+                'student_id' => null,
+                'degree_level' => null,
+                'faculty' => null,
+                'org_unit_id' => $orgUnitId,
+                'program_name' => null,
+                'prefix' => 'นาง',
+                'first_name' => 'พิมพ์พร',
+                'last_name' => 'ศิริวัฒนา',
+                'buddhist_name' => null,
+                'full_name' => 'นางพิมพ์พร ศิริวัฒนา',
+                'gender' => 'FEMALE',
+                'age' => 45,
+                'vassa' => 0,
+                'phone' => '081-888-9999',
+                'email' => 'pimporn.s@gmail.com',
+                'line_id' => 'pim_meditation',
+                'province' => 'กรุงเทพมหานคร',
+                'postal_code' => '10200',
+                'address' => '124/5 ซอยสุขุมวิท 55 แขวงคลองตันเหนือ',
+                'subdistrict' => 'คลองตันเหนือ',
+                'district' => 'วัฒนา',
+                'emergency_contact' => 'นายเกียรติศักดิ์ ศิริวัฒนา (สามี)',
+                'emergency_phone' => '081-888-9990',
+                'congenital_disease' => 'ไม่มี',
+                'dietary_restriction' => 'มังสวิรัติ',
+                'room_info' => 'อาคาร 74 ปี ห้อง 302',
+                'vehicle_info' => 'รถยนต์ส่วนบุคคล ทะเบียน กข 1234 กทม.',
+                'queue_no' => 1,
+                'status' => 'CONFIRMED',
+                'registered_at' => '2026-10-01 09:30:00',
+            ],
+            [
+                'registration_no' => 'PUB-20261023-0002',
+                'event_id' => $eventId,
+                'applicant_type' => 'STUDENT',
+                'citizen_id' => '1100400765432',
+                'student_id' => '6601201001',
+                'degree_level' => 'ปริญญาตรี',
+                'faculty' => 'พุทธศาสตร์',
+                'org_unit_id' => $orgUnitId,
+                'program_name' => 'สาขาวิชาพระพุทธศาสนา',
+                'prefix' => 'พระมหา',
+                'first_name' => 'ปัญญา',
+                'last_name' => 'เมธี',
+                'buddhist_name' => 'ปญฺญาเมธี',
+                'full_name' => 'พระมหาปัญญา เมธี',
+                'gender' => 'MALE',
+                'age' => 28,
+                'vassa' => 7,
+                'phone' => '086-777-6655',
+                'email' => 'panya.med@mcu.ac.th',
+                'line_id' => 'panya_mcu',
+                'province' => 'พระนครศรีอยุธยา',
+                'postal_code' => '13170',
+                'address' => 'วัดมหาธาตุยุวราชรังสฤษฎิ์ เขตพระนคร',
+                'subdistrict' => 'พระบรมมหาราชวัง',
+                'district' => 'พระนคร',
+                'emergency_contact' => 'พระครูปลัดสมคิด (เจ้าอาวาส)',
+                'emergency_phone' => '086-777-6650',
+                'congenital_disease' => 'ไม่มี',
+                'dietary_restriction' => 'อาหารทั่วไป',
+                'room_info' => 'กุฏิสงฆ์ โซน A',
+                'vehicle_info' => 'รถตู้มหาวิทยาลัย',
+                'queue_no' => 2,
+                'status' => 'CONFIRMED',
+                'registered_at' => '2026-10-02 10:15:00',
+            ],
+            [
+                'registration_no' => 'PUB-20261023-0003',
+                'event_id' => $eventId,
+                'applicant_type' => 'GENERAL',
+                'citizen_id' => '1101500654323',
+                'student_id' => null,
+                'degree_level' => null,
+                'faculty' => null,
+                'org_unit_id' => $orgUnitId,
+                'program_name' => null,
+                'prefix' => 'นางสาว',
+                'first_name' => 'นภัสวรรณ',
+                'last_name' => 'รักษ์ธรรม',
+                'buddhist_name' => null,
+                'full_name' => 'นางสาวนภัสวรรณ รักษ์ธรรม',
+                'gender' => 'FEMALE',
+                'age' => 29,
+                'vassa' => 0,
+                'phone' => '092-444-1122',
+                'email' => 'napassawan.r@outlook.com',
+                'line_id' => 'napas_mind',
+                'province' => 'ปทุมธานี',
+                'postal_code' => '12120',
+                'address' => '88/12 หมู่ 4 ต.คลองหนึ่ง',
+                'subdistrict' => 'คลองหนึ่ง',
+                'district' => 'คลองหลวง',
+                'emergency_contact' => 'นายวิเชียร รักษ์ธรรม (บิดา)',
+                'emergency_phone' => '092-444-1120',
+                'congenital_disease' => 'ภูมิแพ้อากาศ (พกยาแก้แพ้ส่วนตัว)',
+                'dietary_restriction' => 'อาหารเจ',
+                'room_info' => 'อาคาร 74 ปี ห้อง 305',
+                'vehicle_info' => 'รถโดยสารประจำทาง',
+                'queue_no' => 3,
+                'status' => 'WAITING_LIST',
+                'registered_at' => '2026-10-03 14:20:00',
+            ],
+            [
+                'registration_no' => 'PUB-20261023-0004',
+                'event_id' => $eventId,
+                'applicant_type' => 'GENERAL',
+                'citizen_id' => '1509900543214',
+                'student_id' => null,
+                'degree_level' => null,
+                'faculty' => null,
+                'org_unit_id' => $orgUnitId,
+                'program_name' => null,
+                'prefix' => 'นาย',
+                'first_name' => 'สิรภพ',
+                'last_name' => 'เชียงคำ',
+                'buddhist_name' => null,
+                'full_name' => 'นายสิรภพ เชียงคำ',
+                'gender' => 'MALE',
+                'age' => 52,
+                'vassa' => 0,
+                'phone' => '089-665-4321',
+                'email' => 'siraphop.ck@yahoo.com',
+                'line_id' => 'siraphop_c',
+                'province' => 'เชียงใหม่',
+                'postal_code' => '50200',
+                'address' => '45 หมู่ 2 ต.สุเทพ',
+                'subdistrict' => 'สุเทพ',
+                'district' => 'เมืองเชียงใหม่',
+                'emergency_contact' => 'นางพิมพา เชียงคำ (ภรรยา)',
+                'emergency_phone' => '089-665-4320',
+                'congenital_disease' => 'ความดันโลหิตสูง (มียาประจำตัว)',
+                'dietary_restriction' => 'อาหารทั่วไป',
+                'room_info' => 'อาคาร 74 ปี ห้อง 201',
+                'vehicle_info' => 'รถไฟ / ต่อรถตู้',
+                'queue_no' => 4,
+                'status' => 'ATTENDED',
+                'registered_at' => '2026-10-04 11:00:00',
+            ],
+            [
+                'registration_no' => 'PUB-20261023-0005',
+                'event_id' => $eventId,
+                'applicant_type' => 'GENERAL',
+                'citizen_id' => '1400200345678',
+                'student_id' => null,
+                'degree_level' => null,
+                'faculty' => null,
+                'org_unit_id' => $orgUnitId,
+                'program_name' => null,
+                'prefix' => 'นาย',
+                'first_name' => 'ธนากร',
+                'last_name' => 'สุขสมบูรณ์',
+                'buddhist_name' => null,
+                'full_name' => 'นายธนากร สุขสมบูรณ์',
+                'gender' => 'MALE',
+                'age' => 35,
+                'vassa' => 0,
+                'phone' => '085-333-2211',
+                'email' => 'thanakorn.s@gmail.com',
+                'line_id' => 'thanakorn_s',
+                'province' => 'นนทบุรี',
+                'postal_code' => '11000',
+                'address' => '19/88 ซอยงามวงศ์วาน 23',
+                'subdistrict' => 'บางเขน',
+                'district' => 'เมืองนนทบุรี',
+                'emergency_contact' => 'นางวรรณา สุขสมบูรณ์ (มารดา)',
+                'emergency_phone' => '085-333-2200',
+                'congenital_disease' => 'ไม่มี',
+                'dietary_restriction' => 'อาหารทั่วไป',
+                'room_info' => 'อาคาร 74 ปี ห้อง 202',
+                'vehicle_info' => 'รถยนต์ส่วนบุคคล',
+                'queue_no' => 5,
+                'status' => 'PENDING',
+                'registered_at' => '2026-10-05 16:45:00',
+            ],
+        ];
+
+        foreach ($samples as $s) {
+            PublicRegistration::updateOrCreate(
+                ['registration_no' => $s['registration_no']],
+                $s
+            );
+        }
+
+        // Update confirmed count on event
+        $cnt = PublicRegistration::where('event_id', $eventId)->where('status', 'CONFIRMED')->count();
+        PublicEvent::where('id', $eventId)->update(['confirmed_count' => $cnt]);
     }
 
     public function newsIndex(Request $request)
@@ -3055,6 +3417,9 @@ class AdminController extends Controller
         $this->checkAuth();
 
         $action = $request->input('action');
+        if ($action === 'export') {
+            return $this->donationExport($request);
+        }
         if ($action === 'update') {
             return $this->donationUpdate($request, $request->input('id'));
         }
@@ -3177,7 +3542,7 @@ class AdminController extends Controller
             'note' => 'nullable|string|max:2000',
             'admin_notes' => 'nullable|string|max:1000',
             'status' => 'required|in:PENDING,VERIFIED,REJECTED',
-            'slip' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:10240',
+            'slip' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:10240',
             'avatar' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:10240',
         ]);
 
@@ -3361,10 +3726,142 @@ class AdminController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
-    private function checkAuth()
-    {
-        if (!Session::has('admin_user')) {
-            abort(redirect()->route('login'));
-        }
-    }
+    /**
+     * ระบบจัดการฐานข้อมูลนิสิตส่วนกลาง (Central Student Master)
+     */
+     public function studentsIndex(Request $request)
+     {
+         $this->checkAuth();
+         $admin = Session::get('admin_user');
+         $isSuperAdmin = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
+
+         $query = Student::with('organizationUnit');
+
+         // กรองตามสิทธิ์ส่วนงาน
+         if (!$isSuperAdmin && !empty($admin['org_unit_id'])) {
+             $query->where('org_unit_id', $admin['org_unit_id']);
+         } elseif ($request->filled('filter_org')) {
+             $query->where('org_unit_id', $request->filter_org);
+         }
+
+         // กรองคำค้นหา
+         if ($request->filled('search')) {
+             $s = trim($request->search);
+             $query->where(function($q) use ($s) {
+                 $q->where('student_code', 'like', "%{$s}%")
+                   ->orWhere('first_name', 'like', "%{$s}%")
+                   ->orWhere('last_name', 'like', "%{$s}%")
+                   ->orWhere('chaya', 'like', "%{$s}%")
+                   ->orWhere('citizen_id', 'like', "%{$s}%")
+                   ->orWhere('email', 'like', "%{$s}%")
+                   ->orWhere('phone', 'like', "%{$s}%");
+             });
+         }
+
+         // กรองระดับการศึกษา
+         if ($request->filled('degree_level')) {
+             $query->where('degree_level', $request->degree_level);
+         }
+
+         // กรองสถานะ
+         if ($request->filled('status')) {
+             $query->where('is_active', $request->status === 'ACTIVE' ? 1 : 0);
+         }
+
+         $students = $query->orderBy('student_code', 'asc')->paginate(20)->withQueryString();
+
+         $orgUnits = OrganizationUnit::where('is_active', 1)->orderBy('id')->get();
+
+         $stats = [
+             'total' => Student::count(),
+             'bachelor' => Student::where('degree_level', 'BACHELOR')->count(),
+             'master' => Student::where('degree_level', 'MASTER')->count(),
+             'doctoral' => Student::where('degree_level', 'DOCTORAL')->count(),
+         ];
+
+         return view('admin.students_index', compact('students', 'orgUnits', 'stats', 'isSuperAdmin'));
+     }
+
+     /**
+      * แก้ไขข้อมูลทางการของนิสิต
+      */
+     public function studentUpdate(Request $request, $id)
+     {
+         $this->checkAuth();
+         $student = Student::findOrFail($id);
+
+         $request->validate([
+             'prefix' => 'required|string|max:50',
+             'first_name' => 'required|string|max:100',
+             'last_name' => 'required|string|max:100',
+             'chaya' => 'nullable|string|max:100',
+             'degree_level' => 'required|in:BACHELOR,MASTER,DOCTORAL',
+             'org_unit_id' => 'nullable|exists:organization_units,id',
+             'faculty' => 'nullable|string|max:150',
+             'major' => 'nullable|string|max:150',
+             'phone' => 'nullable|string|max:30',
+             'email' => 'nullable|email|max:150',
+             'citizen_id' => 'nullable|string|max:13',
+         ]);
+
+         $student->update([
+             'prefix' => $request->prefix,
+             'first_name' => $request->first_name,
+             'last_name' => $request->last_name,
+             'chaya' => $request->chaya,
+             'degree_level' => $request->degree_level,
+             'org_unit_id' => $request->org_unit_id,
+             'faculty' => $request->faculty,
+             'major' => $request->major,
+             'phone' => $request->phone,
+             'email' => $request->email,
+             'citizen_id' => $request->citizen_id,
+         ]);
+
+         return back()->with('success', "อัปเดตข้อมูลนิสิต [{$student->student_code}] เรียบร้อยแล้ว");
+     }
+
+     /**
+      * รีเซ็ตรหัสผ่านนิสิต
+      */
+     public function studentResetPassword(Request $request, $id)
+     {
+         $this->checkAuth();
+         $student = Student::findOrFail($id);
+
+         $newPass = $request->input('new_password', '12345678');
+         if (strlen($newPass) < 6) {
+             return back()->with('error', 'รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร');
+         }
+
+         $student->update([
+             'password' => Hash::make($newPass),
+             'force_password_change' => $request->has('force_change'),
+         ]);
+
+         return back()->with('success', "รีเซ็ตรหัสผ่านสำหรับรหัสนิสิต [{$student->student_code}] สำเร็จแล้ว (รหัสผ่านใหม่: {$newPass})");
+     }
+
+     /**
+      * สลับสถานะเปิดใช้งาน/ระงับบัญชีนิสิต
+      */
+     public function studentToggleStatus($id)
+     {
+         $this->checkAuth();
+         $student = Student::findOrFail($id);
+         $student->update([
+             'is_active' => !$student->is_active,
+         ]);
+
+         $statusText = $student->is_active ? 'เปิดใช้งาน' : 'ระงับการใช้งาน';
+         return back()->with('success', "เปลี่ยนสถานะบัญชีรหัส [{$student->student_code}] เป็น: {$statusText} เรียบร้อยแล้ว");
+     }
+
+     private function checkAuth()
+     {
+         if (!Session::has('admin_user')) {
+             abort(redirect()->route('login'));
+         }
+     }
 }
+

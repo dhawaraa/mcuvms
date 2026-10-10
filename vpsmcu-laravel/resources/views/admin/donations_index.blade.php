@@ -79,7 +79,7 @@
                 <p class="text-xs text-[#6B6357] mt-1">ตรวจสอบรายการโอนเงิน สลิปหลักฐาน จัดการสถานะ ออกใบอนุโมทนาบัตร และสรุปสถิติยอดบริจาค</p>
             </div>
             <div class="flex flex-wrap items-center gap-3">
-                <a href="{{ route('admin.donations.export', request()->query()) }}" class="text-xs bg-white border border-[#D5CEBC] hover:border-[#5A6B47] text-[#2C3E2D] px-3.5 py-2 rounded-xl font-semibold shadow-2xs flex items-center gap-2 transition">
+                <a href="{{ url('/admin/donations.php?' . http_build_query(array_merge(request()->query(), ['action' => 'export']))) }}" class="text-xs bg-white border border-[#D5CEBC] hover:border-[#5A6B47] text-[#2C3E2D] px-3.5 py-2 rounded-xl font-semibold shadow-2xs flex items-center gap-2 transition">
                     <i data-lucide="file-spreadsheet" class="w-4 h-4 text-[#5A6B47]"></i>
                     <span>ส่งออกข้อมูล (Excel/CSV)</span>
                 </a>
@@ -285,7 +285,7 @@
                     <thead class="bg-[#FAF8F2] text-[#4A3B32] font-semibold border-b border-[#EAE5D9]">
                         <tr>
                             <th class="py-3 px-4 whitespace-nowrap">เลขที่รายการ</th>
-                            <th class="py-3 px-4 whitespace-nowrap">ผู้บริจาค / วัตถุประสงค์</th>
+                            <th class="py-3 px-4 whitespace-nowrap">ผู้บริจาค</th>
                             <th class="py-3 px-4 whitespace-nowrap">ลดหย่อนภาษี</th>
                             <th class="py-3 px-4 whitespace-nowrap text-right">จำนวนเงิน (บาท)</th>
                             <th class="py-3 px-4 whitespace-nowrap">วันที่/เวลาโอน</th>
@@ -305,29 +305,37 @@
                                     </div>
                                 </td>
 
-                                <!-- ผู้บริจาค / วัตถุประสงค์ -->
+                                <!-- ผู้บริจาค -->
                                 <td class="py-3.5 px-4 align-middle">
                                     <div class="flex items-center gap-3">
+                                        @php
+                                            $avatarSrc = $d->avatar_url ?? (url('/storage.php/' . ltrim($d->avatar_path, '/')));
+                                        @endphp
                                         @if ($d->avatar_path)
-                                            <button type="button" onclick="viewAvatarModal('{{ asset('storage/' . $d->avatar_path) }}', '{{ addslashes($d->donor_name) }}', '{{ $d->donation_no }}')" class="relative shrink-0 group" title="คลิกเพื่อดูภาพประจำตัว">
-                                                <img src="{{ asset('storage/' . $d->avatar_path) }}" alt="{{ $d->donor_name }}" class="w-10 h-10 rounded-full object-cover border-2 border-[#5A6B47] shadow-xs group-hover:scale-110 transition">
-                                                <span class="absolute -bottom-1 -right-1 bg-[#C86D51] text-white p-0.5 rounded-full" title="ภาพทำโปสเตอร์">
-                                                    <i data-lucide="sparkles" class="w-2.5 h-2.5"></i>
+                                            <button type="button" onclick="viewAvatarModal('{{ $avatarSrc }}', '{{ addslashes($d->donor_name) }}', '{{ $d->donation_no }}')" class="relative shrink-0 group cursor-pointer" title="คลิกเพื่อดูภาพประจำตัวผู้บริจาค (ทำโปสเตอร์)">
+                                                <img src="{{ $avatarSrc }}" alt="{{ $d->donor_name }}" 
+                                                    class="w-11 h-11 rounded-xl object-cover border-2 border-[#5A6B47] shadow-xs group-hover:scale-110 transition duration-200"
+                                                    onerror="this.onerror=null; this.src='/images/mcu-logo.png';">
+                                                <span class="absolute -bottom-1 -right-1 bg-[#C86D51] text-white p-1 rounded-full shadow-xs" title="ภาพทำโปสเตอร์อนุโมทนา">
+                                                    <i data-lucide="sparkles" class="w-3 h-3"></i>
                                                 </span>
                                             </button>
                                         @else
-                                            <div class="w-10 h-10 rounded-full bg-[#EAE5D9] text-[#7B8D65] flex items-center justify-center font-bold text-xs shrink-0 border border-[#D5CEBC]">
+                                            <div class="w-11 h-11 rounded-xl bg-[#EAE5D9] text-[#5A6B47] flex items-center justify-center font-bold text-sm shrink-0 border border-[#D5CEBC] shadow-2xs" title="ไม่มีภาพถ่าย">
                                                 {{ mb_substr($d->donor_name, 0, 1) }}
                                             </div>
                                         @endif
                                         <div class="min-w-0">
                                             <div class="font-bold text-[#2C3E2D] truncate">{{ $d->donor_name }}</div>
-                                            <div class="text-[11px] text-[#6B6357] line-clamp-1 max-w-xs" title="{{ $d->purpose }}">
-                                                {{ $d->purpose ?? 'บำรุงศูนย์ปฏิบัติธรรม' }}
-                                            </div>
-                                            @if($d->phone || $d->email)
-                                                <div class="text-[10px] text-[#8C8275] font-mono mt-0.5">
-                                                    {{ $d->phone }} {{ $d->email ? '&bull; ' . $d->email : '' }}
+                                            @if($d->phone)
+                                                <div class="text-[11px] text-[#6B6357] font-mono mt-0.5 flex items-center gap-1">
+                                                    <i data-lucide="phone" class="w-3 h-3 text-[#5A6B47]"></i>
+                                                    <span>{{ $d->phone }}</span>
+                                                </div>
+                                            @endif
+                                            @if($d->address)
+                                                <div class="text-[10px] text-[#8C8275] line-clamp-1 max-w-xs mt-0.5" title="{{ $d->address }}">
+                                                    <i data-lucide="map-pin" class="w-2.5 h-2.5 inline mr-0.5"></i>{{ $d->address }}
                                                 </div>
                                             @endif
                                         </div>
@@ -356,9 +364,6 @@
                                 <!-- จำนวนเงิน -->
                                 <td class="py-3.5 px-4 align-middle text-right font-mono font-bold text-sm text-[#2C3E2D] whitespace-nowrap">
                                     {{ number_format($d->amount, 2) }}
-                                    <div class="text-[10px] font-normal text-[#7B8D65]">
-                                        {{ $d->bank_account ?? 'โอนเงินเข้าบัญชี' }}
-                                    </div>
                                 </td>
 
                                 <!-- วันที่โอน -->
@@ -371,12 +376,23 @@
                                     </div>
                                 </td>
 
-                                <!-- สลิปหลักฐาน -->
+                                <!-- สลิปหลักฐาน (คลิกดูภาพขยายได้ทันที) -->
                                 <td class="py-3.5 px-4 align-middle text-center whitespace-nowrap">
                                     @if ($d->slip_path)
-                                        <button type="button" onclick="viewSlipModal('{{ asset('storage/' . $d->slip_path) }}', '{{ $d->donation_no }}')" class="p-1.5 bg-white border border-[#D5CEBC] hover:border-[#5A6B47] text-[#5A6B47] rounded-lg shadow-2xs transition inline-flex items-center gap-1" title="ดูหลักฐานสลิป">
-                                            <i data-lucide="file-search" class="w-4 h-4"></i>
-                                            <span class="text-[10px] font-semibold">ดูสลิป</span>
+                                        <button type="button" 
+                                            onclick="viewSlipModal('{{ $d->slip_url ?? asset('storage/' . $d->slip_path) }}', '{{ $d->donation_no }}')" 
+                                            class="group relative inline-flex items-center gap-1.5 p-1 bg-white border border-[#D5CEBC] hover:border-[#5A6B47] rounded-xl shadow-2xs hover:shadow-md transition cursor-pointer" 
+                                            title="คลิกเพื่อดูสลิปหลักฐานภาพใหญ่">
+                                            <div class="w-10 h-10 rounded-lg overflow-hidden bg-[#FAF8F2] border border-[#EAE5D9] shrink-0">
+                                                <img src="{{ $d->slip_url ?? asset('storage/' . $d->slip_path) }}" 
+                                                    alt="Slip" 
+                                                    class="w-full h-full object-cover group-hover:scale-110 transition duration-200"
+                                                    onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-full h-full flex items-center justify-center text-[#5A6B47]\'><i data-lucide=\'receipt\' class=\'w-5 h-5\'></i></div>'; if(window.lucide) lucide.createIcons();">
+                                            </div>
+                                            <span class="text-[11px] font-semibold text-[#5A6B47] pr-2 group-hover:underline flex items-center gap-1">
+                                                <i data-lucide="zoom-in" class="w-3.5 h-3.5"></i>
+                                                <span>ดูสลิป</span>
+                                            </span>
                                         </button>
                                     @else
                                         <span class="text-[10px] text-[#A8A190] italic">ไม่มีสลิป</span>
@@ -539,26 +555,12 @@
                     </div>
                 </div>
 
-                <!-- แถวที่ 6: วัตถุประสงค์และที่อยู่ -->
+                <!-- แถวที่ 6: ที่อยู่สำหรับจัดส่งใบอนุโมทนาบัตร / ใบเสร็จ -->
                 <div>
                     <label class="block text-xs font-semibold text-[#4A3B32] mb-1">
-                        วัตถุประสงค์การบริจาค
-                    </label>
-                    <input type="text" name="purpose" id="edit_purpose" class="w-full px-3.5 py-2 bg-white border border-[#D5CEBC] rounded-xl text-xs focus:ring-2 focus:ring-[#5A6B47]">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-[#4A3B32] mb-1">
-                        ที่อยู่สำหรับจัดส่งใบอนุโมทนาบัตร
+                        ที่อยู่สำหรับจัดส่งใบเสร็จ / ใบอนุโมทนาบัตร
                     </label>
                     <textarea name="address" id="edit_address" rows="2" placeholder="ระบุที่อยู่จัดส่งทางไปรษณีย์..." class="w-full px-3.5 py-2 bg-white border border-[#D5CEBC] rounded-xl text-xs focus:ring-2 focus:ring-[#5A6B47]"></textarea>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-[#4A3B32] mb-1">
-                        คำอธิษฐานจิต / หมายเหตุจากผู้บริจาค
-                    </label>
-                    <textarea name="note" id="edit_note" rows="2" placeholder="คำอธิษฐานจิต..." class="w-full px-3.5 py-2 bg-white border border-[#D5CEBC] rounded-xl text-xs focus:ring-2 focus:ring-[#5A6B47]"></textarea>
                 </div>
 
                 <!-- แถวที่ 7: การจัดการสลิปหลักฐานโอนเงิน & ภาพประจำตัวทำโปสเตอร์ -->
@@ -573,16 +575,25 @@
                             <div id="current_slip_preview_btn" class="hidden">
                                 <button type="button" id="btn_open_current_slip" onclick="" class="px-2.5 py-1 bg-white border border-[#D5CEBC] hover:border-[#5A6B47] text-[#5A6B47] rounded-lg text-[11px] font-semibold flex items-center gap-1 shadow-2xs">
                                     <i data-lucide="eye" class="w-3.5 h-3.5"></i>
-                                    <span>เปิดดูสลิป</span>
+                                    <span>ขยายดูสลิป</span>
                                 </button>
+                            </div>
+                        </div>
+
+                        <!-- กล่องแสดงภาพสลิปปัจจุบัน / ตัวอย่างไฟล์ใหม่ -->
+                        <div id="slip_inline_preview_box" class="hidden flex items-center gap-3 p-2.5 rounded-xl bg-white border border-[#EAE5D9]">
+                            <img id="slip_inline_preview_img" src="#" alt="Slip" class="w-14 h-14 object-cover rounded-lg border border-[#D5CEBC] shrink-0 cursor-pointer" onclick="document.getElementById('btn_open_current_slip').click()">
+                            <div class="text-[11px] text-[#6B6357] leading-tight">
+                                <div id="slip_inline_status_text" class="font-semibold text-[#2C3E2D]">สลิปในระบบ</div>
+                                <span class="text-[10px] text-[#8C8275]">คลิกที่รูปเพื่อเปิดดูภาพขนาดเต็ม</span>
                             </div>
                         </div>
 
                         <div>
                             <label class="block text-[11px] text-[#6B6357] mb-1">
-                                แนบสลิปใหม่เพิ่มเติม หรืออัปโหลดแทนที่เดิม (JPG, PNG, PDF ไม่เกิน 10MB)
+                                แนบสลิปใหม่เพิ่มเติม หรืออัปโหลดแทนที่เดิม (เฉพาะไฟล์ภาพ JPG, PNG, WEBP ไม่เกิน 10MB)
                             </label>
-                            <input type="file" name="slip" id="edit_slip_input" accept="image/jpeg,image/png,image/jpg,application/pdf" class="w-full px-3 py-1.5 bg-white border border-[#D5CEBC] rounded-xl text-xs file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#5A6B47]/10 file:text-[#5A6B47] hover:file:bg-[#5A6B47]/20">
+                            <input type="file" name="slip" id="edit_slip_input" accept="image/jpeg,image/png,image/jpg,image/webp" onchange="handleSlipFileChange(this)" class="w-full px-3 py-1.5 bg-white border border-[#D5CEBC] rounded-xl text-xs file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#5A6B47]/10 file:text-[#5A6B47] hover:file:bg-[#5A6B47]/20">
                         </div>
                     </div>
 
@@ -596,8 +607,17 @@
                             <div id="current_avatar_preview_btn" class="hidden">
                                 <button type="button" id="btn_open_current_avatar" onclick="" class="px-2.5 py-1 bg-white border border-[#D5CEBC] hover:border-[#C86D51] text-[#C86D51] rounded-lg text-[11px] font-semibold flex items-center gap-1 shadow-2xs">
                                     <i data-lucide="eye" class="w-3.5 h-3.5"></i>
-                                    <span>เปิดดูภาพ</span>
+                                    <span>ขยายดูภาพ</span>
                                 </button>
+                            </div>
+                        </div>
+
+                        <!-- กล่องแสดงภาพถ่ายปัจจุบัน / ตัวอย่างไฟล์ใหม่ -->
+                        <div id="avatar_inline_preview_box" class="hidden flex items-center gap-3 p-2.5 rounded-xl bg-white border border-[#EAE5D9]">
+                            <img id="avatar_inline_preview_img" src="#" alt="Avatar" class="w-14 h-14 object-cover rounded-xl border-2 border-[#C86D51] shrink-0 cursor-pointer shadow-xs" onclick="document.getElementById('btn_open_current_avatar').click()">
+                            <div class="text-[11px] text-[#6B6357] leading-tight">
+                                <div id="avatar_inline_status_text" class="font-semibold text-[#2C3E2D]">ภาพถ่ายในระบบ</div>
+                                <span class="text-[10px] text-[#8C8275]">คลิกที่รูปเพื่อเปิดดูภาพขนาดเต็ม</span>
                             </div>
                         </div>
 
@@ -605,7 +625,7 @@
                             <label class="block text-[11px] text-[#6B6357] mb-1">
                                 แนบภาพประจำตัวใหม่ หรืออัปโหลดแทนที่เดิม (JPG, PNG ไม่เกิน 10MB)
                             </label>
-                            <input type="file" name="avatar" id="edit_avatar_input" accept="image/jpeg,image/png,image/jpg,image/webp" class="w-full px-3 py-1.5 bg-white border border-[#D5CEBC] rounded-xl text-xs file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#C86D51]/10 file:text-[#C86D51] hover:file:bg-[#C86D51]/20">
+                            <input type="file" name="avatar" id="edit_avatar_input" accept="image/jpeg,image/png,image/jpg,image/webp" onchange="handleAvatarFileChange(this)" class="w-full px-3 py-1.5 bg-white border border-[#D5CEBC] rounded-xl text-xs file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#C86D51]/10 file:text-[#C86D51] hover:file:bg-[#C86D51]/20">
                         </div>
                     </div>
                 </div>
@@ -743,8 +763,8 @@
     </div>
 
     <!-- Modal: ดูสลิปหลักฐาน (Slip Modal) -->
-    <div id="slipModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-[#D5CEBC] text-center">
+    <div id="slipModal" class="hidden fixed inset-0 z-[999] overflow-y-auto bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-[#D5CEBC] text-center my-auto">
             <div class="flex items-center justify-between pb-3 mb-4 border-b border-[#EAE5D9]">
                 <h4 id="slipModalTitle" class="font-heading font-bold text-sm text-[#2C3E2D]">สลิปหลักฐานการโอนเงิน</h4>
                 <button type="button" onclick="closeSlipModal()" class="text-[#8C8275] hover:text-[#2C3E2D]">
@@ -752,12 +772,17 @@
                 </button>
             </div>
             <div class="max-h-[70vh] overflow-auto rounded-2xl border border-[#EAE5D9] bg-[#FAF8F2] p-2 flex items-center justify-center">
-                <img id="slipModalImage" src="#" alt="Slip Preview" class="max-w-full h-auto rounded-lg shadow-sm">
+                <img id="slipModalImage" src="#" alt="Slip Preview" class="max-w-full h-auto rounded-lg shadow-sm" onerror="this.classList.add('hidden'); document.getElementById('slipFallbackBox').classList.remove('hidden');">
+                <div id="slipFallbackBox" class="hidden p-6 text-center">
+                    <i data-lucide="file-text" class="w-12 h-12 text-[#5A6B47] mx-auto mb-2"></i>
+                    <p class="text-xs text-[#4A3B32] font-semibold mb-2">ไฟล์หลักฐานสลิป (PDF หรือไฟล์เอกสาร)</p>
+                    <p class="text-[11px] text-[#7B8D65]">กรุณากดปุ่มด้านล่างเพื่อเปิดดูเอกสาร</p>
+                </div>
             </div>
             <div class="mt-4 flex justify-center gap-3">
                 <a id="slipDownloadBtn" href="#" target="_blank" download class="px-4 py-2 bg-[#5A6B47] hover:bg-[#465337] text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm">
                     <i data-lucide="download" class="w-3.5 h-3.5"></i>
-                    <span>เปิดภาพเต็ม / ดาวน์โหลด</span>
+                    <span>เปิดไฟล์เต็ม / ดาวน์โหลด</span>
                 </a>
                 <button type="button" onclick="closeSlipModal()" class="px-4 py-2 bg-white border border-[#D5CEBC] text-[#4A3B32] rounded-xl text-xs font-semibold">
                     ปิดหน้าต่าง
@@ -767,8 +792,8 @@
     </div>
 
     <!-- Modal: ดูภาพประจำตัวผู้บริจาคสำหรับทำโปสเตอร์ (Avatar Modal) -->
-    <div id="avatarModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-[#D5CEBC] text-center">
+    <div id="avatarModal" class="hidden fixed inset-0 z-[999] overflow-y-auto bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-[#D5CEBC] text-center my-auto">
             <div class="flex items-center justify-between pb-3 mb-4 border-b border-[#EAE5D9]">
                 <div class="text-left">
                     <h4 id="avatarModalTitle" class="font-heading font-bold text-sm text-[#2C3E2D]">ภาพประจำตัวผู้บริจาค</h4>
@@ -779,7 +804,7 @@
                 </button>
             </div>
             <div class="max-h-[60vh] overflow-auto rounded-2xl border border-[#EAE5D9] bg-[#FAF8F2] p-4 flex items-center justify-center">
-                <img id="avatarModalImage" src="#" alt="Avatar Preview" class="max-w-full max-h-[50vh] rounded-2xl shadow-sm object-contain">
+                <img id="avatarModalImage" src="#" alt="Avatar Preview" class="max-w-full max-h-[50vh] rounded-2xl shadow-sm object-contain" onerror="this.src='/images/mcu-logo.png'">
             </div>
             <div class="mt-4 flex justify-center gap-3">
                 <a id="avatarDownloadBtn" href="#" target="_blank" download class="px-4 py-2 bg-[#C86D51] hover:bg-[#A85238] text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm">
@@ -899,33 +924,51 @@
             document.getElementById('edit_transfer_time').value = donation.transfer_time || '';
 
             document.getElementById('edit_phone').value = donation.phone || '';
-            document.getElementById('edit_email').value = donation.email || '';
-            document.getElementById('edit_purpose').value = donation.purpose || '';
-            document.getElementById('edit_address').value = donation.address || '';
-            document.getElementById('edit_note').value = donation.note || '';
+            const editAddr = document.getElementById('edit_address');
+            if (editAddr) editAddr.value = donation.address || '';
 
-            // Handle current slip preview button
+            // Handle current slip preview and inline thumbnail
             const slipBtnWrapper = document.getElementById('current_slip_preview_btn');
             const openSlipBtn = document.getElementById('btn_open_current_slip');
+            const slipInlineBox = document.getElementById('slip_inline_preview_box');
+            const slipInlineImg = document.getElementById('slip_inline_preview_img');
+            const slipInlineStatus = document.getElementById('slip_inline_status_text');
+            
             if (donation.slip_path) {
+                const slipUrl = donation.slip_url || ('/storage.php/' + donation.slip_path.replace(/^\/+/, ''));
                 slipBtnWrapper.classList.remove('hidden');
                 openSlipBtn.onclick = function() {
-                    viewSlipModal('/storage/' + donation.slip_path, donation.donation_no);
+                    viewSlipModal(slipUrl, donation.donation_no);
                 };
+                slipInlineBox.classList.remove('hidden');
+                slipInlineImg.src = slipUrl;
+                slipInlineStatus.textContent = 'สลิปปัจจุบันในระบบ';
             } else {
                 slipBtnWrapper.classList.add('hidden');
+                slipInlineBox.classList.add('hidden');
+                slipInlineImg.src = '#';
             }
 
-            // Handle current avatar preview button
+            // Handle current avatar preview and inline thumbnail
             const avatarBtnWrapper = document.getElementById('current_avatar_preview_btn');
             const openAvatarBtn = document.getElementById('btn_open_current_avatar');
+            const avatarInlineBox = document.getElementById('avatar_inline_preview_box');
+            const avatarInlineImg = document.getElementById('avatar_inline_preview_img');
+            const avatarInlineStatus = document.getElementById('avatar_inline_status_text');
+
             if (donation.avatar_path) {
+                const avatarUrl = donation.avatar_url || ('/storage.php/' + donation.avatar_path.replace(/^\/+/, ''));
                 avatarBtnWrapper.classList.remove('hidden');
                 openAvatarBtn.onclick = function() {
-                    viewAvatarModal('/storage/' + donation.avatar_path, donation.donor_name, donation.donation_no);
+                    viewAvatarModal(avatarUrl, donation.donor_name, donation.donation_no);
                 };
+                avatarInlineBox.classList.remove('hidden');
+                avatarInlineImg.src = avatarUrl;
+                avatarInlineStatus.textContent = 'ภาพถ่ายทำโปสเตอร์ในระบบ';
             } else {
                 avatarBtnWrapper.classList.add('hidden');
+                avatarInlineBox.classList.add('hidden');
+                avatarInlineImg.src = '#';
             }
 
             // Reset file inputs
@@ -936,6 +979,57 @@
             document.getElementById('edit_admin_notes').value = donation.admin_notes || '';
 
             document.getElementById('actionModal').classList.remove('hidden');
+        }
+
+        function handleSlipFileChange(input) {
+            const file = input.files[0];
+            const slipInlineBox = document.getElementById('slip_inline_preview_box');
+            const slipInlineImg = document.getElementById('slip_inline_preview_img');
+            const slipInlineStatus = document.getElementById('slip_inline_status_text');
+            const slipBtnWrapper = document.getElementById('current_slip_preview_btn');
+            const openSlipBtn = document.getElementById('btn_open_current_slip');
+
+            if (file) {
+                slipInlineBox.classList.remove('hidden');
+                slipBtnWrapper.classList.remove('hidden');
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        slipInlineImg.src = e.target.result;
+                        slipInlineStatus.textContent = 'ไฟล์ใหม่ที่เลือก: ' + file.name;
+                        openSlipBtn.onclick = function() {
+                            viewSlipModal(e.target.result, 'ตัวอย่างไฟล์ใหม่');
+                        };
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    slipInlineImg.src = '/images/mcu-logo.png';
+                    slipInlineStatus.textContent = 'ไฟล์เอกสารใหม่: ' + file.name;
+                }
+            }
+        }
+
+        function handleAvatarFileChange(input) {
+            const file = input.files[0];
+            const avatarInlineBox = document.getElementById('avatar_inline_preview_box');
+            const avatarInlineImg = document.getElementById('avatar_inline_preview_img');
+            const avatarInlineStatus = document.getElementById('avatar_inline_status_text');
+            const avatarBtnWrapper = document.getElementById('current_avatar_preview_btn');
+            const openAvatarBtn = document.getElementById('btn_open_current_avatar');
+
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    avatarInlineBox.classList.remove('hidden');
+                    avatarBtnWrapper.classList.remove('hidden');
+                    avatarInlineImg.src = e.target.result;
+                    avatarInlineStatus.textContent = 'ไฟล์ใหม่ที่เลือก: ' + file.name;
+                    openAvatarBtn.onclick = function() {
+                        viewAvatarModal(e.target.result, 'ตัวอย่างภาพใหม่', 'Preview');
+                    };
+                };
+                reader.readAsDataURL(file);
+            }
         }
 
         function closeActionModal() {
@@ -967,9 +1061,19 @@
 
         function viewSlipModal(slipUrl, donationNo) {
             document.getElementById('slipModalTitle').textContent = 'หลักฐานสลิปการโอนเงิน [' + donationNo + ']';
-            document.getElementById('slipModalImage').src = slipUrl;
+            const slipImg = document.getElementById('slipModalImage');
+            const fallback = document.getElementById('slipFallbackBox');
+            if (slipUrl.toLowerCase().endsWith('.pdf')) {
+                slipImg.classList.add('hidden');
+                fallback.classList.remove('hidden');
+            } else {
+                slipImg.classList.remove('hidden');
+                fallback.classList.add('hidden');
+                slipImg.src = slipUrl;
+            }
             document.getElementById('slipDownloadBtn').href = slipUrl;
             document.getElementById('slipModal').classList.remove('hidden');
+            if (window.lucide) { lucide.createIcons(); }
         }
 
         function closeSlipModal() {
@@ -978,9 +1082,11 @@
 
         function viewAvatarModal(avatarUrl, donorName, donationNo) {
             document.getElementById('avatarModalTitle').textContent = donorName ? 'ภาพประจำตัว: ' + donorName : 'ภาพประจำตัวผู้บริจาค';
-            document.getElementById('avatarModalImage').src = avatarUrl;
+            const avatarImg = document.getElementById('avatarModalImage');
+            avatarImg.src = avatarUrl;
             document.getElementById('avatarDownloadBtn').href = avatarUrl;
             document.getElementById('avatarModal').classList.remove('hidden');
+            if (window.lucide) { lucide.createIcons(); }
         }
 
         function closeAvatarModal() {

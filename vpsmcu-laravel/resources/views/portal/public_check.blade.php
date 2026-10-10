@@ -228,14 +228,18 @@
                     <div class="flex items-center justify-between border-b border-[#E3DEC9] pb-3 mb-4">
                         <div class="flex items-center gap-2">
                             <i data-lucide="clipboard-check" class="w-5 h-5 text-[#5A6B47]"></i>
-                            <h2 class="text-base font-heading font-bold text-[#2C3E2D]">{{ __('portal.public_check_courses_title') }}</h2>
+                            <h2 class="text-base font-heading font-bold text-[#2C3E2D]">
+                                <span class="sm:hidden">ประวัติการสมัครคอร์ส</span>
+                                <span class="hidden sm:inline">{{ __('portal.public_check_courses_title') }}</span>
+                            </h2>
                         </div>
                         <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-[#FAF8F2] border border-[#EAE5D9] text-[#7B8D65]">
                             {{ $registrations->count() }} {{ __('portal.grad_records_unit') }}
                         </span>
                     </div>
 
-                    <div class="overflow-x-auto">
+                    <!-- 1. Desktop Table View (Hidden on mobile < md) -->
+                    <div class="hidden md:block overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="border-b border-[#EAE5D9] text-[11px] font-semibold text-[#7B8D65] uppercase tracking-wider bg-[#FAF8F2]">
@@ -310,7 +314,7 @@
                                         </td>
                                         <td class="py-3.5 px-4 text-center whitespace-nowrap">
                                             <div class="flex items-center justify-center gap-2">
-                                                <!-- Edit Button: Allowed for PENDING and REJECTED status (Option 2) -->
+                                                <!-- Edit Button -->
                                                 @if (in_array($reg->status, ['PENDING', 'REJECTED']))
                                                     <button type="button" onclick="openEditModal({{ json_encode($reg) }})" class="bg-white hover:bg-amber-50 text-amber-700 border border-amber-300 px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 shadow-2xs" title="{{ __('portal.public_check_btn_edit') }}">
                                                         <i data-lucide="edit-3" class="w-3.5 h-3.5 text-amber-600"></i>
@@ -329,6 +333,98 @@
                                 @endforeach
                             </tbody>
                         </table>
+                    </div>
+
+                    <!-- 2. Mobile Card List View (Block on < md, beautiful stacked layout) -->
+                    <div class="block md:hidden space-y-4">
+                        @foreach ($registrations as $reg)
+                            @php
+                                $sDate = ($reg->event && $reg->event->start_date) ? \Carbon\Carbon::parse($reg->event->start_date) : null;
+                                $eDate = ($reg->event && $reg->event->end_date) ? \Carbon\Carbon::parse($reg->event->end_date) : null;
+                                $dateStr = ($sDate && $eDate) ? ($sDate->format('d/m/') . ($sDate->year + 543) . ' - ' . $eDate->format('d/m/') . ($eDate->year + 543)) : '-';
+                            @endphp
+                            <div class="bg-[#FAF8F2] border border-[#EAE5D9] rounded-2xl p-4 space-y-3.5 shadow-xs">
+                                
+                                <!-- Card Header: Reg No + Status Badge -->
+                                <div class="flex items-center justify-between gap-2 border-b border-[#EAE5D9] pb-2.5">
+                                    <div>
+                                        <div class="text-[10px] text-[#7B8D65]">รหัสการสมัคร</div>
+                                        <div class="font-mono font-bold text-sm text-[#C86D51]">{{ $reg->registration_no }}</div>
+                                    </div>
+                                    <div>
+                                        @if ($reg->status === 'CONFIRMED')
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#E9EFE2] text-[#3D523E] border border-[#CADBC0]">
+                                                <i data-lucide="check-circle" class="w-3 h-3 text-[#5A6B47]"></i>
+                                                {{ __('portal.public_status_confirmed') }}
+                                            </span>
+                                        @elseif ($reg->status === 'WAITING_LIST')
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-800 border border-amber-200">
+                                                <i data-lucide="hourglass" class="w-3 h-3 text-amber-600"></i>
+                                                {{ __('portal.public_status_waiting') }}
+                                            </span>
+                                        @elseif ($reg->status === 'REJECTED')
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-red-50 text-red-700 border border-red-200">
+                                                <i data-lucide="x-circle" class="w-3 h-3 text-red-600"></i>
+                                                {{ __('portal.public_status_rejected') }}
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                                                <i data-lucide="clock" class="w-3 h-3 text-blue-600"></i>
+                                                {{ __('portal.public_status_pending') }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <!-- Course Title & Queue -->
+                                <div class="space-y-1">
+                                    <div class="flex items-start justify-between gap-2">
+                                        <h3 class="font-heading font-bold text-sm text-[#2C3E2D] leading-snug break-words flex-grow">
+                                            {{ $reg->event->title ?? '-' }}
+                                        </h3>
+                                        <span class="shrink-0 bg-[#E8F3EA] text-[#2C7338] border border-[#D2E7D5] font-mono font-bold text-xs px-2 py-0.5 rounded-lg">
+                                            คิว #{{ $reg->queue_no ?? '-' }}
+                                        </span>
+                                    </div>
+                                    <div class="text-[11px] text-[#7B8D65] flex items-center gap-1">
+                                        <i data-lucide="map-pin" class="w-3 h-3 text-[#C86D51] shrink-0"></i>
+                                        <span class="break-words">{{ $reg->event->location ?? ($reg->event->organizationUnit->name_th ?? '-') }}</span>
+                                    </div>
+                                    <div class="text-[11px] text-[#6B6357] flex items-center gap-1">
+                                        <i data-lucide="calendar" class="w-3 h-3 text-[#7B8D65] shrink-0"></i>
+                                        <span>{{ $dateStr }}</span>
+                                    </div>
+                                </div>
+
+                                @if ($reg->status === 'REJECTED' && $reg->reject_reason)
+                                    <div class="p-2 rounded-lg bg-red-50 border border-red-200 text-[11px] text-red-700">
+                                        <strong>เหตุผล:</strong> {{ $reg->reject_reason }}
+                                    </div>
+                                @endif
+
+                                <!-- Meta & Action Buttons -->
+                                <div class="pt-2 border-t border-[#EAE5D9] flex items-center justify-between gap-2">
+                                    <div class="text-[10px] text-[#8C8275]">
+                                        {{ $reg->registered_at ? date('d/m/Y H:i', strtotime($reg->registered_at)) : '-' }}
+                                    </div>
+
+                                    <div class="flex items-center gap-2">
+                                        @if (in_array($reg->status, ['PENDING', 'REJECTED']))
+                                            <button type="button" onclick="openEditModal({{ json_encode($reg) }})" class="bg-white hover:bg-amber-50 text-amber-700 border border-amber-300 px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1 shadow-2xs">
+                                                <i data-lucide="edit-3" class="w-3.5 h-3.5 text-amber-600"></i>
+                                                <span>{{ __('portal.public_check_btn_edit') }}</span>
+                                            </button>
+                                        @endif
+
+                                        <button type="button" onclick="openSlipModal('{{ $reg->registration_no }}', '{{ $reg->full_name }}', '{{ $reg->event->title ?? '' }}', '{{ $reg->queue_no }}', '{{ $reg->status }}', '{{ $reg->localized_dietary }}')" class="bg-white hover:bg-[#FAF8F2] text-[#2C3E2D] border border-[#D5CEBC] px-3 py-1.5 rounded-xl text-xs font-medium transition flex items-center gap-1 shadow-2xs">
+                                            <i data-lucide="printer" class="w-3.5 h-3.5 text-[#5A6B47]"></i>
+                                            <span>{{ __('portal.public_btn_print_slip') }}</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        @endforeach
                     </div>
                 </div>
             @else
@@ -523,12 +619,16 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-[#EAE5D9]">
                     <div>
                         <label class="block text-[#6B6357] mb-1">ห้องพัก / อาคาร</label>
-                        <select name="room_info" id="edit_room_info" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs">
-                            <option value="แบบตัวเลือก - ขอที่พักเอง / พักรวมตามที่สถาบันจัดให้">แบบตัวเลือก - ขอที่พักเอง / พักรวมตามที่สถาบันจัดให้</option>
-                            <option value="พักรวมตามที่สถาบันจัดให้">พักรวมตามที่สถาบันจัดให้</option>
-                            <option value="ขอพักเดี่ยว (กรณีมีข้อจำกัดด้านสุขภาพ)">ขอพักเดี่ยว (กรณีมีข้อจำกัดด้านสุขภาพ)</option>
-                            <option value="เดินทางไป-กลับ ไม่ค้างคืน">เดินทางไป-กลับ ไม่ค้างคืน</option>
+                        <select name="room_info_select" id="edit_room_info_select" onchange="toggleEditCustomRoom(this.value)" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs">
+                            <option value="พักรวม">พักรวม</option>
+                            <option value="พักที่อาคาร 92 ปี">พักที่อาคาร 92 ปี</option>
+                            <option value="พักที่อาคารพระพรหมวัชรธีราจารย์">พักที่อาคารพระพรหมวัชรธีราจารย์</option>
+                            <option value="OTHER">อื่น ๆ ระบุ</option>
                         </select>
+                        <input type="hidden" name="room_info" id="edit_room_info" value="พักรวม">
+                        <div id="edit_room_custom_wrapper" class="hidden mt-2">
+                            <input type="text" id="edit_room_custom" placeholder="ระบุข้อมูลห้องพัก / อาคารที่ต้องการ..." oninput="updateEditRoomInfoHidden()" class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#D5CEBC] rounded-lg text-xs focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#5A6B47]">
+                        </div>
                     </div>
                     <div>
                         <label class="block text-[#6B6357] mb-1">การเดินทาง</label>
@@ -741,7 +841,26 @@
             }
 
             // Preferences
-            if (reg.room_info) document.getElementById('edit_room_info').value = reg.room_info;
+            const stdRooms = ['พักรวม', 'พักที่อาคาร 92 ปี', 'พักที่อาคารพระพรหมวัชรธีราจารย์'];
+            const roomVal = reg.room_info || 'พักรวม';
+            const roomSelect = document.getElementById('edit_room_info_select');
+            const roomCustomWrap = document.getElementById('edit_room_custom_wrapper');
+            const roomCustomInput = document.getElementById('edit_room_custom');
+            const roomHidden = document.getElementById('edit_room_info');
+
+            if (stdRooms.includes(roomVal)) {
+                roomSelect.value = roomVal;
+                roomCustomWrap.classList.add('hidden');
+                roomCustomInput.value = '';
+                roomHidden.value = roomVal;
+            } else {
+                roomSelect.value = 'OTHER';
+                roomCustomWrap.classList.remove('hidden');
+                const cleanCustom = roomVal.replace(/^อื่น ๆ:\s*/, '').replace(/^อื่น ๆ\s*/, '');
+                roomCustomInput.value = cleanCustom;
+                roomHidden.value = roomVal;
+            }
+
             if (reg.vehicle_info) document.getElementById('edit_vehicle_info').value = reg.vehicle_info;
             if (reg.dietary_restriction) {
                 const fVal = reg.dietary_restriction;
@@ -760,6 +879,31 @@
 
         function closeEditModal() {
             document.getElementById('editModal').classList.add('hidden');
+        }
+
+        function toggleEditCustomRoom(val) {
+            const customWrapper = document.getElementById('edit_room_custom_wrapper');
+            const customInput = document.getElementById('edit_room_custom');
+            const hiddenInput = document.getElementById('edit_room_info');
+            if (val === 'OTHER') {
+                customWrapper.classList.remove('hidden');
+                customInput.focus();
+                hiddenInput.value = customInput.value.trim() ? ('อื่น ๆ: ' + customInput.value.trim()) : 'อื่น ๆ';
+            } else {
+                customWrapper.classList.add('hidden');
+                hiddenInput.value = val;
+            }
+        }
+
+        function updateEditRoomInfoHidden() {
+            const selectVal = document.getElementById('edit_room_info_select').value;
+            const customInput = document.getElementById('edit_room_custom');
+            const hiddenInput = document.getElementById('edit_room_info');
+            if (selectVal === 'OTHER') {
+                hiddenInput.value = customInput.value.trim() ? ('อื่น ๆ: ' + customInput.value.trim()) : 'อื่น ๆ';
+            } else {
+                hiddenInput.value = selectVal;
+            }
         }
 
         function onEditProvinceChange(provinceName, selectDistrict = null, selectSubdistrict = null) {

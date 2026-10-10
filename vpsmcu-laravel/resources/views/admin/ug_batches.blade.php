@@ -376,17 +376,23 @@
                 </div>
 
                 <div>
-                    <label class="block font-semibold text-[#4A3B32] mb-1">ชื่อโครงการปฏิบัติวิปัสสนากรรมฐาน <span
-                            class="text-[#C86D51]">*</span></label>
-                    <input type="text" name="title"
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="font-semibold text-[#4A3B32]">ชื่อโครงการปฏิบัติวิปัสสนากรรมฐาน <span
+                                class="text-[#C86D51]">*</span></label>
+                        <span class="text-[10px] text-[#8C8275]">(สูงสุดไม่เกิน 255 ตัวอักษร)</span>
+                    </div>
+                    <input type="text" name="title" maxlength="255"
                         placeholder="เช่น โครงการปฏิบัติวิปัสสนากรรมฐาน ประจำปีการศึกษา 2569" required
                         class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
                 </div>
 
                 <div>
-                    <label class="block font-semibold text-[#4A3B32] mb-1">สถานที่จัดกิจกรรม <span
-                            class="text-[#C86D51]">*</span></label>
-                    <input type="text" name="location" placeholder="เช่น อาคาร 72 พรรษา ศูนย์พัฒนาศาสนศึกษา หรือ วัด..."
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="font-semibold text-[#4A3B32]">สถานที่จัดกิจกรรม <span
+                                class="text-[#C86D51]">*</span></label>
+                        <span class="text-[10px] text-[#8C8275]">(สูงสุดไม่เกิน 255 ตัวอักษร)</span>
+                    </div>
+                    <input type="text" name="location" maxlength="255" placeholder="เช่น อาคาร 72 พรรษา ศูนย์พัฒนาศาสนศึกษา หรือ วัด..."
                         required
                         class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
                 </div>
@@ -502,16 +508,22 @@
                 </div>
 
                 <div>
-                    <label class="block font-semibold text-[#4A3B32] mb-1">ชื่อโครงการปฏิบัติวิปัสสนากรรมฐาน <span
-                            class="text-[#C86D51]">*</span></label>
-                    <input type="text" id="edit_title" name="title" required
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="font-semibold text-[#4A3B32]">ชื่อโครงการปฏิบัติวิปัสสนากรรมฐาน <span
+                                class="text-[#C86D51]">*</span></label>
+                        <span class="text-[10px] text-[#8C8275]">(สูงสุดไม่เกิน 255 ตัวอักษร)</span>
+                    </div>
+                    <input type="text" id="edit_title" name="title" maxlength="255" required
                         class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
                 </div>
 
                 <div>
-                    <label class="block font-semibold text-[#4A3B32] mb-1">สถานที่จัดกิจกรรม <span
-                            class="text-[#C86D51]">*</span></label>
-                    <input type="text" id="edit_location" name="location" required
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="font-semibold text-[#4A3B32]">สถานที่จัดกิจกรรม <span
+                                class="text-[#C86D51]">*</span></label>
+                        <span class="text-[10px] text-[#8C8275]">(สูงสุดไม่เกิน 255 ตัวอักษร)</span>
+                    </div>
+                    <input type="text" id="edit_location" name="location" maxlength="255" required
                         class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
                 </div>
 

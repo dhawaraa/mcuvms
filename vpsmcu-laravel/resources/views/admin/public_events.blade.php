@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>จัดการคอร์ส/โครงการปฏิบัติธรรม (โมดูล 3) - VPSMCU Admin</title>
+    <title>จัดการคอร์สวิปัสสนากรรมฐาน - VPSMCU Admin</title>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -69,16 +69,7 @@
         <!-- Header -->
         <div class="flex flex-col sm:flex-row justify-between sm:items-center pb-6 mb-8 border-b border-[#D5CEBC] gap-4">
             <div>
-                <div class="flex items-center gap-2 mb-1">
-                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold tracking-wider uppercase bg-[#5A6B47]/15 text-[#5A6B47] border border-[#5A6B47]/30">
-                        @if ($isCentralOrSuper)
-                            <i data-lucide="shield-check" class="w-3 h-3 inline mr-1"></i> ส่วนกลาง: ดูแลและจัดการคอร์สได้ 52 ส่วนงานทั่วประเทศ
-                        @else
-                            <i data-lucide="building-2" class="w-3 h-3 inline mr-1"></i> สิทธิ์ประจำวิทยาเขต: จัดการเฉพาะคอร์สของส่วนงานตนเอง
-                        @endif
-                    </span>
-                </div>
-                <h1 class="text-2xl font-heading font-bold text-[#2C3E2D]">คอร์สวิปัสสนากรรมฐานสำหรับประชาชน (โมดูล 3)</h1>
+                <h1 class="text-2xl font-heading font-bold text-[#2C3E2D]">จัดการคอร์สวิปัสสนากรรมฐาน</h1>
                 <p class="text-xs text-[#7B8D65] mt-1 font-medium">จัดการคอร์สวิปัสสนากรรมฐานสำหรับประชาชนและนิสิต มจร พร้อมระบบบริหารโควตาและ Waiting List</p>
             </div>
             <button onclick="document.getElementById('add-event-modal').classList.remove('hidden')" class="bg-[#5A6B47] hover:bg-[#2C3E2D] text-white px-4 py-2.5 rounded-xl text-xs font-medium shadow-md transition flex items-center gap-2 self-start sm:self-auto">
@@ -238,17 +229,26 @@
                                 </td>
                                 <td class="p-4 text-center">
                                     @if ($e->status === 'OPEN')
-                                        <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-[#5A6B47]/15 text-[#5A6B47] border border-[#5A6B47]/30">
-                                            เปิดรับสมัคร
-                                        </span>
+                                        <a href="{{ url('/admin/public_events.php?action=status&id=' . $e->id . '&status_val=CLOSED') }}"
+                                           onclick="return confirm('ยืนยันปิดรับสมัครคอร์ส ({{ $e->title }}) หรือไม่?')"
+                                           title="คลิกเพื่อปิดรับสมัคร (สถานะปัจจุบัน: เปิดรับสมัคร)"
+                                           class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-[#2C3E2D] hover:bg-[#1E2B1F] text-emerald-400 shadow-sm hover:scale-105 active:scale-95 transition-all">
+                                            <i data-lucide="check" class="w-4 h-4 stroke-[2.5]"></i>
+                                        </a>
                                     @elseif ($e->status === 'CLOSED')
-                                        <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-[#C86D51]/15 text-[#C86D51] border border-[#C86D51]/30">
-                                            ปิดรับสมัคร
-                                        </span>
+                                        <a href="{{ url('/admin/public_events.php?action=status&id=' . $e->id . '&status_val=OPEN') }}"
+                                           onclick="return confirm('ยืนยันเปิดรับสมัครคอร์ส ({{ $e->title }}) หรือไม่?')"
+                                           title="คลิกเพื่อเปิดรับสมัคร (สถานะปัจจุบัน: ปิดรับสมัคร)"
+                                           class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-[#8E2818] hover:bg-[#6D1B0E] text-rose-100 shadow-sm hover:scale-105 active:scale-95 transition-all">
+                                            <i data-lucide="x" class="w-4 h-4 stroke-[2.5]"></i>
+                                        </a>
                                     @else
-                                        <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-stone-100 text-stone-700 border border-stone-300">
-                                            เสร็จสิ้นโครงการ
-                                        </span>
+                                        <a href="{{ url('/admin/public_events.php?action=status&id=' . $e->id . '&status_val=OPEN') }}"
+                                           onclick="return confirm('ยืนยันเปิดรับสมัครคอร์สนี้ใหม่อีกครั้งหรือไม่?')"
+                                           title="คลิกเพื่อเปิดรับสมัครใหม่ (สถานะปัจจุบัน: เสร็จสิ้นโครงการ)"
+                                           class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-stone-700 hover:bg-stone-800 text-stone-200 shadow-sm hover:scale-105 active:scale-95 transition-all">
+                                            <i data-lucide="check-check" class="w-4 h-4 stroke-[2.5]"></i>
+                                        </a>
                                     @endif
                                 </td>
                                 <td class="p-4 text-right">
@@ -307,7 +307,7 @@
         <div class="bg-white rounded-3xl border border-[#EAE5D9] shadow-2xl max-w-xl w-full p-6 md:p-8 overflow-y-auto max-h-[90vh]">
             <div class="flex justify-between items-center pb-4 border-b border-[#EAE5D9] mb-5">
                 <div>
-                    <h3 class="text-lg font-heading font-bold text-[#2C3E2D]">เพิ่มคอร์สปฏิบัติธรรมใหม่ (Module 3)</h3>
+                    <h3 class="text-lg font-heading font-bold text-[#2C3E2D]">เพิ่มคอร์สปฏิบัติธรรมใหม่</h3>
                     <p class="text-xs text-[#7B8D65]">กำหนดช่วงเวลา สถานที่จัด และโควตาที่นั่งรับสมัคร</p>
                 </div>
                 <button type="button" onclick="document.getElementById('add-event-modal').classList.add('hidden')" class="p-1.5 text-[#8C8275] hover:text-[#2C3E2D] rounded-lg">
@@ -331,13 +331,27 @@
                 @endif
 
                 <div>
-                    <label class="block font-semibold text-[#4A3B32] mb-1">ชื่อคอร์ส/โครงการปฏิบัติธรรม <span class="text-[#C86D51]">*</span></label>
-                    <input type="text" name="title" placeholder="เช่น คอร์สพัฒนาจิตเพื่อสันติสุข ประจำปี 2569" required class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="font-semibold text-[#4A3B32]">ชื่อคอร์ส/โครงการปฏิบัติธรรม <span class="text-[#C86D51]">*</span></label>
+                        <span class="text-[10px] text-[#8C8275]">(สูงสุดไม่เกิน 255 ตัวอักษร)</span>
+                    </div>
+                    <input type="text" name="title" maxlength="255" placeholder="เช่น คอร์สพัฒนาจิตเพื่อสันติสุข ประจำปี 2569" required class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
                 </div>
 
                 <div>
-                    <label class="block font-semibold text-[#4A3B32] mb-1">สถานที่จัดโครงการ / อาคารปฏิบัติธรรม <span class="text-[#C86D51]">*</span></label>
-                    <input type="text" name="location_name" placeholder="เช่น อาคาร 72 พรรษา หรือ ศูนย์วิปัสสนา มจร วังน้อย" required class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="font-semibold text-[#4A3B32]">รายละเอียดโครงการ / กำหนดการสังเขป</label>
+                        <span class="text-[10px] text-[#8C8275]">(ถ้ามี)</span>
+                    </div>
+                    <textarea name="description" rows="3" placeholder="ระบุรายละเอียดโครงการ วัตถุประสงค์ คุณสมบัติผู้สมัคร หรือแนวทางการปฏิบัติตัว..." class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47] resize-y"></textarea>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="font-semibold text-[#4A3B32]">สถานที่จัดโครงการ / อาคารปฏิบัติธรรม <span class="text-[#C86D51]">*</span></label>
+                        <span class="text-[10px] text-[#8C8275]">(สูงสุดไม่เกิน 255 ตัวอักษร)</span>
+                    </div>
+                    <input type="text" name="location_name" maxlength="255" placeholder="เช่น อาคาร 72 พรรษา หรือ ศูนย์วิปัสสนา มจร วังน้อย" required class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
                 </div>
 
                 <!-- ช่องใส่ภาพปกโครงการ (Cover Image) -->
@@ -427,13 +441,27 @@
                 @endif
 
                 <div>
-                    <label class="block font-semibold text-[#4A3B32] mb-1">ชื่อคอร์ส/โครงการปฏิบัติธรรม <span class="text-[#C86D51]">*</span></label>
-                    <input type="text" name="title" id="edit-title" required class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="font-semibold text-[#4A3B32]">ชื่อคอร์ส/โครงการปฏิบัติธรรม <span class="text-[#C86D51]">*</span></label>
+                        <span class="text-[10px] text-[#8C8275]">(สูงสุดไม่เกิน 255 ตัวอักษร)</span>
+                    </div>
+                    <input type="text" name="title" id="edit-title" maxlength="255" required class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
                 </div>
 
                 <div>
-                    <label class="block font-semibold text-[#4A3B32] mb-1">สถานที่จัดโครงการ / อาคารปฏิบัติธรรม <span class="text-[#C86D51]">*</span></label>
-                    <input type="text" name="location_name" id="edit-location" required class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="font-semibold text-[#4A3B32]">รายละเอียดโครงการ / กำหนดการสังเขป</label>
+                        <span class="text-[10px] text-[#8C8275]">(ถ้ามี)</span>
+                    </div>
+                    <textarea name="description" id="edit-description" rows="3" placeholder="ระบุรายละเอียดโครงการ วัตถุประสงค์ คุณสมบัติผู้สมัคร หรือแนวทางการปฏิบัติตัว..." class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47] resize-y"></textarea>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="font-semibold text-[#4A3B32]">สถานที่จัดโครงการ / อาคารปฏิบัติธรรม <span class="text-[#C86D51]">*</span></label>
+                        <span class="text-[10px] text-[#8C8275]">(สูงสุดไม่เกิน 255 ตัวอักษร)</span>
+                    </div>
+                    <input type="text" name="location_name" id="edit-location" maxlength="255" required class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
                 </div>
 
                 <!-- ช่องใส่ภาพปกโครงการ (Cover Image) -->
@@ -508,6 +536,7 @@
             document.getElementById('edit-event-form').action = "{{ url('/admin/public_events.php') }}";
             document.getElementById('edit_event_id').value = event.id;
             document.getElementById('edit-title').value = event.title || '';
+            document.getElementById('edit-description').value = event.description || '';
             document.getElementById('edit-location').value = event.location_name || '';
             document.getElementById('edit-start-date').value = event.start_date || '';
             document.getElementById('edit-end-date').value = event.end_date || '';

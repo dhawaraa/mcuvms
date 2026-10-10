@@ -46,61 +46,79 @@
 </head>
 <body class="antialiased min-h-screen flex flex-col justify-between">
 
-    <!-- Top Navigation -->
-    <nav class="bg-[#FAF8F2] border-b border-[#E3DEC9] sticky top-0 z-50">
+    <!-- Top Navigation Header (Matching Student Dashboard Header) -->
+    <header class="bg-[#FAF8F2]/90 border-b border-[#E7E2D4] w-full sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
-                <a href="{{ route('home') }}" class="flex items-center space-x-3">
-                    <img src="{{ asset('images/mcu-logo.png') }}" alt="MCU Logo" class="w-10 h-10 object-contain drop-shadow-sm">
+            <div class="flex justify-between items-center h-20">
+                
+                <!-- Logo & Brand -->
+                <a href="{{ route('home') }}" class="flex items-center space-x-3.5 group">
+                    <img src="{{ asset('images/mcu-logo.png') }}" alt="MCU Logo" class="w-12 h-12 object-contain drop-shadow-sm group-hover:scale-105 transition">
                     <div>
-                        <div class="font-heading font-bold text-[#2C3E2D] leading-tight">VPSMCU</div>
-                        <div class="text-xs text-[#6B6357]">{{ __('portal.university_name') }}</div>
+                        <div class="font-heading font-extrabold text-xl text-[#2C3E2D] tracking-tight leading-tight">
+                            VPSMCU
+                        </div>
+                        <p class="text-xs text-[#6B6357] font-medium">{{ __('portal.university_name') }}</p>
                     </div>
                 </a>
 
-                <!-- Module 2 Navigation Tabs: ยื่นคำร้อง (Active) vs ตรวจประวัติสะสมวัน -->
-                <div class="hidden sm:flex items-center bg-[#EAE5D9]/80 p-1 rounded-2xl border border-[#D5CEBC]">
-                    <a href="{{ route('grad.request') }}" class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-[#5A6B47] text-white shadow-sm">
+                <!-- Center Pill Tabs (ยื่นคำร้อง e-Document / ตรวจประวัติสะสมวัน) -->
+                <div class="hidden md:flex items-center bg-[#EFECE3] p-1 rounded-2xl border border-[#DFDACB]">
+                    <a href="{{ route('grad.request') }}" class="px-4 py-2 rounded-xl text-xs font-semibold bg-[#4D5E3C] text-white shadow-xs transition flex items-center gap-1.5">
                         <i data-lucide="file-text" class="w-4 h-4"></i>
-                        <span>{{ __('portal.grad_req_tab_request') }}</span>
+                        <span>ยื่นคำร้อง e-Document</span>
                     </a>
-                    <a href="{{ route('grad.progress') }}" class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 text-[#4A3B32] hover:text-[#2C3E2D] hover:bg-[#FAF8F2]">
-                        <i data-lucide="search" class="w-4 h-4 text-[#5A6B47]"></i>
-                        <span>{{ __('portal.grad_req_tab_progress') }}</span>
+                    <a href="{{ route('student.dashboard') }}" class="px-4 py-2 rounded-xl text-xs font-semibold text-[#4A3B32] hover:text-[#2C3E2D] hover:bg-[#FAF8F2] transition flex items-center gap-1.5">
+                        <i data-lucide="search" class="w-4 h-4 text-[#7A7366]"></i>
+                        <span>ตรวจประวัติสะสมวัน</span>
                     </a>
                 </div>
 
-                <div class="flex items-center space-x-3 sm:space-x-4">
+                <!-- Right Actions: Language Switcher & Profile / Home Link -->
+                <div class="flex items-center space-x-4">
                     @php
                         $currentLang = session('locale', 'th');
                     @endphp
                     <!-- Language Switcher (TH / EN) -->
-                    <div class="flex items-center bg-[#EAE5D9] p-0.5 rounded-xl border border-[#D5CEBC] text-xs font-bold font-mono">
-                        <a href="{{ route('lang.switch', 'th') }}" title="ภาษาไทย" class="px-2 py-1 rounded-lg transition {{ $currentLang === 'th' ? 'bg-[#5A6B47] text-white shadow-sm' : 'text-[#6B6357] hover:text-[#2C3E2D]' }}">
+                    <div class="flex items-center bg-[#E5DFD0] p-1 rounded-xl text-xs font-bold font-mono">
+                        <a href="{{ route('lang.switch', 'th') }}" title="ภาษาไทย" class="px-2.5 py-1 rounded-lg transition {{ $currentLang === 'th' ? 'bg-[#4D5E3C] text-white shadow-xs' : 'text-[#605B50] hover:text-[#2C3E2D]' }}">
                             TH
                         </a>
-                        <a href="{{ route('lang.switch', 'en') }}" title="English" class="px-2 py-1 rounded-lg transition {{ $currentLang === 'en' ? 'bg-[#5A6B47] text-white shadow-sm' : 'text-[#6B6357] hover:text-[#2C3E2D]' }}">
+                        <a href="{{ route('lang.switch', 'en') }}" title="English" class="px-2.5 py-1 rounded-lg transition {{ $currentLang === 'en' ? 'bg-[#4D5E3C] text-white shadow-xs' : 'text-[#605B50] hover:text-[#2C3E2D]' }}">
                             EN
                         </a>
                     </div>
 
-                    <a href="{{ route('home') }}" class="text-[#4A3B32] hover:text-[#C86D51] font-semibold text-[15px] flex items-center gap-1.5 transition">
-                        <i data-lucide="arrow-left" class="w-4.5 h-4.5 text-[#5A6B47]"></i> <span class="hidden sm:inline">{{ __('portal.nav_back_home') }}</span>
-                    </a>
+                    @if(session()->has('student_user'))
+                        <a href="{{ route('student.profile') }}" title="ข้อมูลส่วนตัว" class="text-xs sm:text-sm font-semibold text-[#4D5E3C] hover:text-[#2C3E2D] flex items-center gap-1.5 transition">
+                            <i data-lucide="user" class="w-4 h-4"></i>
+                            <span class="hidden sm:inline">ข้อมูลส่วนตัว</span>
+                        </a>
+
+                        <a href="{{ route('student.logout') }}" title="ออกจากระบบ" class="text-xs font-semibold text-[#C86D51] hover:text-[#A85238] flex items-center gap-1 transition ml-2">
+                            <i data-lucide="log-out" class="w-4 h-4"></i>
+                            <span class="hidden sm:inline">ออก</span>
+                        </a>
+                    @else
+                        <a href="{{ route('student.login') }}" title="เข้าสู่ระบบนิสิต" class="text-xs sm:text-sm font-semibold bg-[#4D5E3C] hover:bg-[#3D4C30] text-white px-3.5 py-1.5 rounded-xl flex items-center gap-1.5 transition shadow-xs">
+                            <i data-lucide="log-in" class="w-4 h-4"></i>
+                            <span>เข้าสู่ระบบนิสิต</span>
+                        </a>
+                    @endif
                 </div>
             </div>
 
             <!-- Mobile Sub-Navigation -->
-            <div class="flex sm:hidden items-center justify-center pb-3 pt-1 border-t border-[#EAE5D9] gap-2">
-                <a href="{{ route('grad.request') }}" class="flex-1 text-center py-1.5 px-3 rounded-lg text-xs font-bold bg-[#5A6B47] text-white">
-                    {{ __('portal.grad_req_tab_request') }}
+            <div class="flex md:hidden items-center justify-center pb-3 pt-1 border-t border-[#EAE5D9] gap-2">
+                <a href="{{ route('grad.request') }}" class="flex-1 text-center py-2 px-3 rounded-xl text-xs font-semibold bg-[#4D5E3C] text-white shadow-2xs">
+                    ยื่นคำร้อง e-Document
                 </a>
-                <a href="{{ route('grad.progress') }}" class="flex-1 text-center py-1.5 px-3 rounded-lg text-xs font-bold bg-white text-[#4A3B32] border border-[#D5CEBC]">
-                    {{ __('portal.grad_req_tab_progress') }}
+                <a href="{{ route('student.dashboard') }}" class="flex-1 text-center py-2 px-3 rounded-xl text-xs font-semibold bg-white text-[#4A3B32] border border-[#DFDACB]">
+                    ตรวจประวัติสะสมวัน
                 </a>
             </div>
         </div>
-    </nav>
+    </header>
 
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-grow">

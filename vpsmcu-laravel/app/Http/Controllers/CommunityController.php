@@ -13,6 +13,9 @@ class CommunityController extends Controller
     public function create()
     {
         $events = PublicEvent::with('organizationUnit')
+            ->withCount(['registrations as active_registrations_count' => function ($q) {
+                $q->whereNotIn('status', ['REJECTED', 'CANCELLED']);
+            }])
             ->where('status', 'OPEN')
             ->orderBy('start_date', 'asc')
             ->get();
@@ -63,6 +66,14 @@ class CommunityController extends Controller
         if ($existing) {
             return back()->with('error', 'ท่านได้ลงทะเบียนในโครงการนี้แล้ว เลขที่ใบสมัคร: ' . $existing->registration_no . ' (' . $existing->status . ')')
                          ->with('regSuccess', $existing->registration_no);
+        }
+
+        // ตรวจสอบโควตาที่นั่งว่าง (ใครมาก่อนได้สิทธิ์ก่อน - นับทุกคนที่ลงทะเบียนเข้ามาที่ยังไม่ถูกปฏิเสธ/ยกเลิก)
+        $currentRegistered = PublicRegistration::where('event_id', $event->id)
+            ->whereNotIn('status', ['REJECTED', 'CANCELLED'])
+            ->count();
+        if ($event->max_quota > 0 && $currentRegistered >= $event->max_quota) {
+            return back()->with('error', 'ขออภัย โครงการนี้มีผู้ลงทะเบียนครบเต็มตามจำนวนที่นั่ง (' . $event->max_quota . ' ท่าน) แล้ว');
         }
 
         $status = 'PENDING';

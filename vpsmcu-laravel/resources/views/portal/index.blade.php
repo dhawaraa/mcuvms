@@ -72,8 +72,8 @@
 </head>
 <body class="antialiased min-h-screen flex flex-col justify-between selection:bg-[#5A6B47] selection:text-white">
 
-    <!-- Top Announcement Bar (Deep Forest) -->
-    <div class="bg-[#243325] text-[#D5CEBC] text-xs py-2 px-4 border-b border-[#1E2B1F]">
+    <!-- Top Announcement Bar (Deep Forest - Hidden on mobile) -->
+    <div class="hidden sm:block bg-[#243325] text-[#D5CEBC] text-xs py-2 px-4 border-b border-[#1E2B1F]">
         <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-1 font-medium">
             <div class="flex items-center space-x-2">
                 <span class="inline-block w-2 h-2 rounded-full bg-[#7B8D65]"></span>
@@ -159,8 +159,8 @@
                         <span>{{ __('portal.nav_request_cert') }}</span>
                     </a>
 
-                    <!-- ฐานข้อมูล -->
-                    <a href="{{ route('ug.check') }}" class="hover:text-[#5A6B47] transition flex items-center gap-1.5 whitespace-nowrap py-1">
+                    <!-- ฐานข้อมูลนิสิต (เข้าสู่ระบบพอร์ทัลนิสิต) -->
+                    <a href="{{ route('student.login') }}" class="hover:text-[#5A6B47] transition flex items-center gap-1.5 whitespace-nowrap py-1">
                         <i data-lucide="users" class="w-4.5 h-4.5 text-[#4A3B32]"></i>
                         <span>{{ __('portal.nav_database') }}</span>
                     </a>
@@ -178,7 +178,7 @@
                     </a>
                 </nav>
 
-                <!-- Actions: Language Switcher (TH / EN in Pill Style as in Reference) -->
+                <!-- Actions: Language Switcher & Hamburger Button -->
                 <div class="flex items-center space-x-2.5">
                     @php
                         $currentLang = session('locale', 'th');
@@ -191,13 +191,89 @@
                             EN
                         </a>
                     </div>
+
+                    <!-- Hamburger Button (Visible on screens < xl) -->
+                    <button type="button" id="mobile-menu-btn" onclick="toggleMobileMenu()" class="xl:hidden p-2 rounded-xl text-[#4A3B32] hover:text-[#2C3E2D] hover:bg-[#EAE5D9] transition focus:outline-none" aria-label="Toggle navigation menu">
+                        <i data-lucide="menu" id="hamburger-icon" class="w-6 h-6"></i>
+                        <i data-lucide="x" id="close-icon" class="w-6 h-6 hidden"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu Dropdown (Drawer) -->
+        <div id="mobile-menu-drawer" class="hidden xl:hidden bg-[#FAF8F2] border-b border-[#E3DEC9] shadow-lg transition-all animate-fadeIn">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 space-y-2">
+                <!-- ปฏิทินโครงการ (Collapsible Sub-menu) -->
+                <div class="border-b border-[#EAE5D9] pb-2">
+                    <button type="button" onclick="toggleMobileCalendar()" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold text-[#4A3B32] hover:bg-white hover:text-[#5A6B47] transition">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="calendar" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
+                            <span>{{ __('portal.nav_calendar') }}</span>
+                        </div>
+                        <i data-lucide="chevron-down" id="mobile-calendar-chevron" class="w-4 h-4 text-[#8C8275] transition-transform duration-200"></i>
+                    </button>
+                    <!-- Sub-menu Items (Hidden by default) -->
+                    <div id="mobile-calendar-sub" class="hidden pl-4 pr-1 py-1 space-y-1 bg-[#F5F2E9]/60 rounded-xl mt-1">
+                        <a href="#calendar" onclick="switchCategory('ALL'); toggleMobileMenu();" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-[#2C3E2D] hover:bg-white transition">
+                            <span class="w-6 h-6 rounded-md bg-[#5A6B47]/10 flex items-center justify-center text-[#5A6B47] shrink-0">
+                                <i data-lucide="calendar-range" class="w-3.5 h-3.5"></i>
+                            </span>
+                            <div>
+                                <div class="font-semibold">{{ __('portal.nav_all_schedules') }}</div>
+                                <div class="text-[10px] text-[#7B8D65]">{{ __('portal.nav_all_schedules_desc') }}</div>
+                            </div>
+                        </a>
+                        <a href="#calendar" onclick="switchCategory('UG'); toggleMobileMenu();" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-[#2C3E2D] hover:bg-white transition">
+                            <span class="w-6 h-6 rounded-md bg-[#5A6B47]/15 flex items-center justify-center text-[#5A6B47] shrink-0">
+                                <i data-lucide="graduation-cap" class="w-3.5 h-3.5"></i>
+                            </span>
+                            <div>
+                                <div class="font-semibold text-[#5A6B47]">{{ __('portal.nav_ug_schedules') }}</div>
+                                <div class="text-[10px] text-[#7B8D65]">{{ __('portal.nav_ug_schedules_desc') }}</div>
+                            </div>
+                        </a>
+                        <a href="#calendar" onclick="switchCategory('PUBLIC'); toggleMobileMenu();" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-[#2C3E2D] hover:bg-white transition">
+                            <span class="w-6 h-6 rounded-md bg-[#C86D51]/15 flex items-center justify-center text-[#C86D51] shrink-0">
+                                <i data-lucide="users" class="w-3.5 h-3.5"></i>
+                            </span>
+                            <div>
+                                <div class="font-semibold text-[#C86D51]">{{ __('portal.nav_public_schedules') }}</div>
+                                <div class="text-[10px] text-[#7B8D65]">{{ __('portal.nav_public_schedules_desc') }}</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- ลิงก์เมนูหลัก -->
+                <div class="space-y-1 pt-1">
+                    <a href="{{ route('grad.progress') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold text-[#4A3B32] hover:bg-white hover:text-[#5A6B47] transition">
+                        <i data-lucide="graduation-cap" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
+                        <span>{{ __('portal.nav_verify_days') }}</span>
+                    </a>
+                    <a href="{{ route('grad.request') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold text-[#4A3B32] hover:bg-white hover:text-[#5A6B47] transition">
+                        <i data-lucide="file-text" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
+                        <span>{{ __('portal.nav_request_cert') }}</span>
+                    </a>
+                    <a href="{{ route('student.login') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold text-[#4A3B32] hover:bg-white hover:text-[#5A6B47] transition">
+                        <i data-lucide="users" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
+                        <span>{{ __('portal.nav_database') }}</span>
+                    </a>
+                    <a href="{{ route('contact') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold text-[#4A3B32] hover:bg-white hover:text-[#5A6B47] transition">
+                        <i data-lucide="phone" class="w-4.5 h-4.5 text-[#5A6B47]"></i>
+                        <span>{{ __('portal.nav_contact') }}</span>
+                    </a>
+                    <a href="{{ route('donation') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-bold text-[#C86D51] bg-[#C86D51]/10 hover:bg-[#C86D51]/20 transition">
+                        <i data-lucide="gift" class="w-4.5 h-4.5 text-[#C86D51]"></i>
+                        <span>{{ __('portal.nav_donation') }}</span>
+                    </a>
                 </div>
             </div>
         </div>
     </header>
 
     <!-- Hero Banner with Background Image (Shifted upwards) -->
-    <section class="relative hero-banner w-full min-h-[460px] sm:min-h-[520px] lg:min-h-[580px] flex items-start justify-end overflow-hidden pt-8 sm:pt-12 md:pt-16 pb-28 sm:pb-36">
+    <section class="relative hero-banner w-full min-h-[160px] sm:min-h-[500px] lg:min-h-[580px] flex items-start justify-end overflow-hidden pt-4 sm:pt-12 md:pt-16 pb-3 sm:pb-32">
         <!-- Subtle gradient overlay for readability of right-aligned text -->
         <div class="absolute inset-0 bg-gradient-to-l from-white/90 via-white/40 to-transparent pointer-events-none"></div>
 
@@ -205,13 +281,13 @@
             <div class="flex justify-end">
                 <div class="max-w-6xl text-right">
                     <!-- Bold Hero Title: Dynamic localization (TH/EN), locked lines, never wraps -->
-                    <h1 class="text-3xl sm:text-5xl md:text-7xl lg:text-[96px] xl:text-[112px] font-heading font-extrabold text-[#663300] tracking-tight leading-[1.05] drop-shadow-xs whitespace-nowrap">
+                    <h1 class="text-2xl sm:text-5xl md:text-7xl lg:text-[96px] xl:text-[112px] font-heading font-extrabold text-[#663300] tracking-tight leading-[1.05] drop-shadow-xs whitespace-nowrap">
                         {{ __('portal.hero_title_1') }}
                     </h1>
-                    <h2 class="text-2xl sm:text-4xl md:text-5xl lg:text-[60px] xl:text-[70px] font-heading font-extrabold text-[#CC6600] tracking-tight leading-[1.1] mt-1 sm:mt-2 drop-shadow-xs whitespace-nowrap">
+                    <h2 class="text-xl sm:text-4xl md:text-5xl lg:text-[60px] xl:text-[70px] font-heading font-extrabold text-[#CC6600] tracking-tight leading-[1.1] mt-1 sm:mt-2 drop-shadow-xs whitespace-nowrap">
                         {{ __('portal.hero_title_2') }}
                     </h2>
-                    <p class="text-xs sm:text-base md:text-lg lg:text-xl xl:text-2xl font-heading font-semibold text-[#4A3B32] mt-2 sm:mt-4 tracking-wide whitespace-nowrap">
+                    <p class="text-[11px] sm:text-base md:text-lg lg:text-xl xl:text-2xl font-heading font-semibold text-[#4A3B32] mt-1 sm:mt-4 tracking-wide whitespace-nowrap">
                         {{ __('portal.hero_subtitle') }}
                     </p>
                 </div>
@@ -219,84 +295,84 @@
         </div>
     </section>
 
-    <!-- 4 Overlapping Action Cards Section (Custom Color Codes) -->
-    <section class="relative -mt-16 sm:-mt-20 z-20 px-4 sm:px-6 lg:px-8 mb-14">
+    <!-- 4 Overlapping Action Cards Section (2 columns on mobile, 4 columns on desktop) -->
+    <section class="relative -mt-2 sm:-mt-20 z-20 px-3 sm:px-6 lg:px-8 mb-10 sm:mb-14">
         <div class="max-w-7xl mx-auto">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
                 
                 <!-- Card 1: สมัครปฏิบัติธรรม (Button: #397657, Background: #E9FAE9) -->
-                <div class="bg-[#E9FAE9] rounded-3xl p-6 sm:p-7 border border-[#D0EED0] shadow-md flex flex-col items-center text-center justify-between hover:shadow-lg transition">
+                <div class="bg-[#E9FAE9] rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-[#D0EED0] shadow-md flex flex-col items-center text-center justify-between hover:shadow-lg transition">
                     <div class="flex flex-col items-center w-full">
-                        <div class="w-14 h-14 rounded-full bg-[#397657] text-white flex items-center justify-center mb-4 shadow-sm">
-                            <i data-lucide="user-plus" class="w-7 h-7 text-white"></i>
+                        <div class="w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-[#397657] text-white flex items-center justify-center mb-2.5 sm:mb-4 shadow-sm">
+                            <i data-lucide="user-plus" class="w-5 h-5 sm:w-7 sm:h-7 text-white"></i>
                         </div>
-                        <h3 class="font-heading font-bold text-xl text-[#244E38] mb-1.5">
+                        <h3 class="font-heading font-bold text-sm sm:text-xl text-[#244E38] mb-1 sm:mb-1.5">
                             {{ __('portal.card_register_title') }}
                         </h3>
-                        <p class="text-xs text-[#52735F] leading-relaxed mb-6">
+                        <p class="text-[11px] sm:text-xs text-[#52735F] leading-tight sm:leading-relaxed mb-3 sm:mb-6 line-clamp-2 sm:line-clamp-none">
                             {{ __('portal.card_register_desc') }}
                         </p>
                     </div>
-                    <a href="{{ route('public.register') }}" class="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full text-xs font-semibold bg-[#397657] hover:bg-[#2C5E45] text-white transition shadow-sm w-36">
+                    <a href="{{ route('public.register') }}" class="inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-6 py-2 sm:py-2.5 rounded-full text-[11px] sm:text-xs font-semibold bg-[#397657] hover:bg-[#2C5E45] text-white transition shadow-sm w-full sm:w-36">
                         <span>{{ __('portal.card_register_btn') }}</span>
-                        <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                        <i data-lucide="arrow-right" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                     </a>
                 </div>
 
                 <!-- Card 2: ฐานข้อมูลนิสิต (Button: #357EBC, Background: #E5F7FD) -->
-                <div class="bg-[#E5F7FD] rounded-3xl p-6 sm:p-7 border border-[#C6EDFA] shadow-md flex flex-col items-center text-center justify-between hover:shadow-lg transition">
+                <div class="bg-[#E5F7FD] rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-[#C6EDFA] shadow-md flex flex-col items-center text-center justify-between hover:shadow-lg transition">
                     <div class="flex flex-col items-center w-full">
-                        <div class="w-14 h-14 rounded-full bg-[#357EBC] text-white flex items-center justify-center mb-4 shadow-sm">
-                            <i data-lucide="users" class="w-7 h-7 text-white"></i>
+                        <div class="w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-[#357EBC] text-white flex items-center justify-center mb-2.5 sm:mb-4 shadow-sm">
+                            <i data-lucide="users" class="w-5 h-5 sm:w-7 sm:h-7 text-white"></i>
                         </div>
-                        <h3 class="font-heading font-bold text-xl text-[#1E5079] mb-1.5">
+                        <h3 class="font-heading font-bold text-sm sm:text-xl text-[#1E5079] mb-1 sm:mb-1.5">
                             {{ __('portal.card_database_title') }}
                         </h3>
-                        <p class="text-xs text-[#4E7699] leading-relaxed mb-6">
+                        <p class="text-[11px] sm:text-xs text-[#4E7699] leading-tight sm:leading-relaxed mb-3 sm:mb-6 line-clamp-2 sm:line-clamp-none">
                             {{ __('portal.card_database_desc') }}
                         </p>
                     </div>
-                    <a href="{{ route('ug.check') }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold bg-[#357EBC] hover:bg-[#286395] text-white transition shadow-sm w-40">
+                    <a href="{{ route('student.login') }}" class="inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 rounded-full text-[11px] sm:text-xs font-semibold bg-[#357EBC] hover:bg-[#286395] text-white transition shadow-sm w-full sm:w-40">
                         <span>{{ __('portal.card_database_btn') }}</span>
-                        <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                        <i data-lucide="arrow-right" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                     </a>
                 </div>
 
-                <!-- Card 3: ตรวจสอบจำนวนวัน (Button: #A14530, Background: #F5EFE5) -->
-                <div class="bg-[#F5EFE5] rounded-3xl p-6 sm:p-7 border border-[#E7DCCE] shadow-md flex flex-col items-center text-center justify-between hover:shadow-lg transition">
+                <!-- Card 3: ขอหนังสือรับรอง (Button: #A3772C, Background: #FFFEF0) -->
+                <div class="bg-[#FFFEF0] rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-[#F2EFCB] shadow-md flex flex-col items-center text-center justify-between hover:shadow-lg transition">
                     <div class="flex flex-col items-center w-full">
-                        <div class="w-14 h-14 rounded-full bg-[#A14530] text-white flex items-center justify-center mb-4 shadow-sm">
-                            <i data-lucide="file-check" class="w-7 h-7 text-white"></i>
+                        <div class="w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-[#A3772C] text-white flex items-center justify-center mb-2.5 sm:mb-4 shadow-sm">
+                            <i data-lucide="file-text" class="w-5 h-5 sm:w-7 sm:h-7 text-white"></i>
                         </div>
-                        <h3 class="font-heading font-bold text-xl text-[#6B2C1F] mb-1.5">
-                            {{ __('portal.card_verify_days_title') }}
-                        </h3>
-                        <p class="text-xs text-[#805D54] leading-relaxed mb-6">
-                            {{ __('portal.card_verify_days_desc') }}
-                        </p>
-                    </div>
-                    <a href="{{ route('grad.progress') }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold bg-[#A14530] hover:bg-[#833523] text-white transition shadow-sm w-40">
-                        <span>{{ __('portal.card_verify_days_btn') }}</span>
-                        <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-                    </a>
-                </div>
-
-                <!-- Card 4: ขอหนังสือรับรอง (Button: #A3772C, Background: #FFFEF0) -->
-                <div class="bg-[#FFFEF0] rounded-3xl p-6 sm:p-7 border border-[#F2EFCB] shadow-md flex flex-col items-center text-center justify-between hover:shadow-lg transition">
-                    <div class="flex flex-col items-center w-full">
-                        <div class="w-14 h-14 rounded-full bg-[#A3772C] text-white flex items-center justify-center mb-4 shadow-sm">
-                            <i data-lucide="file-text" class="w-7 h-7 text-white"></i>
-                        </div>
-                        <h3 class="font-heading font-bold text-xl text-[#6E4F1A] mb-1.5">
+                        <h3 class="font-heading font-bold text-sm sm:text-xl text-[#6E4F1A] mb-1 sm:mb-1.5">
                             {{ __('portal.card_request_cert_title') }}
                         </h3>
-                        <p class="text-xs text-[#8A7145] leading-relaxed mb-6">
+                        <p class="text-[11px] sm:text-xs text-[#8A7145] leading-tight sm:leading-relaxed mb-3 sm:mb-6 line-clamp-2 sm:line-clamp-none">
                             {{ __('portal.card_request_cert_desc') }}
                         </p>
                     </div>
-                    <a href="{{ route('grad.request') }}" class="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full text-xs font-semibold bg-[#A3772C] hover:bg-[#855F20] text-white transition shadow-sm w-36">
+                    <a href="{{ route('grad.request') }}" class="inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-6 py-2 sm:py-2.5 rounded-full text-[11px] sm:text-xs font-semibold bg-[#A3772C] hover:bg-[#855F20] text-white transition shadow-sm w-full sm:w-36">
                         <span>{{ __('portal.card_request_cert_btn') }}</span>
-                        <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                        <i data-lucide="arrow-right" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
+                    </a>
+                </div>
+
+                <!-- Card 4: ร่วมบริจาค (Button: #A14530, Background: #F5EFE5) -->
+                <div class="bg-[#F5EFE5] rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-[#E7DCCE] shadow-md flex flex-col items-center text-center justify-between hover:shadow-lg transition">
+                    <div class="flex flex-col items-center w-full">
+                        <div class="w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-[#A14530] text-white flex items-center justify-center mb-2.5 sm:mb-4 shadow-sm">
+                            <i data-lucide="heart-handshake" class="w-5 h-5 sm:w-7 sm:h-7 text-white"></i>
+                        </div>
+                        <h3 class="font-heading font-bold text-sm sm:text-xl text-[#6B2C1F] mb-1 sm:mb-1.5">
+                            {{ __('portal.card_donation_title') }}
+                        </h3>
+                        <p class="text-[11px] sm:text-xs text-[#805D54] leading-tight sm:leading-relaxed mb-3 sm:mb-6 line-clamp-2 sm:line-clamp-none">
+                            {{ __('portal.card_donation_desc') }}
+                        </p>
+                    </div>
+                    <a href="{{ url('/donation.php') }}" class="inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 rounded-full text-[11px] sm:text-xs font-semibold bg-[#A14530] hover:bg-[#833523] text-white transition shadow-sm w-full sm:w-40">
+                        <span>{{ __('portal.card_donation_btn') }}</span>
+                        <i data-lucide="arrow-right" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                     </a>
                 </div>
 
@@ -625,7 +701,7 @@
                 end_date: p.end_date || p.start_date,
                 location: (currentLocale === 'en' && p.location_name_en) ? p.location_name_en : (p.location_name || 'อาคาร 72 ปี พระวิสุทธาธิบดี มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย จ.พระนครศรีอยุธยา'),
                 max_quota: p.max_quota,
-                reg_count: p.registrations ? p.registrations.length : (p.confirmed_count || 0),
+                reg_count: (p.active_registrations_count !== undefined) ? p.active_registrations_count : (p.registrations ? p.registrations.length : (p.confirmed_count || 0)),
                 academic_year: null,
                 org_name: p.organization_unit ? ((currentLocale === 'en' && p.organization_unit.name_en) ? p.organization_unit.name_en : p.organization_unit.name_th) : 'มจร',
                 org_code: p.organization_unit ? (p.organization_unit.code_provincial || p.organization_unit.code) : 'MCU',
@@ -660,8 +736,8 @@
             'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
         ];
 
-        // Default month: set to month of retreat dates (e.g. November 2026 / พฤศจิกายน 2569)
-        let currentDate = new Date('2026-11-01');
+        // Default month: set to current month (เดือนปัจจุบัน)
+        let currentDate = new Date();
         let selectedDay = null; // YYYY-MM-DD string or null
 
         function getFilteredEvents() {
@@ -959,6 +1035,37 @@
 
             container.innerHTML = html;
             lucide.createIcons();
+        }
+
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const drawer = document.getElementById('mobile-menu-drawer');
+            const hamburgerIcon = document.getElementById('hamburger-icon');
+            const closeIcon = document.getElementById('close-icon');
+            
+            if (drawer.classList.contains('hidden')) {
+                drawer.classList.remove('hidden');
+                hamburgerIcon.classList.add('hidden');
+                closeIcon.classList.remove('hidden');
+            } else {
+                drawer.classList.add('hidden');
+                hamburgerIcon.classList.remove('hidden');
+                closeIcon.classList.add('hidden');
+            }
+            lucide.createIcons();
+        }
+
+        // Mobile Calendar Sub-menu Accordion Toggle
+        function toggleMobileCalendar() {
+            const sub = document.getElementById('mobile-calendar-sub');
+            const chevron = document.getElementById('mobile-calendar-chevron');
+            if (sub.classList.contains('hidden')) {
+                sub.classList.remove('hidden');
+                chevron.classList.add('rotate-180');
+            } else {
+                sub.classList.add('hidden');
+                chevron.classList.remove('rotate-180');
+            }
         }
 
         // Initialize on DOM load

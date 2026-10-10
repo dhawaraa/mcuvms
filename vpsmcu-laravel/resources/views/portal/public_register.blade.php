@@ -132,15 +132,15 @@
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-grow space-y-6 sm:space-y-8">
 
         <!-- 1. Header Banner Card (Dynamic title per step) -->
-        <div class="hero-banner-card rounded-2xl p-6 sm:p-9 text-white shadow-sm border border-[#205C29]/40 relative overflow-hidden">
+        <div class="hero-banner-card rounded-2xl p-5 sm:p-9 text-white shadow-sm border border-[#205C29]/40 relative overflow-hidden">
             <div class="max-w-xl">
-                <h1 id="banner_title" class="text-2xl sm:text-3xl font-heading font-extrabold text-white tracking-tight leading-snug">
+                <h1 id="banner_title" class="text-xl sm:text-3xl font-heading font-extrabold text-white tracking-tight leading-snug">
                     {{ __('portal.public_banner_step1_title') }}
                 </h1>
-                <p id="banner_subtitle" class="text-base sm:text-lg font-heading font-medium text-white/95 mt-0.5">
+                <p id="banner_subtitle" class="text-sm sm:text-lg font-heading font-medium text-white/95 mt-0.5">
                     {{ __('portal.public_banner_step1_subtitle') }}
                 </p>
-                <p id="banner_desc" class="text-xs sm:text-sm text-white/85 mt-3 leading-relaxed">
+                <p id="banner_desc" class="text-xs sm:text-sm text-white/85 mt-2 sm:mt-3 leading-relaxed">
                     {!! __('portal.public_banner_step1_desc') !!}
                 </p>
             </div>
@@ -150,40 +150,40 @@
         <div class="max-w-2xl mx-auto px-2">
             <div class="relative flex items-center justify-between">
                 <!-- Background Connection Lines -->
-                <div class="absolute top-5 left-10 right-10 -translate-y-1/2 flex items-center z-0">
+                <div class="absolute top-4 sm:top-5 left-8 right-8 sm:left-10 sm:right-10 -translate-y-1/2 flex items-center z-0">
                     <div id="step-connector-1" class="step-line flex-1 transition duration-300"></div>
                     <div id="step-connector-2" class="step-line flex-1 transition duration-300"></div>
                 </div>
 
                 <!-- Step 1 Circle & Label -->
                 <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="goToStep(1)">
-                    <div id="step-circle-1" class="w-10 h-10 rounded-full bg-[#1F6B30] text-white flex items-center justify-center font-bold text-sm shadow-xs transition duration-200">
-                        <i data-lucide="check" class="w-5 h-5 hidden" id="step-icon-1"></i>
+                    <div id="step-circle-1" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#1F6B30] text-white flex items-center justify-center font-bold text-xs sm:text-sm shadow-xs transition duration-200">
+                        <i data-lucide="check" class="w-4 h-4 sm:w-5 sm:h-5 hidden" id="step-icon-1"></i>
                         <span id="step-num-1">1</span>
                     </div>
-                    <span id="step-text-1" class="text-xs sm:text-sm font-heading font-bold text-[#2D2A26] mt-2 text-center whitespace-nowrap">
+                    <span id="step-text-1" class="text-[11px] sm:text-sm font-heading font-bold text-[#2D2A26] mt-1.5 sm:mt-2 text-center whitespace-nowrap">
                         {{ __('portal.public_stepper_step1') }}
                     </span>
                 </div>
 
                 <!-- Step 2 Circle & Label -->
                 <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="goToStep(2)">
-                    <div id="step-circle-2" class="w-10 h-10 rounded-full bg-white border-2 border-[#D5CEBC] text-[#8C8275] flex items-center justify-center font-bold text-sm shadow-xs transition duration-200">
-                        <i data-lucide="check" class="w-5 h-5 hidden" id="step-icon-2"></i>
+                    <div id="step-circle-2" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white border-2 border-[#D5CEBC] text-[#8C8275] flex items-center justify-center font-bold text-xs sm:text-sm shadow-xs transition duration-200">
+                        <i data-lucide="check" class="w-4 h-4 sm:w-5 sm:h-5 hidden" id="step-icon-2"></i>
                         <span id="step-num-2">2</span>
                     </div>
-                    <span id="step-text-2" class="text-xs sm:text-sm font-heading font-medium text-[#7A7367] mt-2 text-center whitespace-nowrap">
+                    <span id="step-text-2" class="text-[11px] sm:text-sm font-heading font-medium text-[#7A7367] mt-1.5 sm:mt-2 text-center whitespace-nowrap">
                         {{ __('portal.public_stepper_step2') }}
                     </span>
                 </div>
 
                 <!-- Step 3 Circle & Label -->
                 <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="goToStep(3)">
-                    <div id="step-circle-3" class="w-10 h-10 rounded-full bg-white border-2 border-[#D5CEBC] text-[#8C8275] flex items-center justify-center font-bold text-sm shadow-xs transition duration-200">
-                        <i data-lucide="check" class="w-5 h-5 hidden" id="step-icon-3"></i>
+                    <div id="step-circle-3" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white border-2 border-[#D5CEBC] text-[#8C8275] flex items-center justify-center font-bold text-xs sm:text-sm shadow-xs transition duration-200">
+                        <i data-lucide="check" class="w-4 h-4 sm:w-5 sm:h-5 hidden" id="step-icon-3"></i>
                         <span id="step-num-3">3</span>
                     </div>
-                    <span id="step-text-3" class="text-xs sm:text-sm font-heading font-medium text-[#7A7367] mt-2 text-center whitespace-nowrap">
+                    <span id="step-text-3" class="text-[11px] sm:text-sm font-heading font-medium text-[#7A7367] mt-1.5 sm:mt-2 text-center whitespace-nowrap">
                         {{ __('portal.public_stepper_step3') }}
                     </span>
                 </div>
@@ -246,7 +246,7 @@
         @else
 
             <!-- Form Card Wrapper -->
-            <form id="publicRegisterForm" action="{{ url('/public_register.php') }}" method="POST">
+            <form id="publicRegisterForm" action="{{ url('/public_register.php') }}" method="POST" novalidate>
                 @csrf
 
                 <!-- ============================================================== -->
@@ -267,110 +267,196 @@
 
                     <!-- Events List -->
                     <div class="space-y-4">
+                        @php
+                            $targetEventId = request('event_id');
+                            $hasEventIdMatch = $targetEventId ? $events->contains('id', (int)$targetEventId) : false;
+                        @endphp
                         @forelse ($events as $index => $ev)
                             @php 
                                 $quota = $ev->max_quota ?? 50;
-                                $confirmed = $ev->confirmed_count ?? 0;
-                                $available = max(0, $quota - $confirmed);
+                                // ใครมาก่อนได้สิทธิ์ก่อน: นับผู้สมัครทั้งหมดที่ไม่ถูกยกเลิก/ปฏิเสธ (หรือ fallback confirmed_count)
+                                $currentRegistered = isset($ev->active_registrations_count) 
+                                    ? $ev->active_registrations_count 
+                                    : ($ev->activeRegistrations ? $ev->activeRegistrations->count() : ($ev->confirmed_count ?? 0));
+                                $available = max(0, $quota - $currentRegistered);
                                 $isFull = ($available <= 0);
-                                $percent = $quota > 0 ? min(100, round(($confirmed / $quota) * 100)) : 0;
+                                $percent = $quota > 0 ? min(100, round(($currentRegistered / $quota) * 100)) : 0;
                                 $coverImg = $ev->cover_image ? $ev->cover_image : '/images/news/meditation_hall.jpg';
+                                $isSelected = $hasEventIdMatch ? ((int)$targetEventId === (int)$ev->id) : ($index === 0);
                             @endphp
                             <label class="event-card group relative block p-4 sm:p-5 border border-[#E8E3D7] rounded-2xl cursor-pointer hover:border-[#2C7338] hover:shadow-xs transition bg-[#FFFFFF]" data-event-id="{{ $ev->id }}">
-                                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                                    
-                                    <!-- Radio Selector Circle -->
-                                    <div class="shrink-0 flex items-center">
-                                        <input type="radio" name="event_id" value="{{ $ev->id }}" {{ $index === 0 ? 'checked' : '' }} required class="event-radio w-5 h-5 text-[#2C7338] focus:ring-[#2C7338] cursor-pointer" onchange="onEventRadioChange(this)">
-                                    </div>
-
-                                    <!-- Thumbnail Image -->
-                                    <div class="w-full sm:w-44 h-28 rounded-xl overflow-hidden bg-stone-100 shrink-0 border border-[#EAE5D9]">
-                                        <img src="{{ asset($coverImg) }}" alt="{{ $ev->localized_title }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                                    </div>
-
-                                    <!-- Event Main Information -->
-                                    <div class="flex-grow min-w-0 space-y-2">
-                                        <div class="flex items-center gap-2">
+                                
+                                <!-- ================= MOBILE VIEW (Hidden on sm and up) ================= -->
+                                <div class="block sm:hidden space-y-3">
+                                    <!-- Top Row: Radio, Status Badge & Seats remaining -->
+                                    <div class="flex items-center justify-between gap-2">
+                                        <div class="flex items-center gap-2.5 min-w-0">
+                                            <input type="radio" name="event_id" value="{{ $ev->id }}" {{ $isSelected && !$isFull ? 'checked' : '' }} {{ $isFull ? 'disabled' : 'required' }} class="event-radio w-5 h-5 text-[#2C7338] focus:ring-[#2C7338] cursor-pointer shrink-0 disabled:opacity-50 disabled:cursor-not-allowed" onchange="onEventRadioChange(this)">
                                             @if ($ev->status === 'OPEN' && !$isFull)
-                                                <span class="px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-[#2C7338] text-white">
+                                                <span class="px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-[#2C7338] text-white shrink-0">
                                                     {{ __('portal.public_status_open') }}
                                                 </span>
                                             @elseif ($isFull)
-                                                <span class="px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-[#A3432B] text-white">
+                                                <span class="px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-[#A3432B] text-white shrink-0">
                                                     {{ __('portal.public_status_full_waitlist') }}
                                                 </span>
                                             @else
-                                                <span class="px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-[#A3432B] text-white">
+                                                <span class="px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-[#A3432B] text-white shrink-0">
                                                     {{ __('portal.public_status_coming_soon') }}
                                                 </span>
                                             @endif
                                         </div>
+                                        <div class="text-[11px] font-medium text-[#2C7338] bg-[#E8F3EA] px-2.5 py-0.5 rounded-full shrink-0">
+                                            เหลือ {{ $available }} ที่นั่ง
+                                        </div>
+                                    </div>
 
-                                        <h3 class="font-heading font-bold text-base text-[#2D2A26] group-hover:text-[#2C7338] transition leading-snug event-title">
-                                            {{ $ev->localized_title }}
-                                        </h3>
-                                        <p class="text-xs text-[#7A7367] event-target">
+                                    <!-- Event Title (Full width, bold, prominent) -->
+                                    <h3 class="font-heading font-bold text-base text-[#2D2A26] leading-snug break-words">
+                                        {{ $ev->localized_title }}
+                                    </h3>
+
+                                    <!-- Image (Full width banner on mobile) -->
+                                    <div class="w-full h-36 rounded-xl overflow-hidden bg-stone-100 border border-[#EAE5D9]">
+                                        <img src="{{ asset($coverImg) }}" alt="{{ $ev->localized_title }}" class="w-full h-full object-cover">
+                                    </div>
+
+                                    <!-- Target audience -->
+                                    <p class="text-xs text-[#7A7367]">
+                                        {{ __('portal.public_target_audience') }}
+                                    </p>
+
+                                    <!-- Location & Date rows -->
+                                    <div class="space-y-1.5 text-xs text-[#6B6357]">
+                                        <div class="flex items-start gap-1.5">
+                                            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#C86D51] shrink-0 mt-0.5"></i>
+                                            <span class="break-words leading-tight">{{ $ev->localized_location }}</span>
+                                        </div>
+                                        <div class="flex items-start gap-1.5">
+                                            <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#7A7367] shrink-0 mt-0.5"></i>
+                                            @php
+                                                $isEn = app()->getLocale() === 'en';
+                                                $sDate = \Carbon\Carbon::parse($ev->start_date);
+                                                $eDate = \Carbon\Carbon::parse($ev->end_date);
+                                                $thMonths = ['', 'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+                                                $enMonths = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                                                $months = $isEn ? $enMonths : $thMonths;
+                                                $yearS = $isEn ? $sDate->year : ($sDate->year + 543);
+                                                $yearE = $isEn ? $eDate->year : ($eDate->year + 543);
+                                                $nights = $sDate->diffInDays($eDate);
+                                                $days = $nights + 1;
+                                                $dateStr = ($sDate->format('Y-m') === $eDate->format('Y-m'))
+                                                    ? ($sDate->day . ' - ' . $eDate->day . ' ' . $months[$sDate->month] . ' ' . $yearS)
+                                                    : ($sDate->day . ' ' . $months[$sDate->month] . ' ' . $yearS . ' - ' . $eDate->day . ' ' . $months[$eDate->month] . ' ' . $yearE);
+                                                
+                                                $deadlineDate = $sDate->copy()->subDays(3);
+                                                $deadlineYear = $isEn ? $deadlineDate->year : ($deadlineDate->year + 543);
+                                                $deadlineStr = $deadlineDate->day . ' ' . $months[$deadlineDate->month] . ' ' . $deadlineYear;
+                                            @endphp
+                                            <span class="break-words leading-tight">{{ $dateStr }} ({{ $nights }} {{ __('portal.public_nights') }} {{ $days }} {{ __('portal.public_days') }})</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Bottom Quota & Deadline Box -->
+                                    <div class="bg-[#FBF9F4] rounded-xl p-3 border border-[#EFECE5] text-xs space-y-2">
+                                        <div class="flex items-center justify-between gap-1.5 text-[#6B6357]">
+                                            <div class="flex items-center gap-1.5">
+                                                <i data-lucide="calendar-check" class="w-3.5 h-3.5 text-[#7A7367] shrink-0"></i>
+                                                <span>{{ __('portal.public_deadline_label') }}</span>
+                                            </div>
+                                            <strong class="text-[#2D2A26]">{{ $deadlineStr }}</strong>
+                                        </div>
+                                        <div class="space-y-1">
+                                            <div class="w-full bg-[#EAE5D9] rounded-full h-1.5 overflow-hidden">
+                                                <div class="bg-[#2C7338] h-1.5 rounded-full" style="width: {{ $percent }}%"></div>
+                                            </div>
+                                            <div class="flex justify-between text-[10px] text-[#7A7367]">
+                                                <span>ทั้งหมด {{ $quota }} ที่นั่ง</span>
+                                                <span class="font-mono">{{ $percent }}%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- ================= DESKTOP VIEW (sm and up) ================= -->
+                                <div class="hidden sm:flex flex-col lg:flex-row items-stretch lg:items-center gap-4">
+                                    <div class="flex items-center gap-3.5 shrink-0">
+                                        <div class="shrink-0 flex items-center">
+                                            <input type="radio" name="event_id" value="{{ $ev->id }}" {{ $isSelected && !$isFull ? 'checked' : '' }} {{ $isFull ? 'disabled' : 'required' }} class="event-radio w-5 h-5 text-[#2C7338] focus:ring-[#2C7338] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed" onchange="onEventRadioChange(this)">
+                                        </div>
+
+                                        <div class="w-40 h-28 rounded-xl overflow-hidden bg-stone-100 shrink-0 border border-[#EAE5D9]">
+                                            <img src="{{ asset($coverImg) }}" alt="{{ $ev->localized_title }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                                        </div>
+                                    </div>
+
+                                    <div class="flex-grow min-w-0 w-full space-y-2">
+                                        <div class="space-y-1.5">
+                                            <div>
+                                                @if ($ev->status === 'OPEN' && !$isFull)
+                                                    <span class="px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-[#2C7338] text-white inline-block">
+                                                        {{ __('portal.public_status_open') }}
+                                                    </span>
+                                                @elseif ($isFull)
+                                                    <span class="px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-[#A3432B] text-white inline-block">
+                                                        {{ __('portal.public_status_full_waitlist') }}
+                                                    </span>
+                                                @else
+                                                    <span class="px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-[#A3432B] text-white inline-block">
+                                                        {{ __('portal.public_status_coming_soon') }}
+                                                    </span>
+                                                @endif
+                                            </div>
+
+                                            <h3 class="font-heading font-bold text-base text-[#2D2A26] group-hover:text-[#2C7338] transition leading-snug event-title break-words">
+                                                {{ $ev->localized_title }}
+                                            </h3>
+                                        </div>
+
+                                        <p class="text-xs text-[#7A7367]">
                                             {{ __('portal.public_target_audience') }}
                                         </p>
 
                                         <div class="pt-1 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs text-[#6B6357]">
-                                            <div class="flex items-center gap-1.5 truncate">
+                                            <div class="flex items-center gap-1.5 min-w-0">
                                                 <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#C86D51] shrink-0"></i>
-                                                <span class="truncate event-location">{{ $ev->localized_location }}</span>
+                                                <span class="event-location break-words">{{ $ev->localized_location }}</span>
                                             </div>
                                             <div class="flex items-center gap-1.5 shrink-0">
                                                 <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#7A7367] shrink-0"></i>
-                                                @php
-                                                    $isEn = app()->getLocale() === 'en';
-                                                    $sDate = \Carbon\Carbon::parse($ev->start_date);
-                                                    $eDate = \Carbon\Carbon::parse($ev->end_date);
-                                                    $thMonths = ['', 'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
-                                                    $enMonths = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                                                    $months = $isEn ? $enMonths : $thMonths;
-                                                    $yearS = $isEn ? $sDate->year : ($sDate->year + 543);
-                                                    $yearE = $isEn ? $eDate->year : ($eDate->year + 543);
-                                                    $nights = $sDate->diffInDays($eDate);
-                                                    $days = $nights + 1;
-                                                    $dateStr = ($sDate->format('Y-m') === $eDate->format('Y-m'))
-                                                        ? ($sDate->day . ' - ' . $eDate->day . ' ' . $months[$sDate->month] . ' ' . $yearS)
-                                                        : ($sDate->day . ' ' . $months[$sDate->month] . ' ' . $yearS . ' - ' . $eDate->day . ' ' . $months[$eDate->month] . ' ' . $yearE);
-                                                    
-                                                    $deadlineDate = $sDate->copy()->subDays(3);
-                                                    $deadlineYear = $isEn ? $deadlineDate->year : ($deadlineDate->year + 543);
-                                                    $deadlineStr = $deadlineDate->day . ' ' . $months[$deadlineDate->month] . ' ' . $deadlineYear;
-                                                @endphp
-                                                <span class="event-dates">{{ $dateStr }} ({{ $nights }} {{ __('portal.public_nights') }} {{ $days }} {{ __('portal.public_days') }})</span>
+                                                <span class="event-dates break-words">{{ $dateStr }} ({{ $nights }} {{ __('portal.public_nights') }} {{ $days }} {{ __('portal.public_days') }})</span>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <!-- Right Meta Badge (Quota & Deadlines) -->
-                                    <div class="w-full sm:w-44 shrink-0 bg-[#FBF9F4] rounded-xl p-3 border border-[#EFECE5] text-xs space-y-2 mt-2 sm:mt-0">
-                                        <div class="flex items-center gap-1.5 text-[#6B6357]">
-                                            <i data-lucide="calendar-check" class="w-3.5 h-3.5 text-[#7A7367]"></i>
-                                            <span>{{ __('portal.public_deadline_label') }}</span>
+                                    <div class="w-full lg:w-48 shrink-0 bg-[#FBF9F4] rounded-xl p-3 border border-[#EFECE5] text-xs space-y-2 mt-2 lg:mt-0">
+                                        <div class="flex items-center justify-between sm:justify-start gap-1.5 text-[#6B6357]">
+                                            <div class="flex items-center gap-1.5">
+                                                <i data-lucide="calendar-check" class="w-3.5 h-3.5 text-[#7A7367] shrink-0"></i>
+                                                <span>{{ __('portal.public_deadline_label') }}</span>
+                                            </div>
                                             <strong class="text-[#2D2A26]">{{ $deadlineStr }}</strong>
                                         </div>
 
-                                        <div class="flex items-center gap-1.5 text-[#6B6357]">
-                                            <i data-lucide="users" class="w-3.5 h-3.5 text-[#2C7338]"></i>
-                                            <span>{{ __('portal.public_remaining_seats') }} <strong>{{ $available }}</strong> {{ __('portal.public_total_seats_suffix') }}</span>
-                                        </div>
-                                        <div class="text-[10px] text-[#8C8275]">
-                                            {{ __('portal.public_total_seats_prefix') }} {{ $quota }} {{ __('portal.public_total_seats_suffix') }}
+                                        <div class="flex items-center justify-between sm:justify-start gap-1.5 text-[#6B6357]">
+                                            <div class="flex items-center gap-1.5">
+                                                <i data-lucide="users" class="w-3.5 h-3.5 text-[#2C7338] shrink-0"></i>
+                                                <span>{{ __('portal.public_remaining_seats') }}</span>
+                                            </div>
+                                            <span><strong class="text-[#2C7338]">{{ $available }}</strong> / {{ $quota }} {{ __('portal.public_total_seats_suffix') }}</span>
                                         </div>
 
-                                        <!-- Progress Bar -->
-                                        <div class="w-full bg-[#EAE5D9] rounded-full h-1.5 overflow-hidden">
-                                            <div class="bg-[#2C7338] h-1.5 rounded-full" style="width: {{ $percent }}%"></div>
-                                        </div>
-                                        <div class="text-right text-[10px] text-[#7A7367] font-mono">
-                                            {{ $percent }}%
+                                        <div class="space-y-1">
+                                            <div class="w-full bg-[#EAE5D9] rounded-full h-1.5 overflow-hidden">
+                                                <div class="bg-[#2C7338] h-1.5 rounded-full" style="width: {{ $percent }}%"></div>
+                                            </div>
+                                            <div class="text-right text-[10px] text-[#7A7367] font-mono">
+                                                {{ $percent }}%
+                                            </div>
                                         </div>
                                     </div>
-
                                 </div>
+
                             </label>
                         @empty
                             <div class="text-center py-10 text-[#7B8D65] bg-[#FAF8F2] rounded-xl border border-dashed border-[#EAE5D9]">
@@ -404,32 +490,68 @@
                         <h2 class="text-lg sm:text-xl font-heading font-bold text-[#2D2A26]">{{ __('portal.public_selected_course_title') }}</h2>
                     </div>
 
-                    <!-- Selected Project Preview Box (Matches Screenshot 2) -->
-                    <div class="p-4 sm:p-5 border border-[#E8E3D7] rounded-2xl bg-white flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                        <div class="w-full sm:w-36 h-24 rounded-xl overflow-hidden bg-stone-100 shrink-0 border border-[#EAE5D9]">
-                            <img id="selected_ev_img" src="/images/news/meditation_hall.jpg" alt="Selected Event" class="w-full h-full object-cover">
-                        </div>
-                        <div class="flex-grow space-y-1.5">
-                            <span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-[#2C7338] text-white inline-block">
-                                {{ __('portal.public_status_open') }}
-                            </span>
-                            <h3 id="selected_ev_title" class="font-heading font-bold text-base text-[#2D2A26] leading-snug">
+                    <!-- Selected Project Preview Box (Responsive on mobile) -->
+                    <div class="p-4 sm:p-5 border border-[#E8E3D7] rounded-2xl bg-white space-y-3 sm:space-y-0 sm:flex sm:flex-col lg:sm:flex-row sm:items-center sm:gap-4">
+                        
+                        <!-- Mobile View (block sm:hidden): Full width layout -->
+                        <div class="block sm:hidden space-y-3">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-[#2C7338] text-white">
+                                    {{ __('portal.public_status_open') }}
+                                </span>
+                                <span class="text-xs text-[#7A7367]">
+                                    {{ __('portal.public_target_audience') }}
+                                </span>
+                            </div>
+
+                            <h3 id="selected_ev_title_mob" class="font-heading font-bold text-base text-[#2D2A26] leading-snug break-words">
                                 --
                             </h3>
-                            <p class="text-xs text-[#7A7367]">
-                                {{ __('portal.public_target_audience') }}
-                            </p>
-                        </div>
-                        <div class="w-full sm:w-56 shrink-0 bg-[#F4FBF5] rounded-xl p-3 border border-[#D7EED9] text-xs space-y-1.5">
-                            <div class="flex items-center gap-1.5 text-[#2C7338] font-semibold">
-                                <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
-                                <span id="selected_ev_dates">--</span>
+
+                            <div class="w-full h-36 rounded-xl overflow-hidden bg-stone-100 border border-[#EAE5D9]">
+                                <img id="selected_ev_img_mob" src="/images/news/meditation_hall.jpg" alt="Selected Event" class="w-full h-full object-cover">
                             </div>
-                            <div class="flex items-start gap-1.5 text-[#6B6357]">
-                                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#C86D51] shrink-0 mt-0.5"></i>
-                                <span id="selected_ev_loc" class="text-[11px] leading-tight">--</span>
+
+                            <div class="bg-[#F4FBF5] rounded-xl p-3 border border-[#D7EED9] text-xs space-y-1.5">
+                                <div class="flex items-center gap-1.5 text-[#2C7338] font-semibold">
+                                    <i data-lucide="calendar" class="w-3.5 h-3.5 shrink-0"></i>
+                                    <span id="selected_ev_dates_mob" class="break-words">--</span>
+                                </div>
+                                <div class="flex items-start gap-1.5 text-[#6B6357]">
+                                    <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#C86D51] shrink-0 mt-0.5"></i>
+                                    <span id="selected_ev_loc_mob" class="text-[11px] leading-tight break-words">--</span>
+                                </div>
                             </div>
                         </div>
+
+                        <!-- Desktop View (hidden sm:flex) -->
+                        <div class="hidden sm:flex items-center gap-4 w-full">
+                            <div class="w-36 h-24 rounded-xl overflow-hidden bg-stone-100 shrink-0 border border-[#EAE5D9]">
+                                <img id="selected_ev_img" src="/images/news/meditation_hall.jpg" alt="Selected Event" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex-grow min-w-0 space-y-1.5">
+                                <span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-[#2C7338] text-white inline-block">
+                                    {{ __('portal.public_status_open') }}
+                                </span>
+                                <h3 id="selected_ev_title" class="font-heading font-bold text-base text-[#2D2A26] leading-snug break-words">
+                                    --
+                                </h3>
+                                <p class="text-xs text-[#7A7367]">
+                                    {{ __('portal.public_target_audience') }}
+                                </p>
+                            </div>
+                            <div class="w-60 shrink-0 bg-[#F4FBF5] rounded-xl p-3 border border-[#D7EED9] text-xs space-y-1.5">
+                                <div class="flex items-center gap-1.5 text-[#2C7338] font-semibold">
+                                    <i data-lucide="calendar" class="w-3.5 h-3.5 shrink-0"></i>
+                                    <span id="selected_ev_dates" class="break-words">--</span>
+                                </div>
+                                <div class="flex items-start gap-1.5 text-[#6B6357]">
+                                    <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#C86D51] shrink-0 mt-0.5"></i>
+                                    <span id="selected_ev_loc" class="text-[11px] leading-tight break-words">--</span>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
                     <!-- 1. ข้อมูลผู้สมัครเข้าร่วมโครงการ (Personal Information) -->
@@ -604,12 +726,16 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                             <div>
                                 <label class="block text-[#6B6357] mb-1">{{ __('portal.public_room') }}</label>
-                                <select name="room_info" id="inp_room_info" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs">
-                                    <option value="แบบตัวเลือก - ขอที่พักเอง / พักรวมตามที่สถาบันจัดให้">{{ __('portal.public_room_option_any') }}</option>
-                                    <option value="พักรวมตามที่สถาบันจัดให้">{{ __('portal.public_room_option_shared') }}</option>
-                                    <option value="ขอพักเดี่ยว (กรณีมีข้อจำกัดด้านสุขภาพ)">{{ __('portal.public_room_option_single') }}</option>
-                                    <option value="เดินทางไป-กลับ ไม่ค้างคืน">{{ __('portal.public_room_option_commute') }}</option>
+                                <select name="room_info_select" id="inp_room_info_select" onchange="toggleCustomRoom(this.value)" class="w-full px-3 py-2 bg-white border border-[#D5CEBC] rounded-lg text-xs">
+                                    <option value="พักรวม">พักรวม</option>
+                                    <option value="พักที่อาคาร 92 ปี">พักที่อาคาร 92 ปี</option>
+                                    <option value="พักที่อาคารพระพรหมวัชรธีราจารย์">พักที่อาคารพระพรหมวัชรธีราจารย์</option>
+                                    <option value="OTHER">อื่น ๆ ระบุ</option>
                                 </select>
+                                <input type="hidden" name="room_info" id="inp_room_info" value="พักรวม">
+                                <div id="room_custom_wrapper" class="hidden mt-2">
+                                    <input type="text" id="inp_room_custom" placeholder="ระบุข้อมูลห้องพัก / อาคารที่ต้องการ..." oninput="updateRoomInfoHidden()" class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#D5CEBC] rounded-lg text-xs focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#5A6B47]">
+                                </div>
                             </div>
 
                             <div>
@@ -677,31 +803,68 @@
                             <span>{{ __('portal.public_summary_course_title') }}</span>
                         </div>
 
-                        <div class="p-4 sm:p-5 border border-[#E8E3D7] rounded-2xl bg-white flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                            <div class="w-full sm:w-36 h-24 rounded-xl overflow-hidden bg-stone-100 shrink-0 border border-[#EAE5D9]">
-                                <img id="review_ev_img" src="/images/news/meditation_hall.jpg" alt="Event Cover" class="w-full h-full object-cover">
-                            </div>
-                            <div class="flex-grow space-y-1.5">
-                                <span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-[#2C7338] text-white inline-block">
-                                    เปิดรับสมัคร
-                                </span>
-                                <h3 id="review_ev_title" class="font-heading font-bold text-base text-[#2D2A26] leading-snug">
+                        <!-- Review Project Preview Box (Responsive on mobile) -->
+                        <div class="p-4 sm:p-5 border border-[#E8E3D7] rounded-2xl bg-white space-y-3 sm:space-y-0 sm:flex sm:flex-col lg:sm:flex-row sm:items-center sm:gap-4">
+                            
+                            <!-- Mobile View (block sm:hidden) -->
+                            <div class="block sm:hidden space-y-3">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-[#2C7338] text-white">
+                                        เปิดรับสมัคร
+                                    </span>
+                                    <span class="text-xs text-[#7A7367]">
+                                        สำหรับนิสิต บุคลากร และประชาชนทั่วไป
+                                    </span>
+                                </div>
+
+                                <h3 id="review_ev_title_mob" class="font-heading font-bold text-base text-[#2D2A26] leading-snug break-words">
                                     --
                                 </h3>
-                                <p class="text-xs text-[#7A7367]">
-                                    สำหรับนิสิต บุคลากร และประชาชนทั่วไป
-                                </p>
-                            </div>
-                            <div class="w-full sm:w-56 shrink-0 bg-[#F4FBF5] rounded-xl p-3 border border-[#D7EED9] text-xs space-y-1.5">
-                                <div class="flex items-center gap-1.5 text-[#2C7338] font-semibold">
-                                    <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
-                                    <span id="review_ev_dates">--</span>
+
+                                <div class="w-full h-36 rounded-xl overflow-hidden bg-stone-100 border border-[#EAE5D9]">
+                                    <img id="review_ev_img_mob" src="/images/news/meditation_hall.jpg" alt="Event Cover" class="w-full h-full object-cover">
                                 </div>
-                                <div class="flex items-start gap-1.5 text-[#6B6357]">
-                                    <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#C86D51] shrink-0 mt-0.5"></i>
-                                    <span id="review_ev_loc" class="text-[11px] leading-tight">--</span>
+
+                                <div class="bg-[#F4FBF5] rounded-xl p-3 border border-[#D7EED9] text-xs space-y-1.5">
+                                    <div class="flex items-center gap-1.5 text-[#2C7338] font-semibold">
+                                        <i data-lucide="calendar" class="w-3.5 h-3.5 shrink-0"></i>
+                                        <span id="review_ev_dates_mob" class="break-words">--</span>
+                                    </div>
+                                    <div class="flex items-start gap-1.5 text-[#6B6357]">
+                                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#C86D51] shrink-0 mt-0.5"></i>
+                                        <span id="review_ev_loc_mob" class="text-[11px] leading-tight break-words">--</span>
+                                    </div>
                                 </div>
                             </div>
+
+                            <!-- Desktop View (hidden sm:flex) -->
+                            <div class="hidden sm:flex items-center gap-4 w-full">
+                                <div class="w-36 h-24 rounded-xl overflow-hidden bg-stone-100 shrink-0 border border-[#EAE5D9]">
+                                    <img id="review_ev_img" src="/images/news/meditation_hall.jpg" alt="Event Cover" class="w-full h-full object-cover">
+                                </div>
+                                <div class="flex-grow min-w-0 space-y-1.5">
+                                    <span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-[#2C7338] text-white inline-block">
+                                        เปิดรับสมัคร
+                                    </span>
+                                    <h3 id="review_ev_title" class="font-heading font-bold text-base text-[#2D2A26] leading-snug break-words">
+                                        --
+                                    </h3>
+                                    <p class="text-xs text-[#7A7367]">
+                                        สำหรับนิสิต บุคลากร และประชาชนทั่วไป
+                                    </p>
+                                </div>
+                                <div class="w-60 shrink-0 bg-[#F4FBF5] rounded-xl p-3 border border-[#D7EED9] text-xs space-y-1.5">
+                                    <div class="flex items-center gap-1.5 text-[#2C7338] font-semibold">
+                                        <i data-lucide="calendar" class="w-3.5 h-3.5 shrink-0"></i>
+                                        <span id="review_ev_dates" class="break-words">--</span>
+                                    </div>
+                                    <div class="flex items-start gap-1.5 text-[#6B6357]">
+                                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#C86D51] shrink-0 mt-0.5"></i>
+                                        <span id="review_ev_loc" class="text-[11px] leading-tight break-words">--</span>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
 
@@ -1010,23 +1173,39 @@
 
             // Step 2 Preview
             const sImg = document.getElementById('selected_ev_img');
+            const sImgMob = document.getElementById('selected_ev_img_mob');
             const sTitle = document.getElementById('selected_ev_title');
+            const sTitleMob = document.getElementById('selected_ev_title_mob');
             const sDates = document.getElementById('selected_ev_dates');
+            const sDatesMob = document.getElementById('selected_ev_dates_mob');
             const sLoc = document.getElementById('selected_ev_loc');
+            const sLocMob = document.getElementById('selected_ev_loc_mob');
             if (sImg) sImg.src = img;
+            if (sImgMob) sImgMob.src = img;
             if (sTitle) sTitle.textContent = title;
+            if (sTitleMob) sTitleMob.textContent = title;
             if (sDates) sDates.textContent = dates;
+            if (sDatesMob) sDatesMob.textContent = dates;
             if (sLoc) sLoc.textContent = loc;
+            if (sLocMob) sLocMob.textContent = loc;
 
             // Step 3 Review
             const rImg = document.getElementById('review_ev_img');
+            const rImgMob = document.getElementById('review_ev_img_mob');
             const rTitle = document.getElementById('review_ev_title');
+            const rTitleMob = document.getElementById('review_ev_title_mob');
             const rDates = document.getElementById('review_ev_dates');
+            const rDatesMob = document.getElementById('review_ev_dates_mob');
             const rLoc = document.getElementById('review_ev_loc');
+            const rLocMob = document.getElementById('review_ev_loc_mob');
             if (rImg) rImg.src = img;
+            if (rImgMob) rImgMob.src = img;
             if (rTitle) rTitle.textContent = title;
+            if (rTitleMob) rTitleMob.textContent = title;
             if (rDates) rDates.textContent = dates;
+            if (rDatesMob) rDatesMob.textContent = dates;
             if (rLoc) rLoc.textContent = loc;
+            if (rLocMob) rLocMob.textContent = loc;
         }
 
         function validateStep2() {
@@ -1124,6 +1303,31 @@
             const selected = document.querySelector('input[name="event_id"]:checked');
             if (selected) {
                 syncSelectedEventCard(selected);
+            }
+        }
+
+        function toggleCustomRoom(val) {
+            const customWrapper = document.getElementById('room_custom_wrapper');
+            const customInput = document.getElementById('inp_room_custom');
+            const hiddenInput = document.getElementById('inp_room_info');
+            if (val === 'OTHER') {
+                customWrapper.classList.remove('hidden');
+                customInput.focus();
+                hiddenInput.value = customInput.value.trim() ? ('อื่น ๆ: ' + customInput.value.trim()) : 'อื่น ๆ';
+            } else {
+                customWrapper.classList.add('hidden');
+                hiddenInput.value = val;
+            }
+        }
+
+        function updateRoomInfoHidden() {
+            const selectVal = document.getElementById('inp_room_info_select').value;
+            const customInput = document.getElementById('inp_room_custom');
+            const hiddenInput = document.getElementById('inp_room_info');
+            if (selectVal === 'OTHER') {
+                hiddenInput.value = customInput.value.trim() ? ('อื่น ๆ: ' + customInput.value.trim()) : 'อื่น ๆ';
+            } else {
+                hiddenInput.value = selectVal;
             }
         }
 
@@ -1258,6 +1462,59 @@
             if (subOption && subOption.dataset.postalCode) {
                 postalInput.value = subOption.dataset.postalCode;
             }
+        }
+
+        // Form Submit Handler
+        const registerForm = document.getElementById('publicRegisterForm');
+        if (registerForm) {
+            registerForm.addEventListener('submit', function(e) {
+                // Verify event selected
+                const selectedEv = document.querySelector('input[name="event_id"]:checked');
+                if (!selectedEv) {
+                    e.preventDefault();
+                    alert(@json(__('portal.public_alert_select_event')));
+                    goToStep(1);
+                    return false;
+                }
+
+                // Verify Step 2 fields
+                if (!validateStep2()) {
+                    e.preventDefault();
+                    goToStep(2);
+                    return false;
+                }
+
+                // Verify Step 3 checkboxes
+                const chkRules = document.getElementById('chk_agree_rules');
+                const chkCert = document.getElementById('chk_certify_info');
+                if (chkRules && !chkRules.checked) {
+                    e.preventDefault();
+                    alert('กรุณากดยอมรับกฎระเบียบและข้อปฏิบัติตนในการเข้าร่วมโครงการ');
+                    chkRules.focus();
+                    return false;
+                }
+                if (chkCert && !chkCert.checked) {
+                    e.preventDefault();
+                    alert('กรุณากดยืนยันรับรองว่าข้อมูลทั้งหมดเป็นความจริง');
+                    chkCert.focus();
+                    return false;
+                }
+
+                // Prevent multiple clicks & show loading indicator
+                const submitBtn = document.getElementById('btn_final_submit');
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+                    submitBtn.innerHTML = `
+                        <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                        </svg>
+                        กำลังส่งข้อมูล...
+                    `;
+                }
+                return true;
+            });
         }
     </script>
     <script>

@@ -20,6 +20,12 @@ class PublicEvent extends Model
         return $this->hasMany(PublicRegistration::class, 'event_id');
     }
 
+    public function activeRegistrations()
+    {
+        return $this->hasMany(PublicRegistration::class, 'event_id')
+            ->whereNotIn('status', ['REJECTED', 'CANCELLED']);
+    }
+
     public function getLocalizedTitleAttribute()
     {
         if (app()->getLocale() === 'en' && !empty($this->title_en)) {
@@ -34,6 +40,14 @@ class PublicEvent extends Model
             return $this->location_name_en;
         }
         return $this->location_name;
+    }
+
+    public function getLocalizedDescriptionAttribute()
+    {
+        if (app()->getLocale() === 'en' && !empty($this->description_en)) {
+            return $this->description_en;
+        }
+        return $this->description;
     }
 
     public function getCoverImageAttribute($value)

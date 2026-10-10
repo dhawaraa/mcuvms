@@ -34,7 +34,10 @@ class HomeController extends Controller
             ->where('status', 'OPEN');
 
         // 2. ดึงกำหนดการภาคประชาชน ที่เปิดรับสมัคร (PublicEvent)
-        $publicEventQuery = PublicEvent::with(['organizationUnit', 'registrations'])
+        $publicEventQuery = PublicEvent::with(['organizationUnit'])
+            ->withCount(['registrations as active_registrations_count' => function ($q) {
+                $q->whereNotIn('status', ['REJECTED', 'CANCELLED']);
+            }])
             ->where('status', 'OPEN');
 
         if ($request->filled('filter_org')) {
@@ -222,10 +225,10 @@ class HomeController extends Controller
         $totalDonationsCount = Donation::where('status', 'VERIFIED')->count();
         $totalDonationsAmount = Donation::where('status', 'VERIFIED')->sum('amount');
         
-        // รายนามผู้ร่วมบุญล่าสุด (แสดงเฉพาะที่ยืนยันแล้ว หรืออนุโมทนาบัตร)
+        // รายนามผู้ร่วมบุญล่าสุด (แสดงเฉพาะที่ยืนยันแล้ว ไม่เกิน 6 รายการ)
         $recentDonations = Donation::where('status', 'VERIFIED')
             ->orderBy('id', 'desc')
-            ->limit(10)
+            ->limit(6)
             ->get();
 
         return view('portal.donation', compact('settings', 'contactSettings', 'totalDonationsCount', 'totalDonationsAmount', 'recentDonations'));
@@ -233,33 +236,56 @@ class HomeController extends Controller
 
     public function donationSubmit(Request $request)
     {
+        // แปลงรูปแบบวันที่ วว/ดด/ปปปป (พ.ศ.) หรือ YYYY-MM-DD ให้เป็น Y-m-d ค.ศ. ก่อน validate
+        $rawDate = trim($request->input('transfer_date', ''));
+        $parsedDate = null;
+        if (preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/', $rawDate, $m)) {
+            $day = str_pad($m[1], 2, '0', STR_PAD_LEFT);
+            $month = str_pad($m[2], 2, '0', STR_PAD_LEFT);
+            $year = (int)$m[3];
+            if ($year > 2400) {
+                $year -= 543; // แปลง พ.ศ. เป็น ค.ศ.
+            }
+            $parsedDate = sprintf('%04d-%s-%s', $year, $month, $day);
+            $request->merge(['transfer_date' => $parsedDate]);
+        }
+
+        // ตั้งค่าเริ่มต้นวันที่ เวลา และบัญชีธนาคาร หากไม่ได้ระบุมาในฟอร์ม
+        if (empty($parsedDate)) {
+            $parsedDate = date('Y-m-d');
+            $request->merge(['transfer_date' => $parsedDate]);
+        }
+        if (!$request->filled('transfer_time')) {
+            $request->merge(['transfer_time' => date('H:i')]);
+        }
+        if (!$request->filled('bank_account')) {
+            $request->merge(['bank_account' => 'ธนาคารทหารไทยธนชาต (ttb) (231-2-93605-3)']);
+        }
+
         $validated = $request->validate([
             'donor_name' => 'required|string|max:255',
             'tax_id' => 'nullable|string|max:20',
             'is_tax_deductible' => 'nullable|boolean',
             'amount' => 'required|numeric|min:1|max:10000000',
-            'bank_account' => 'required|string|max:150',
-            'transfer_date' => 'required|date',
-            'transfer_time' => 'required|string|max:10',
+            'bank_account' => 'nullable|string|max:150',
+            'transfer_date' => 'nullable|date',
+            'transfer_time' => 'nullable|string|max:10',
             'phone' => 'nullable|string|max:50',
             'email' => 'nullable|email|max:150',
             'address' => 'nullable|string|max:1000',
             'purpose' => 'nullable|string|max:255',
             'note' => 'nullable|string|max:2000',
-            'slip' => 'required|file|mimes:jpg,jpeg,png,pdf|max:10240', // สูงสุด 10MB
+            'slip' => 'required|file|mimes:jpg,jpeg,png,webp|max:10240', // สลิปต้องเป็นรูปภาพเท่านั้น สูงสุด 10MB
             'avatar' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:10240', // ภาพประจำตัวผู้บริจาค สูงสุด 10MB
         ], [
-            'donor_name.required' => 'กรุณาระบุชื่อ-นามสกุล ผู้บริจาค',
-            'amount.required' => 'กรุณาระบุจำนวนเงินที่บริจาค',
+            'donor_name.required' => 'กรุณาระบุชื่อ-นามสกุล',
+            'amount.required' => 'กรุณาระบุจำนวนบริจาค',
             'amount.min' => 'จำนวนเงินบริจาคต้องไม่น้อยกว่า 1 บาท',
-            'bank_account.required' => 'กรุณาเลือกบัญชีธนาคารที่โอนเงินเข้า',
-            'transfer_date.required' => 'กรุณาระบุวันที่โอนเงิน',
-            'transfer_time.required' => 'กรุณาระบุเวลาที่โอนเงิน',
-            'slip.required' => 'กรุณาแนบไฟล์สลิปหลักฐานการโอนเงิน',
-            'slip.mimes' => 'ไฟล์สลิปต้องเป็นรูปภาพ (JPG, PNG) หรือไฟล์ PDF เท่านั้น',
+            'slip.required' => 'กรุณาแนบไฟล์สลิปการโอนเงิน',
+            'slip.mimes' => 'ไฟล์สลิปหลักฐานต้องเป็นไฟล์รูปภาพ (JPG, PNG หรือ WEBP) เท่านั้น',
             'slip.max' => 'ขนาดไฟล์สลิปต้องไม่เกิน 10MB',
-            'avatar.mimes' => 'ภาพประจำตัวผู้บริจาคต้องเป็นไฟล์รูปภาพ (JPG, PNG, WEBP) เท่านั้น',
-            'avatar.max' => 'ขนาดไฟล์ภาพประจำตัวต้องไม่เกิน 10MB',
+            'avatar.mimes' => 'ไฟล์รูปภาพต้องเป็นไฟล์รูปภาพ (JPG, PNG หรือ WEBP) เท่านั้น',
+            'avatar.max' => 'ขนาดไฟล์รูปภาพต้องไม่เกิน 10MB',
         ]);
 
         // อัปโหลดไฟล์สลิป
@@ -269,6 +295,18 @@ class HomeController extends Controller
             $extension = $slipFile->getClientOriginalExtension();
             $filename = 'slip_' . date('Ymd_His') . '_' . uniqid() . '.' . $extension;
             $slipPath = $slipFile->storeAs('donations', $filename, 'public');
+
+            // ซิงค์ไฟล์ไปยัง public/storage/donations ทันที (รองรับ shared hosting)
+            try {
+                $targetDir = public_path('storage/donations');
+                if (!is_dir($targetDir)) {
+                    @mkdir($targetDir, 0775, true);
+                }
+                $storedFile = storage_path('app/public/' . $slipPath);
+                if (file_exists($storedFile) && !file_exists($targetDir . '/' . $filename)) {
+                    @copy($storedFile, $targetDir . '/' . $filename);
+                }
+            } catch (\Exception $e) {}
         }
 
         // อัปโหลดภาพประจำตัวผู้บริจาค (สำหรับทำโปสเตอร์อนุโมทนาบุญ)
@@ -278,6 +316,18 @@ class HomeController extends Controller
             $extension = $avatarFile->getClientOriginalExtension();
             $filename = 'donor_avatar_' . date('Ymd_His') . '_' . uniqid() . '.' . $extension;
             $avatarPath = $avatarFile->storeAs('donations/avatars', $filename, 'public');
+
+            // ซิงค์ไฟล์ไปยัง public/storage/donations/avatars ทันที (รองรับ shared hosting)
+            try {
+                $targetDir = public_path('storage/donations/avatars');
+                if (!is_dir($targetDir)) {
+                    @mkdir($targetDir, 0775, true);
+                }
+                $storedFile = storage_path('app/public/' . $avatarPath);
+                if (file_exists($storedFile) && !file_exists($targetDir . '/' . $filename)) {
+                    @copy($storedFile, $targetDir . '/' . $filename);
+                }
+            } catch (\Exception $e) {}
         }
 
         // สร้างรหัสการบริจาค เช่น DON-20261001-XXXX
@@ -303,9 +353,16 @@ class HomeController extends Controller
         ]);
 
         return back()->with('success', 'บันทึกข้อมูลการแจ้งบริจาคเรียบร้อยแล้ว เจ้าหน้าที่จะตรวจสอบยอดเงินและออกใบอนุโมทนาบัตรให้ต่อไป')
+                     ->with('donation_success_complete', true)
                      ->with('donation_no', $donationNo)
                      ->with('donor_name', $validated['donor_name'])
-                     ->with('amount', number_format($validated['amount'], 2));
+                     ->with('amount', number_format($validated['amount'], 2))
+                     ->with('transfer_date', $donation->transfer_date ? $donation->transfer_date->format('d/m/Y') : $validated['transfer_date'])
+                     ->with('transfer_time', $validated['transfer_time'])
+                     ->with('bank_account', $validated['bank_account'])
+                     ->with('purpose', $donation->purpose)
+                     ->with('is_tax_deductible', $donation->is_tax_deductible)
+                     ->with('tax_id', $donation->tax_id);
     }
 }
 

@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\GradStudent;
 use App\Models\GradCreditEntry;
+use App\Models\Student;
+use App\Models\UgRegistration;
+use App\Models\PublicRegistration;
 use Illuminate\Http\Request;
 
 use App\Models\OrganizationUnit;
@@ -14,25 +17,58 @@ class GraduateController extends Controller
 {
     public function index(Request $request)
     {
-        $searchCode = trim($request->get('student_code', ''));
-        $student = null;
-        $credits = [];
+        $code = trim($request->get('student_code') ?? $request->get('search') ?? '');
 
-        if (!empty($searchCode)) {
-            $student = GradStudent::with('organizationUnit')
-                ->where('student_code', $searchCode)
-                ->orWhere('student_id', $searchCode)
-                ->first();
+        // 1. ถ้านิสิตล็อกอินอยู่แล้ว และไม่ได้ระบุรหัสค้นหา ให้ redirect ไปที่ student.dashboard
+        if (empty($code) && session()->has('student_user')) {
+            return redirect()->route('student.dashboard');
+        }
 
+        // 2. ถ้ามีการระบุรหัสนิสิต ให้ค้นหาและแสดงผลผ่านหน้า student_dashboard
+        if (!empty($code)) {
+            $student = Student::with('organizationUnit')->where('student_code', $code)->first();
+            
             if ($student) {
-                $credits = GradCreditEntry::where('student_id', $student->id)
-                    ->orWhere('student_id', $student->student_id)
-                    ->orderBy('start_date', 'desc')
+                // ดึงข้อมูล ป.ตรี
+                $ugRegistrations = UgRegistration::with('batch.organizationUnit')
+                    ->where('student_code', $student->student_code)
+                    ->orderByDesc('id')
                     ->get();
+                $ugCompletedDays = $ugRegistrations->where('status', 'COMPLETED')->count() * 10;
+
+                // ดึงข้อมูล บัณฑิตศึกษา
+                $gradRecord = GradStudent::with(['creditEntries', 'organizationUnit'])
+                    ->where('student_code', $student->student_code)
+                    ->first();
+
+                // ดึงข้อมูล คอร์สปฏิบัติธรรมทั่วไป
+                $publicRegistrations = PublicRegistration::with('event.organizationUnit')
+                    ->where('student_id', $student->student_code)
+                    ->orderByDesc('id')
+                    ->get();
+
+                $searchCode = $code;
+                return view('portal.student_dashboard', compact(
+                    'student',
+                    'ugRegistrations',
+                    'ugCompletedDays',
+                    'gradRecord',
+                    'publicRegistrations',
+                    'searchCode'
+                ));
+            } else {
+                // ไม่พบรหัสนิสิตที่ระบุ
+                session()->flash('search_not_found', "ไม่พบข้อมูลนิสิตรหัส {$code}");
+                // หากล็อกอินอยู่ ให้เด้งกลับแดชบอร์ดพร้อมแฟลชข้อความ
+                if (session()->has('student_user')) {
+                    return redirect()->route('student.dashboard')->with('search_not_found', "ไม่พบข้อมูลนิสิตรหัส {$code}");
+                }
             }
         }
 
-        return view('portal.grad_progress', compact('student', 'credits', 'searchCode'));
+        // 3. ถ้าไม่ได้ล็อกอินและไม่ได้ระบุรหัสนิสิต (หรือระบุรหัสแล้วแต่ไม่พบ)
+        // นำทางไปหน้าเข้าสู่ระบบนิสิตเพื่อความปลอดภัยและเข้าถึงแดชบอร์ด
+        return redirect()->route('student.login')->with('warning', 'กรุณาเข้าสู่ระบบด้วยรหัสนิสิต เพื่อตรวจสอบจำนวนวันกรรมฐานและประวัติการปฏิบัติธรรม');
     }
 
     public function requestForm()

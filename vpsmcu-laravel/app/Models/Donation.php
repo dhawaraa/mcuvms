@@ -16,8 +16,35 @@ class Donation extends Model
         'verified_at' => 'datetime',
     ];
 
+    protected $appends = [
+        'slip_url',
+        'avatar_url',
+    ];
+
     public function verifier()
     {
         return $this->belongsTo(User::class, 'verified_by');
+    }
+
+    /**
+     * ดึง URL สลิปหลักฐาน รองรับทั้งโฮสติ้งจริง (ผ่าน /storage.php) และ Local
+     */
+    public function getSlipUrlAttribute(): ?string
+    {
+        if (empty($this->slip_path)) {
+            return null;
+        }
+        return url('/storage.php/' . ltrim($this->slip_path, '/'));
+    }
+
+    /**
+     * ดึง URL ภาพประจำตัวผู้บริจาค
+     */
+    public function getAvatarUrlAttribute(): ?string
+    {
+        if (empty($this->avatar_path)) {
+            return null;
+        }
+        return url('/storage.php/' . ltrim($this->avatar_path, '/'));
     }
 }

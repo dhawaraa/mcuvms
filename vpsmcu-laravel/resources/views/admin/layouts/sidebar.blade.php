@@ -196,7 +196,7 @@
             <!-- 4. เมนูแม่: คอร์สปฏิบัติธรรม ย่อ/ขยาย Dropdown เมนูย่อย 3 เมนู -->
             <div class="rounded-xl overflow-hidden transition-all duration-200 {{ $isPublicActive ? 'bg-[#182319] border border-[#2F4430] shadow-inner' : 'hover:bg-[#1E2B1F]' }}">
                 <button type="button" 
-                    title="คอร์สปฏิบัติธรรม (โมดูล 3)"
+                    title="คอร์สปฏิบัติธรรม"
                     onclick="toggleSubmenu('submenu-public', 'chevron-public')" 
                     class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition gap-3 {{ $isPublicActive ? 'text-white font-semibold bg-[#223324]' : 'text-[#B8B1A2] hover:text-white' }}">
                     <span class="flex items-center gap-3">
@@ -209,29 +209,51 @@
                     <i id="chevron-public" data-lucide="chevron-down" class="sidebar-text w-4 h-4 text-[#8C9B80] transition-transform duration-200 {{ $isPublicActive ? 'rotate-180 text-[#C5D7AF]' : '' }}"></i>
                 </button>
 
-                <!-- รายการเมนูย่อยของ โมดูล 3 -->
+                <!-- รายการเมนูย่อยของ คอร์สปฏิบัติธรรม -->
                 <div id="submenu-public" class="space-y-1 px-2.5 pb-2.5 pt-2 bg-[#141E15]/90 border-t border-[#263727] {{ $isPublicActive ? '' : 'hidden' }}">
                     
-                    <!-- ย่อย 1: จัดการคอร์ส/โครงการ -->
-                    <a href="{{ route('admin.public.events') }}" title="จัดการคอร์ส/โครงการ" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 relative {{ $currentRoute === 'admin.public.events' ? 'bg-[#5A6B47] text-white font-semibold shadow-sm ring-1 ring-[#7B8D65]/40 pl-3.5' : 'text-[#D0C9BA] hover:text-white hover:bg-[#253726] border-l-2 border-transparent hover:border-[#7B8D65]' }}">
+                    <!-- ย่อย 1: จัดการคอร์สปฏิบัติธรรม -->
+                    <a href="{{ route('admin.public.events') }}" title="จัดการคอร์สปฏิบัติธรรม" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 relative {{ $currentRoute === 'admin.public.events' ? 'bg-[#5A6B47] text-white font-semibold shadow-sm ring-1 ring-[#7B8D65]/40 pl-3.5' : 'text-[#D0C9BA] hover:text-white hover:bg-[#253726] border-l-2 border-transparent hover:border-[#7B8D65]' }}">
                         <i data-lucide="calendar" class="w-4 h-4 shrink-0 {{ $currentRoute === 'admin.public.events' ? 'text-white' : 'text-[#A3B88C]' }}"></i>
-                        <span class="sidebar-text whitespace-nowrap">จัดการคอร์ส/โครงการ</span>
+                        <span class="sidebar-text whitespace-nowrap">จัดการคอร์สปฏิบัติธรรม</span>
                     </a>
 
-                    <!-- ย่อย 2: ทะเบียนรายชื่อผู้สมัคร -->
-                    <a href="{{ route('admin.public.students') }}" title="ทะเบียนรายชื่อผู้สมัคร" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 relative {{ $currentRoute === 'admin.public.students' ? 'bg-[#5A6B47] text-white font-semibold shadow-sm ring-1 ring-[#7B8D65]/40 pl-3.5' : 'text-[#D0C9BA] hover:text-white hover:bg-[#253726] border-l-2 border-transparent hover:border-[#7B8D65]' }}">
+                    <!-- ย่อย 2: ทะเบียนผู้สมัครคอร์ส -->
+                    <a href="{{ route('admin.public.students') }}" title="ทะเบียนผู้สมัครคอร์ส" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 relative {{ $currentRoute === 'admin.public.students' ? 'bg-[#5A6B47] text-white font-semibold shadow-sm ring-1 ring-[#7B8D65]/40 pl-3.5' : 'text-[#D0C9BA] hover:text-white hover:bg-[#253726] border-l-2 border-transparent hover:border-[#7B8D65]' }}">
                         <i data-lucide="users" class="w-4 h-4 shrink-0 {{ $currentRoute === 'admin.public.students' ? 'text-white' : 'text-[#A3B88C]' }}"></i>
-                        <span class="sidebar-text whitespace-nowrap">ทะเบียนรายชื่อผู้สมัคร</span>
+                        <span class="sidebar-text whitespace-nowrap">ทะเบียนผู้สมัครคอร์ส</span>
                     </a>
 
-                    <!-- ย่อย 3: รายงานสถิติวิปัสสนา -->
-                    <a href="{{ route('admin.public.sar') }}" title="รายงานสถิติวิปัสสนา" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 relative {{ $currentRoute === 'admin.public.sar' ? 'bg-[#5A6B47] text-white font-semibold shadow-sm ring-1 ring-[#7B8D65]/40 pl-3.5' : 'text-[#D0C9BA] hover:text-white hover:bg-[#253726] border-l-2 border-transparent hover:border-[#7B8D65]' }}">
+                    <!-- ย่อย 3: รายงานสถิติคอร์ส -->
+                    <a href="{{ route('admin.public.sar') }}" title="รายงานสถิติคอร์ส" class="flex items-center px-3 py-2 rounded-lg text-[13px] transition gap-2.5 relative {{ $currentRoute === 'admin.public.sar' ? 'bg-[#5A6B47] text-white font-semibold shadow-sm ring-1 ring-[#7B8D65]/40 pl-3.5' : 'text-[#D0C9BA] hover:text-white hover:bg-[#253726] border-l-2 border-transparent hover:border-[#7B8D65]' }}">
                         <i data-lucide="bar-chart-2" class="w-4 h-4 shrink-0 {{ $currentRoute === 'admin.public.sar' ? 'text-white' : 'text-[#A3B88C]' }}"></i>
-                        <span class="sidebar-text whitespace-nowrap">รายงานสถิติวิปัสสนา</span>
+                        <span class="sidebar-text whitespace-nowrap">รายงานสถิติคอร์ส</span>
                     </a>
 
                 </div>
             </div>
+
+            <!-- 4.1 ฐานข้อมูลนิสิต (Student Master Data) -->
+            @if ($currentRoute === 'admin.students.index' || str_contains($currentUrl, 'students'))
+                <a href="{{ route('admin.students.index') }}" title="ฐานข้อมูลนิสิต (Student Master)" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-[#5A6B47] to-[#465337] text-white shadow-md shadow-[#1B271C]/30 border border-[#7B8D65]/30">
+                    <span class="flex items-center gap-3">
+                        <i data-lucide="user-check" class="w-4.5 h-4.5 text-[#EAE5D9] shrink-0"></i>
+                        <div class="sidebar-text whitespace-nowrap">
+                            <div class="leading-tight font-semibold text-sm">ฐานข้อมูลนิสิต</div>
+                            <div class="text-[11px] text-[#D5CEBC]/80 font-mono">Student Master</div>
+                        </div>
+                    </span>
+                    <span class="sidebar-text w-2 h-2 rounded-full bg-[#A3B88C] animate-pulse shrink-0"></span>
+                </a>
+            @else
+                <a href="{{ route('admin.students.index') }}" title="ฐานข้อมูลนิสิต (Student Master)" class="flex items-center px-3.5 py-2.5 rounded-xl text-[#B8B1A2] hover:text-white hover:bg-[#2C3E2D] transition gap-3">
+                    <i data-lucide="user-check" class="w-4.5 h-4.5 text-[#A3B88C] shrink-0"></i>
+                    <div class="sidebar-text whitespace-nowrap">
+                        <div class="leading-tight text-sm">ฐานข้อมูลนิสิต</div>
+                        <div class="text-[11px] text-[#8C9B80] font-mono">Student Master</div>
+                    </div>
+                </a>
+            @endif
 
             <!-- 5. ข่าวสารประชาสัมพันธ์ -->
             @if ($currentRoute === 'admin.news.index')

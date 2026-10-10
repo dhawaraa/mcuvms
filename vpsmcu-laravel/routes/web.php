@@ -6,9 +6,29 @@ use App\Http\Controllers\UndergraduateController;
 use App\Http\Controllers\GraduateController;
 use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\StudentPortalController;
 
 // Public Portal Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Student Portal Routes (หน้าบ้าน: สำหรับนิสิต มจร เข้าดูประวัติ แก้ไขข้อมูล และเปลี่ยนรหัสผ่าน)
+Route::prefix('student')->name('student.')->group(function () {
+    Route::get('/login', [StudentPortalController::class, 'showLogin'])->name('login');
+    Route::get('/login.php', [StudentPortalController::class, 'showLogin']);
+    Route::post('/login', [StudentPortalController::class, 'login'])->name('login.post');
+    Route::post('/login.php', [StudentPortalController::class, 'login']);
+    Route::get('/logout', [StudentPortalController::class, 'logout'])->name('logout');
+    Route::get('/logout.php', [StudentPortalController::class, 'logout']);
+
+    Route::get('/dashboard', [StudentPortalController::class, 'dashboard'])->name('dashboard');
+    Route::get('/dashboard.php', [StudentPortalController::class, 'dashboard']);
+    Route::get('/profile', [StudentPortalController::class, 'profile'])->name('profile');
+    Route::get('/profile.php', [StudentPortalController::class, 'profile']);
+    Route::post('/profile/update', [StudentPortalController::class, 'updateProfile'])->name('profile.update');
+    Route::post('/profile/update.php', [StudentPortalController::class, 'updateProfile']);
+    Route::post('/password/update', [StudentPortalController::class, 'updatePassword'])->name('password.update');
+    Route::post('/password/update.php', [StudentPortalController::class, 'updatePassword']);
+});
 
 // Module 1: Undergraduate
 Route::get('/ug_register.php', [UndergraduateController::class, 'create'])->name('ug.register');
@@ -116,6 +136,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/ug/complete/{id}', [AdminController::class, 'ugComplete'])->name('ug.complete');
     Route::post('/ug/students/bulk-action', [AdminController::class, 'ugStudentsBulkAction'])->name('ug.students.bulk');
 
+    // Central Student Database (ฐานข้อมูลนิสิตส่วนกลาง มจร)
+    Route::match(['get', 'post'], '/students.php', [AdminController::class, 'studentsIndex'])->name('students.index');
+    Route::get('/students', [AdminController::class, 'studentsIndex']);
+    Route::post('/students/update/{id}', [AdminController::class, 'studentUpdate'])->name('students.update');
+    Route::post('/students/reset-password/{id}', [AdminController::class, 'studentResetPassword'])->name('students.resetPassword');
+    Route::get('/students/toggle-status/{id}', [AdminController::class, 'studentToggleStatus'])->name('students.toggleStatus');
+
     // Module 1: QR Scanner, Print Sheet & Export
     Route::get('/ug_scanner.php', [AdminController::class, 'ugScanner'])->name('ug.scanner');
     Route::get('/ug/scanner', [AdminController::class, 'ugScanner']);
@@ -153,8 +180,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::match(['get', 'post'], '/public_students.php', [AdminController::class, 'publicStudents'])->name('public.students');
     Route::get('/public/students', [AdminController::class, 'publicStudents']);
+    Route::get('/public/student/status/{id}/{status}', [AdminController::class, 'publicStudentStatus'])->name('public.student.status');
     Route::get('/public/student/approve/{id}', [AdminController::class, 'publicStudentApprove'])->name('public.student.approve');
     Route::post('/public/student/reject/{id}', [AdminController::class, 'publicStudentReject'])->name('public.student.reject');
+    Route::get('/public_export.php', [AdminController::class, 'publicExport'])->name('public.export.legacy');
     Route::get('/public/export', [AdminController::class, 'publicExport'])->name('public.export');
 
     Route::match(['get', 'post'], '/public_sar.php', [AdminController::class, 'publicSar'])->name('public.sar');
@@ -200,12 +229,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/contact-inquiries/delete/{id}', [AdminController::class, 'contactInquiryDelete'])->name('contact.inquiries.delete');
 
     // 3. Donation Management & Analytics: จัดการการบริจาคและสถิติ
-    Route::get('/donations.php', [AdminController::class, 'donationsIndex'])->name('donations.index');
-    Route::get('/donations', [AdminController::class, 'donationsIndex']);
+    Route::match(['get', 'post'], '/donations.php', [AdminController::class, 'donationsIndex'])->name('donations.index');
+    Route::match(['get', 'post'], '/donations', [AdminController::class, 'donationsIndex']);
     Route::post('/donations/status/{id}', [AdminController::class, 'donationStatus'])->name('donations.status');
     Route::post('/donations/update/{id}', [AdminController::class, 'donationUpdate'])->name('donations.update');
     Route::get('/donations/delete/{id}', [AdminController::class, 'donationDelete'])->name('donations.delete');
     Route::post('/donations/settings', [AdminController::class, 'donationSettingsUpdate'])->name('donations.settings');
     Route::get('/donations/export', [AdminController::class, 'donationExport'])->name('donations.export');
+    Route::get('/donations_export.php', [AdminController::class, 'donationExport'])->name('donations.export.legacy');
 });
 

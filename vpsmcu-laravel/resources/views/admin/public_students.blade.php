@@ -69,16 +69,11 @@
         <!-- Header -->
         <div class="flex flex-col sm:flex-row justify-between sm:items-center pb-6 mb-8 border-b border-[#D5CEBC] gap-4">
             <div>
-                <div class="flex items-center gap-2 mb-1">
-                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold tracking-wider uppercase bg-[#5A6B47]/15 text-[#5A6B47] border border-[#5A6B47]/30">
-                        <i data-lucide="users" class="w-3 h-3 inline mr-1"></i> โมดูลที่ 3: ทะเบียนผู้สมัครอบรม (Public Registrations Master)
-                    </span>
-                </div>
-                <h1 class="text-2xl font-heading font-bold text-[#2C3E2D]">ทะเบียนผู้สมัครคอร์สวิปัสสนากรรมฐานสำหรับประชาชน</h1>
+                <h1 class="text-2xl font-heading font-bold text-[#2C3E2D]">ทะเบียนผู้สมัครคอร์สปฏิบัติธรรม</h1>
                 <p class="text-xs text-[#7B8D65] mt-1 font-medium">ตรวจสอบสถานะผู้สมัคร, จัดการข้อมูลห้องพัก ยานพาหนะ และอาหาร พร้อมส่งออกรายชื่อ (Export CSV)</p>
             </div>
             <div class="flex items-center gap-2 self-start sm:self-auto">
-                <a href="{{ route('admin.public.export', request()->query()) }}" class="bg-[#FAF8F2] hover:bg-[#EAE5D9] text-[#2C3E2D] border border-[#D5CEBC] px-4 py-2.5 rounded-xl text-xs font-medium shadow-sm transition flex items-center gap-2">
+                <a href="{{ url('/admin/public_students.php?' . http_build_query(array_merge(request()->query(), ['action' => 'export']))) }}" class="bg-[#FAF8F2] hover:bg-[#EAE5D9] text-[#2C3E2D] border border-[#D5CEBC] px-4 py-2.5 rounded-xl text-xs font-medium shadow-sm transition flex items-center gap-2">
                     <i data-lucide="download" class="w-4 h-4 text-[#5A6B47]"></i> ส่งออก Excel/CSV
                 </a>
             </div>
@@ -315,33 +310,63 @@
                                     </td>
                                     <td class="p-4 text-center">
                                         @if ($r->status === 'PENDING')
-                                            <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-800 border border-amber-300 flex items-center justify-center gap-1 w-fit mx-auto">
-                                                <i data-lucide="clock" class="w-3 h-3"></i> รอตรวจสอบ
-                                            </span>
+                                            <a href="{{ url('/admin/public_students.php?action=status&id=' . $r->id . '&status_val=CONFIRMED') }}"
+                                               onclick="return confirm('ยืนยันอนุมัติสิทธิ์ (Confirmed) ของ {{ addslashes($r->full_name) }}?')"
+                                               title="สถานะ: รอตรวจสอบ (คลิกเพื่ออนุมัติสิทธิ์)"
+                                               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-100 hover:bg-emerald-600 text-amber-800 hover:text-white border border-amber-300 hover:border-emerald-600 transition shadow-sm hover:scale-105 active:scale-95 group">
+                                                <i data-lucide="clock" class="w-3.5 h-3.5 group-hover:hidden"></i>
+                                                <i data-lucide="check" class="w-3.5 h-3.5 hidden group-hover:inline"></i>
+                                                <span>รอตรวจสอบ</span>
+                                            </a>
                                         @elseif ($r->status === 'CONFIRMED')
-                                            <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-[#5A6B47]/15 text-[#5A6B47] border border-[#5A6B47]/30 flex items-center justify-center gap-1 w-fit mx-auto">
-                                                <i data-lucide="check-circle-2" class="w-3 h-3"></i> อนุมัติสิทธิ์แล้ว
-                                            </span>
+                                            <a href="{{ url('/admin/public_students.php?action=status&id=' . $r->id . '&status_val=ATTENDED') }}"
+                                               onclick="return confirm('ปรับเป็น เข้าร่วมอบรมแล้ว (Attended) หรือไม่?')"
+                                               title="สถานะ: อนุมัติสิทธิ์แล้ว (คลิกเพื่อบันทึกเข้าร่วมอบรมแล้ว)"
+                                               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#2C3E2D] hover:bg-[#1E2B1F] text-emerald-300 hover:text-white border border-[#2C3E2D] transition shadow-sm hover:scale-105 active:scale-95">
+                                                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 stroke-[2.5]"></i>
+                                                <span>อนุมัติสิทธิ์แล้ว</span>
+                                            </a>
                                         @elseif ($r->status === 'WAITING_LIST')
-                                            <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-[#C86D51]/15 text-[#C86D51] border border-[#C86D51]/30 flex items-center justify-center gap-1 w-fit mx-auto">
-                                                <i data-lucide="hourglass" class="w-3 h-3"></i> รายชื่อสำรอง
-                                            </span>
+                                            <a href="{{ url('/admin/public_students.php?action=status&id=' . $r->id . '&status_val=CONFIRMED') }}"
+                                               onclick="return confirm('เลื่อนจากรายชื่อสำรอง เป็น อนุมัติสิทธิ์ (Confirmed) หรือไม่?')"
+                                               title="สถานะ: รายชื่อสำรอง (คลิกเพื่อเลื่อนเป็นอนุมัติสิทธิ์)"
+                                               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#C86D51]/15 hover:bg-[#C86D51] text-[#C86D51] hover:text-white border border-[#C86D51]/30 hover:border-[#C86D51] transition shadow-sm hover:scale-105 active:scale-95">
+                                                <i data-lucide="hourglass" class="w-3.5 h-3.5"></i>
+                                                <span>รายชื่อสำรอง</span>
+                                            </a>
                                         @elseif ($r->status === 'ATTENDED')
-                                            <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center justify-center gap-1 w-fit mx-auto">
-                                                <i data-lucide="user-check" class="w-3 h-3"></i> เข้าร่วมแล้ว
-                                            </span>
+                                            <a href="{{ url('/admin/public_students.php?action=status&id=' . $r->id . '&status_val=CONFIRMED') }}"
+                                               onclick="return confirm('ปรับกลับเป็น อนุมัติสิทธิ์ (Confirmed) หรือไม่?')"
+                                               title="สถานะ: เข้าร่วมอบรมแล้ว (คลิกเพื่อปรับกลับเป็นอนุมัติสิทธิ์)"
+                                               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-700 hover:bg-emerald-800 text-white border border-emerald-600 transition shadow-sm hover:scale-105 active:scale-95">
+                                                <i data-lucide="user-check" class="w-3.5 h-3.5 stroke-[2.5]"></i>
+                                                <span>เข้าร่วมแล้ว</span>
+                                            </a>
                                         @elseif ($r->status === 'REJECTED')
-                                            <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-red-100 text-red-800 border border-red-300 flex items-center justify-center gap-1 w-fit mx-auto" title="{{ $r->reject_reason }}">
-                                                <i data-lucide="x-circle" class="w-3 h-3"></i> ไม่อนุมัติ
-                                            </span>
+                                            <a href="{{ url('/admin/public_students.php?action=status&id=' . $r->id . '&status_val=PENDING') }}"
+                                               onclick="return confirm('ปรับกลับเป็น รอตรวจสอบ (Pending) หรือไม่?')"
+                                               title="สถานะ: ไม่อนุมัติ / ปฏิเสธ (คลิกเพื่อคืนสถานะรอตรวจสอบ) - เหตุผล: {{ $r->reject_reason ?: '-' }}"
+                                               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#8E2818] hover:bg-[#6D1B0E] text-rose-100 hover:text-white border border-[#8E2818] transition shadow-sm hover:scale-105 active:scale-95">
+                                                <i data-lucide="x-circle" class="w-3.5 h-3.5 stroke-[2.5]"></i>
+                                                <span>ไม่อนุมัติ</span>
+                                            </a>
                                         @else
-                                            <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-stone-100 text-stone-700 border border-stone-300 flex items-center justify-center gap-1 w-fit mx-auto">
-                                                <i data-lucide="slash" class="w-3 h-3"></i> ยกเลิก
-                                            </span>
+                                            <a href="{{ url('/admin/public_students.php?action=status&id=' . $r->id . '&status_val=PENDING') }}"
+                                               onclick="return confirm('ปรับกลับเป็น รอตรวจสอบ (Pending) หรือไม่?')"
+                                               title="สถานะ: ยกเลิกสิทธิ์ (คลิกเพื่อคืนสถานะรอตรวจสอบ)"
+                                               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-stone-600 hover:bg-stone-700 text-stone-200 hover:text-white border border-stone-500 transition shadow-sm hover:scale-105 active:scale-95">
+                                                <i data-lucide="slash" class="w-3.5 h-3.5"></i>
+                                                <span>ยกเลิก</span>
+                                            </a>
                                         @endif
                                     </td>
                                     <td class="p-4 text-right">
                                         <div class="flex items-center justify-end gap-1.5">
+                                            <!-- ปุ่มแก้ไขข้อมูลผู้สมัคร (ทุกฟิลด์) -->
+                                            <button type="button" onclick="openEditApplicantModal({{ json_encode($r) }})" title="แก้ไขข้อมูลผู้สมัคร" class="p-1.5 text-[#5A6B47] hover:bg-[#5A6B47]/15 rounded-lg border border-[#5A6B47]/30 transition">
+                                                <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                            </button>
+
                                             <!-- ปุ่มอนุมัติสิทธิ์ -->
                                             @if ($r->status !== 'CONFIRMED' && $r->status !== 'ATTENDED')
                                                 <a href="{{ url('/admin/public_students.php?action=approve&id=' . $r->id) }}" onclick="return confirm('ยืนยันอนุมัติสิทธิ์การเข้าร่วมอบรมของ {{ addslashes($r->full_name) }}?')" title="อนุมัติสิทธิ์เข้าร่วม (Approve)" class="p-1.5 text-[#5A6B47] hover:bg-[#5A6B47]/15 rounded-lg border border-[#5A6B47]/30 transition">
@@ -426,6 +451,258 @@
         </div>
     </div>
 
+    <!-- Modal Form: แก้ไขข้อมูลผู้สมัครเข้าร่วมอบรม (แก้ไขได้ทุกฟิลด์) -->
+    <div id="edit-applicant-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl border border-[#EAE5D9] shadow-2xl max-w-2xl w-full p-6 md:p-8 overflow-y-auto max-h-[90vh]">
+            <div class="flex justify-between items-center pb-4 border-b border-[#EAE5D9] mb-5">
+                <div>
+                    <h3 class="text-lg font-heading font-bold text-[#2C3E2D] flex items-center gap-2">
+                        <i data-lucide="edit-3" class="w-5 h-5 text-[#5A6B47]"></i>
+                        <span>แก้ไขข้อมูลผู้สมัครลงทะเบียน</span>
+                    </h3>
+                    <p class="text-xs text-[#7B8D65]">รหัสการสมัคร: <span id="edit_modal_reg_no" class="font-mono font-bold text-[#C86D51]"></span> | คิวที่: <span id="edit_modal_queue_no" class="font-mono font-bold text-[#2C3E2D]"></span></p>
+                </div>
+                <button type="button" onclick="document.getElementById('edit-applicant-modal').classList.add('hidden')" class="p-1.5 text-[#8C8275] hover:text-[#2C3E2D] rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form id="edit-applicant-form" method="POST" action="{{ url('/admin/public_students.php') }}" class="space-y-4 text-xs">
+                @csrf
+                <input type="hidden" name="action" value="update">
+                <input type="hidden" name="id" id="edit_app_id" value="">
+
+                <!-- 1. คอร์สและประเภทผู้สมัคร -->
+                <div class="p-3.5 bg-[#FAF8F2] rounded-2xl border border-[#EAE5D9] space-y-3">
+                    <div class="font-semibold text-[#2C3E2D] flex items-center gap-1.5 text-xs">
+                        <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#5A6B47]"></i> ข้อมูลโครงการ & ประเภทผู้สมัคร
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">คอร์ส / โครงการที่สมัคร <span class="text-[#C86D51]">*</span></label>
+                            <select name="event_id" id="edit_app_event_id" required class="w-full px-3 py-2 bg-white border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                                @foreach ($events as $ev)
+                                    <option value="{{ $ev->id }}">{{ $ev->title }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">ประเภทผู้สมัคร <span class="text-[#C86D51]">*</span></label>
+                            <select name="applicant_type" id="edit_app_applicant_type" onchange="toggleEditStudentSection(this.value)" required class="w-full px-3 py-2 bg-white border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                                <option value="PEOPLE">ประชาชนทั่วไป (General Public)</option>
+                                <option value="STUDENT">นิสิต มจร (MCU Student)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- ส่วนข้อมูลเฉพาะนิสิต มจร -->
+                    <div id="edit_app_student_fields" class="pt-2 border-t border-[#EAE5D9] space-y-2 hidden">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <div>
+                                <label class="block font-medium text-[#4A3B32] mb-0.5">รหัสนิสิต</label>
+                                <input type="text" name="student_id" id="edit_app_student_id" placeholder="เช่น 6601201001" class="w-full px-2.5 py-1.5 bg-white border border-[#EAE5D9] rounded-lg text-xs font-mono">
+                            </div>
+                            <div>
+                                <label class="block font-medium text-[#4A3B32] mb-0.5">ระดับการศึกษา</label>
+                                <select name="degree_level" id="edit_app_degree_level" class="w-full px-2.5 py-1.5 bg-white border border-[#EAE5D9] rounded-lg text-xs">
+                                    <option value="">-- เลือกระดับการศึกษา --</option>
+                                    <option value="ปริญญาตรี">ปริญญาตรี</option>
+                                    <option value="ปริญญาโท">ปริญญาโท</option>
+                                    <option value="ปริญญาเอก">ปริญญาเอก</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block font-medium text-[#4A3B32] mb-0.5">คณะ</label>
+                                <input type="text" name="faculty" id="edit_app_faculty" placeholder="เช่น พุทธศาสตร์" class="w-full px-2.5 py-1.5 bg-white border border-[#EAE5D9] rounded-lg text-xs">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <div>
+                                <label class="block font-medium text-[#4A3B32] mb-0.5">ส่วนงานต้นสังกัดนิสิต</label>
+                                <select name="org_unit_id" id="edit_app_org_unit_id" class="w-full px-2.5 py-1.5 bg-white border border-[#EAE5D9] rounded-lg text-xs">
+                                    <option value="">-- เลือกส่วนงาน --</option>
+                                    @foreach ($orgUnits as $org)
+                                        <option value="{{ $org->id }}">{{ $org->name_th }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block font-medium text-[#4A3B32] mb-0.5">สาขาวิชา/หลักสูตร</label>
+                                <input type="text" name="program_name" id="edit_app_program_name" placeholder="เช่น สาขาวิชาพระพุทธศาสนา" class="w-full px-2.5 py-1.5 bg-white border border-[#EAE5D9] rounded-lg text-xs">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. ข้อมูลส่วนบุคคล -->
+                <div class="space-y-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">คำนำหน้า <span class="text-[#C86D51]">*</span></label>
+                            <input type="text" name="prefix" id="edit_app_prefix" placeholder="นาย, นาง, พระมหา..." required class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">ชื่อ <span class="text-[#C86D51]">*</span></label>
+                            <input type="text" name="first_name" id="edit_app_first_name" required class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">นามสกุล <span class="text-[#C86D51]">*</span></label>
+                            <input type="text" name="last_name" id="edit_app_last_name" required class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">ฉายา/นามแฝง (ถ้ามี)</label>
+                            <input type="text" name="buddhist_name" id="edit_app_buddhist_name" placeholder="เช่น ปญฺญาเมธี" class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">เพศสภาพ <span class="text-[#C86D51]">*</span></label>
+                            <select name="gender" id="edit_app_gender" required class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                                <option value="MALE">ชาย (ฆราวาส)</option>
+                                <option value="FEMALE">หญิง (ฆราวาส)</option>
+                                <option value="MONK">พระภิกษุ (Monk)</option>
+                                <option value="NOVICE">สามเณร (Novice)</option>
+                                <option value="OTHER">อื่น ๆ</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">อายุ (ปี)</label>
+                            <input type="number" name="age" id="edit_app_age" min="0" max="120" class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47] font-mono">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">พรรษา (ถ้ามี)</label>
+                            <input type="number" name="vassa" id="edit_app_vassa" min="0" max="100" class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47] font-mono">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">เลขบัตร ปชช./Passport</label>
+                            <input type="text" name="citizen_id" id="edit_app_citizen_id" maxlength="30" class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47] font-mono">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. ข้อมูลการติดต่อและที่อยู่ -->
+                <div class="space-y-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">เบอร์โทรศัพท์ <span class="text-[#C86D51]">*</span></label>
+                            <input type="text" name="phone" id="edit_app_phone" required class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47] font-mono">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">อีเมล</label>
+                            <input type="email" name="email" id="edit_app_email" class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47] font-mono">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">Line ID</label>
+                            <input type="text" name="line_id" id="edit_app_line_id" class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                        <div class="sm:col-span-2">
+                            <label class="block font-semibold text-[#4A3B32] mb-1">ที่อยู่ / วัดต้นสังกัด</label>
+                            <input type="text" name="address" id="edit_app_address" placeholder="บ้านเลขที่ ซอย ถนน..." class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">ตำบล/แขวง</label>
+                            <input type="text" name="subdistrict" id="edit_app_subdistrict" class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">อำเภอ/เขต</label>
+                            <input type="text" name="district" id="edit_app_district" class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">จังหวัด</label>
+                            <input type="text" name="province" id="edit_app_province" class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">รหัสไปรษณีย์</label>
+                            <input type="text" name="postal_code" id="edit_app_postal_code" class="w-full px-3 py-2 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47] font-mono">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. ข้อมูลการอำนวยความสะดวก & สุขภาพ -->
+                <div class="p-3.5 bg-[#FAF8F2] rounded-2xl border border-[#EAE5D9] space-y-3">
+                    <div class="font-semibold text-[#2C3E2D] flex items-center gap-1.5 text-xs">
+                        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#5A6B47]"></i> อาหาร ห้องพัก ยานพาหนะ & บุคคลติดต่อฉุกเฉิน
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">ประเภทอาหาร</label>
+                            <select name="dietary_restriction" id="edit_app_dietary_restriction" class="w-full px-3 py-2 bg-white border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                                <option value="NORMAL">อาหารทั่วไป</option>
+                                <option value="VEGETARIAN">อาหารมังสวิรัติ (Vegetarian)</option>
+                                <option value="JAY">อาหารเจ (Jay)</option>
+                                <option value="HALAL">อาหารฮาลาล (Halal)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">โรคประจำตัว / ข้อจำกัดสุขภาพ</label>
+                            <input type="text" name="congenital_disease" id="edit_app_congenital_disease" placeholder="เช่น ความดัน, ภูมิแพ้, หรือระบุว่า ไม่มี" class="w-full px-3 py-2 bg-white border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">การจัดสรรห้องพัก / อาคาร</label>
+                            <input type="text" name="room_info" id="edit_app_room_info" placeholder="เช่น อาคาร 74 ปี ห้อง 302 หรือ กุฏิสงฆ์ โซน A" class="w-full px-3 py-2 bg-white border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">ยานพาหนะเดินทาง / ทะเบียนรถ</label>
+                            <input type="text" name="vehicle_info" id="edit_app_vehicle_info" placeholder="เช่น รถยนต์ส่วนบุคคล กข 1234 หรือ รถตู้ มจร" class="w-full px-3 py-2 bg-white border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">ผู้ติดต่อฉุกเฉิน (ชื่อ & ความสัมพันธ์)</label>
+                            <input type="text" name="emergency_contact" id="edit_app_emergency_contact" placeholder="เช่น นางอุษา (มารดา)" class="w-full px-3 py-2 bg-white border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-[#4A3B32] mb-1">เบอร์โทรผู้ติดต่อฉุกเฉิน</label>
+                            <input type="text" name="emergency_phone" id="edit_app_emergency_phone" placeholder="08X-XXX-XXXX" class="w-full px-3 py-2 bg-white border border-[#EAE5D9] rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47] font-mono">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. สถานะการสมัครและเหตุผลปฏิเสธ -->
+                <div class="p-3.5 bg-amber-50/70 rounded-2xl border border-amber-200/80 space-y-3">
+                    <div class="font-semibold text-amber-900 flex items-center gap-1.5 text-xs">
+                        <i data-lucide="check-square" class="w-3.5 h-3.5 text-amber-800"></i> สถานะการคัดกรองผลการสมัคร
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-semibold text-amber-900 mb-1">สถานะผู้สมัคร <span class="text-[#C86D51]">*</span></label>
+                            <select name="status" id="edit_app_status" required class="w-full px-3 py-2 bg-white border border-amber-300 rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                                <option value="PENDING">รอการตรวจสอบ (Pending)</option>
+                                <option value="CONFIRMED">อนุมัติสิทธิ์เข้าร่วม (Confirmed)</option>
+                                <option value="WAITING_LIST">รายชื่อสำรอง (Waiting List)</option>
+                                <option value="ATTENDED">เข้าร่วมอบรมแล้ว (Attended)</option>
+                                <option value="REJECTED">ไม่อนุมัติ / ปฏิเสธ (Rejected)</option>
+                                <option value="CANCELLED">ยกเลิกสิทธิ์ (Cancelled)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-amber-900 mb-1">หมายเหตุ / เหตุผลการปฏิเสธ (ถ้ามี)</label>
+                            <input type="text" name="reject_reason" id="edit_app_reject_reason" placeholder="ระบุเหตุผลกรณีไม่อนุมัติหรือยกเลิก..." class="w-full px-3 py-2 bg-white border border-amber-300 rounded-xl text-xs focus:ring-1 focus:ring-[#5A6B47]">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-[#EAE5D9] flex justify-end gap-2">
+                    <button type="button" onclick="document.getElementById('edit-applicant-modal').classList.add('hidden')" class="px-4 py-2 border border-[#EAE5D9] rounded-xl hover:bg-stone-50 font-medium">ยกเลิก</button>
+                    <button type="submit" class="bg-[#5A6B47] hover:bg-[#2C3E2D] text-white px-5 py-2 rounded-xl font-medium shadow-md transition flex items-center gap-1.5">
+                        <i data-lucide="check" class="w-4 h-4"></i> บันทึกการแก้ไขทุกฟิลด์
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         function toggleSelectAll(master) {
             const checkboxes = document.querySelectorAll('.row-checkbox');
@@ -482,6 +759,65 @@
                 input.classList.add('hidden');
                 input.required = false;
             }
+        }
+
+        function toggleEditStudentSection(val) {
+            const el = document.getElementById('edit_app_student_fields');
+            if (val === 'STUDENT') {
+                el.classList.remove('hidden');
+            } else {
+                el.classList.add('hidden');
+            }
+        }
+
+        function openEditApplicantModal(data) {
+            document.getElementById('edit_modal_reg_no').innerText = data.registration_no || '-';
+            document.getElementById('edit_modal_queue_no').innerText = data.queue_no ? 'Q-' + String(data.queue_no).padStart(3, '0') : '-';
+            document.getElementById('edit_app_id').value = data.id;
+
+            document.getElementById('edit_app_event_id').value = data.event_id || '';
+            const appType = (data.applicant_type === 'STUDENT') ? 'STUDENT' : 'PEOPLE';
+            document.getElementById('edit_app_applicant_type').value = appType;
+            toggleEditStudentSection(appType);
+
+            document.getElementById('edit_app_student_id').value = data.student_id || '';
+            document.getElementById('edit_app_degree_level').value = data.degree_level || '';
+            document.getElementById('edit_app_faculty').value = data.faculty || '';
+            document.getElementById('edit_app_org_unit_id').value = data.org_unit_id || '';
+            document.getElementById('edit_app_program_name').value = data.program_name || '';
+
+            document.getElementById('edit_app_prefix').value = data.prefix || '';
+            document.getElementById('edit_app_first_name').value = data.first_name || '';
+            document.getElementById('edit_app_last_name').value = data.last_name || '';
+            document.getElementById('edit_app_buddhist_name').value = data.buddhist_name || '';
+
+            document.getElementById('edit_app_gender').value = data.gender || 'MALE';
+            document.getElementById('edit_app_age').value = data.age || '';
+            document.getElementById('edit_app_vassa').value = data.vassa || '';
+            document.getElementById('edit_app_citizen_id').value = data.citizen_id || '';
+
+            document.getElementById('edit_app_phone').value = data.phone || '';
+            document.getElementById('edit_app_email').value = data.email || '';
+            document.getElementById('edit_app_line_id').value = data.line_id || '';
+
+            document.getElementById('edit_app_address').value = data.address || '';
+            document.getElementById('edit_app_subdistrict').value = data.subdistrict || '';
+            document.getElementById('edit_app_district').value = data.district || '';
+            document.getElementById('edit_app_province').value = data.province || '';
+            document.getElementById('edit_app_postal_code').value = data.postal_code || '';
+
+            document.getElementById('edit_app_dietary_restriction').value = data.dietary_restriction || 'NORMAL';
+            document.getElementById('edit_app_congenital_disease').value = data.congenital_disease || '';
+            document.getElementById('edit_app_room_info').value = data.room_info || '';
+            document.getElementById('edit_app_vehicle_info').value = data.vehicle_info || '';
+
+            document.getElementById('edit_app_emergency_contact').value = data.emergency_contact || '';
+            document.getElementById('edit_app_emergency_phone').value = data.emergency_phone || '';
+
+            document.getElementById('edit_app_status').value = data.status || 'PENDING';
+            document.getElementById('edit_app_reject_reason').value = data.reject_reason || '';
+
+            document.getElementById('edit-applicant-modal').classList.remove('hidden');
         }
 
         lucide.createIcons();

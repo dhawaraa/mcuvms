@@ -118,8 +118,12 @@
                     {{ __('portal.ug_check_header_desc') }}
                 </p>
             </div>
-            <div class="shrink-0">
-                <a href="{{ route('ug.register') }}" class="inline-flex items-center gap-2 bg-[#5A6B47] hover:bg-[#2C3E2D] text-white px-5 py-3 rounded-xl font-medium text-sm transition shadow-lg border border-white/10">
+            <div class="shrink-0 flex flex-wrap gap-2.5">
+                <a href="{{ route('student.login') }}" class="inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 text-white px-4 py-3 rounded-xl font-medium text-sm transition shadow-lg border border-white/20">
+                    <i data-lucide="user-round" class="w-4 h-4 text-[#A3B88C]"></i>
+                    <span>เข้าสู่ระบบพอร์ทัลนิสิต</span>
+                </a>
+                <a href="{{ route('ug.register') }}" class="inline-flex items-center gap-2 bg-[#5A6B47] hover:bg-[#2C3E2D] text-white px-4 py-3 rounded-xl font-medium text-sm transition shadow-lg border border-white/10">
                     <i data-lucide="user-plus" class="w-4 h-4"></i>
                     <span>{{ __('portal.ug_tab_register') }}</span>
                 </a>

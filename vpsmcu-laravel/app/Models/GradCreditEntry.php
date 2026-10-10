@@ -10,6 +10,11 @@ class GradCreditEntry extends Model
     protected $guarded = [];
     public $timestamps = false;
 
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date' => 'date',
+    ];
+
     public function student()
     {
         return $this->belongsTo(GradStudent::class, 'student_id');

@@ -10,6 +10,11 @@ class UgBatch extends Model
     protected $guarded = [];
     public $timestamps = false;
 
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date' => 'date',
+    ];
+
     public function organizationUnit()
     {
         return $this->belongsTo(OrganizationUnit::class, 'org_unit_id');
