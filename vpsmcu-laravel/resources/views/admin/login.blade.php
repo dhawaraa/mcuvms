@@ -93,7 +93,7 @@
                         <i data-lucide="user" class="w-3.5 h-3.5 text-[#5A6B47]"></i>
                         <span>ชื่อผู้ใช้ (Username)</span>
                     </label>
-                    <input type="text" name="username" value="admin" required class="w-full px-4 py-3 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-sm focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47] font-mono text-[#2C3E2D]">
+                    <input type="text" name="username" required autofocus placeholder="กรอกชื่อผู้ใช้งาน" class="w-full px-4 py-3 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-sm focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47] font-mono text-[#2C3E2D]">
                 </div>
 
                 <div>
@@ -102,7 +102,7 @@
                         <span>รหัสผ่าน (Password)</span>
                     </label>
                     <div class="relative">
-                        <input type="password" id="login_password" name="password" value="password" required class="w-full pl-4 pr-11 py-3 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-sm focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47] font-mono text-[#2C3E2D]">
+                        <input type="password" id="login_password" name="password" required placeholder="กรอกรหัสผ่าน" class="w-full pl-4 pr-11 py-3 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-sm focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47] font-mono text-[#2C3E2D]">
                         <button type="button" onclick="togglePasswordVisibility('login_password', 'login_pass_icon')" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#8C8275] hover:text-[#2C3E2D]" title="ดูรหัสผ่าน">
                             <i id="login_pass_icon" data-lucide="eye" class="w-4 h-4"></i>
                         </button>
@@ -116,26 +116,6 @@
                     </button>
                 </div>
             </form>
-
-            <div class="mt-6 pt-6 border-t border-[#EAE5D9] text-center">
-                <div class="text-xs font-semibold text-[#7B8D65] mb-2">
-                    บัญชีทดสอบในระบบ (รหัสผ่านทุกบัญชีคือ: <strong class="text-[#2C3E2D]">password</strong>):
-                </div>
-                <div class="space-y-1.5 text-[11px] font-mono text-[#4A3B32]">
-                    <div class="bg-[#FAF8F2] py-1 px-2.5 rounded-lg border border-[#EAE5D9] flex justify-between">
-                        <span>ส่วนกลาง (ทุก 52 วิทยาเขต):</span>
-                        <strong class="text-[#2C3E2D]">central</strong>
-                    </div>
-                    <div class="bg-[#FAF8F2] py-1 px-2.5 rounded-lg border border-[#EAE5D9] flex justify-between">
-                        <span>วิทยาเขตเชียงใหม่:</span>
-                        <strong class="text-[#2C3E2D]">officer_cmi</strong>
-                    </div>
-                    <div class="bg-[#FAF8F2] py-1 px-2.5 rounded-lg border border-[#EAE5D9] flex justify-between">
-                        <span>Super Administrator:</span>
-                        <strong class="text-[#2C3E2D]">admin</strong>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <div class="text-center mt-6">
