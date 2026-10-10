@@ -205,9 +205,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/news_pin.php/{id}', [AdminController::class, 'newsTogglePin']);
 
     // Users & Roles Management (Rule Matrix: ผู้ดูแลระบบส่วนกลาง)
-    Route::get('/users.php', [AdminController::class, 'usersIndex'])->name('users.index');
-    Route::get('/users', [AdminController::class, 'usersIndex']);
-    Route::post('/users', [AdminController::class, 'userStore'])->name('users.store');
+    Route::match(['get', 'post'], '/users.php', [AdminController::class, 'usersIndex'])->name('users.index');
+    Route::match(['get', 'post'], '/users', [AdminController::class, 'usersIndex']);
+    Route::post('/users/store', [AdminController::class, 'userStore'])->name('users.store');
     Route::post('/users/update/{id}', [AdminController::class, 'userUpdate'])->name('users.update');
     Route::get('/users/toggle-status/{id}', [AdminController::class, 'userToggleStatus'])->name('users.toggleStatus');
     Route::get('/users/delete/{id}', [AdminController::class, 'userDelete'])->name('users.delete');
