@@ -2460,16 +2460,43 @@ class AdminController extends Controller
         $admin = Session::get('admin_user');
         $isCentralOrSuper = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
 
-        $query = PublicRegistration::with(['event.organizationUnit'])->orderBy('registered_at', 'desc');
+        $query = PublicRegistration::with(['event.organizationUnit', 'organizationUnit'])->orderBy('registered_at', 'desc');
 
         if (!$isCentralOrSuper && !empty($admin['org_unit_id'])) {
             $query->whereHas('event', function ($q) use ($admin) {
                 $q->where('org_unit_id', $admin['org_unit_id']);
             });
+        } elseif ($request->filled('filter_org')) {
+            $orgId = $request->input('filter_org');
+            $query->whereHas('event', function ($q) use ($orgId) {
+                $q->where('org_unit_id', $orgId);
+            });
+        }
+
+        if ($request->filled('search')) {
+            $s = trim($request->input('search'));
+            $cleanQueue = preg_replace('/[^0-9]/', '', $s);
+            $query->where(function ($q) use ($s, $cleanQueue) {
+                $q->where('full_name', 'LIKE', "%{$s}%")
+                  ->orWhere('phone', 'LIKE', "%{$s}%")
+                  ->orWhere('citizen_id', 'LIKE', "%{$s}%")
+                  ->orWhere('registration_no', 'LIKE', "%{$s}%");
+                if ($cleanQueue) {
+                    $q->orWhere('queue_no', intval($cleanQueue));
+                }
+            });
         }
 
         if ($request->filled('event_id')) {
             $query->where('event_id', $request->input('event_id'));
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->input('status'));
+        }
+
+        if ($request->filled('applicant_type')) {
+            $query->where('applicant_type', $request->input('applicant_type'));
         }
 
         $items = $query->get();
