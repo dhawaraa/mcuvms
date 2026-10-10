@@ -101,7 +101,12 @@
                         <i data-lucide="key-round" class="w-3.5 h-3.5 text-[#5A6B47]"></i>
                         <span>รหัสผ่าน (Password)</span>
                     </label>
-                    <input type="password" name="password" value="password" required class="w-full px-4 py-3 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-sm focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47] font-mono text-[#2C3E2D]">
+                    <div class="relative">
+                        <input type="password" id="login_password" name="password" value="password" required class="w-full pl-4 pr-11 py-3 bg-[#FAF8F2] border border-[#EAE5D9] rounded-xl text-sm focus:ring-2 focus:ring-[#5A6B47] focus:border-[#5A6B47] font-mono text-[#2C3E2D]">
+                        <button type="button" onclick="togglePasswordVisibility('login_password', 'login_pass_icon')" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#8C8275] hover:text-[#2C3E2D]" title="ดูรหัสผ่าน">
+                            <i id="login_pass_icon" data-lucide="eye" class="w-4 h-4"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="pt-2">
@@ -142,6 +147,25 @@
     </div>
 
     <script>
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (!input) return;
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                if (icon) {
+                    icon.setAttribute('data-lucide', 'eye-off');
+                }
+            } else {
+                input.type = 'password';
+                if (icon) {
+                    icon.setAttribute('data-lucide', 'eye');
+                }
+            }
+            lucide.createIcons();
+        }
+
         lucide.createIcons();
     </script>
 </body>
