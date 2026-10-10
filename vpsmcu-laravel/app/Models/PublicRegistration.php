@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PublicRegistration extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'public_registrations';
     protected $guarded = [];
     public $timestamps = false;

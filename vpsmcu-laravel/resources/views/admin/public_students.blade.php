@@ -69,13 +69,39 @@
         <!-- Header -->
         <div class="flex flex-col sm:flex-row justify-between sm:items-center pb-6 mb-8 border-b border-[#D5CEBC] gap-4">
             <div>
-                <h1 class="text-2xl font-heading font-bold text-[#2C3E2D]">ทะเบียนผู้สมัครคอร์สปฏิบัติธรรม</h1>
-                <p class="text-xs text-[#7B8D65] mt-1 font-medium">ตรวจสอบสถานะผู้สมัคร, จัดการข้อมูลห้องพัก ยานพาหนะ และอาหาร พร้อมส่งออกรายชื่อ (Export CSV)</p>
+                <h1 class="text-2xl font-heading font-bold text-[#2C3E2D]">
+                    @if (!empty($isTrashTab))
+                        ถังขยะรายชื่อผู้สมัคร (Trash Bin)
+                    @else
+                        ทะเบียนผู้สมัครคอร์สปฏิบัติธรรม
+                    @endif
+                </h1>
+                <p class="text-xs text-[#7B8D65] mt-1 font-medium">
+                    @if (!empty($isTrashTab))
+                        รายการผู้สมัครที่ถูกลบชั่วคราว สามารถกด "กู้คืน (Restore)" กลับสู่ระบบได้ หรือเลือกลบถาวร
+                    @else
+                        ตรวจสอบสถานะผู้สมัคร, จัดการข้อมูลห้องพัก ยานพาหนะ และอาหาร พร้อมส่งออกรายชื่อ (Export CSV)
+                    @endif
+                </p>
             </div>
-            <div class="flex items-center gap-2 self-start sm:self-auto">
-                <a href="{{ url('/admin/public_students.php?' . http_build_query(array_merge(request()->query(), ['action' => 'export']))) }}" class="bg-[#FAF8F2] hover:bg-[#EAE5D9] text-[#2C3E2D] border border-[#D5CEBC] px-4 py-2.5 rounded-xl text-xs font-medium shadow-sm transition flex items-center gap-2">
-                    <i data-lucide="download" class="w-4 h-4 text-[#5A6B47]"></i> ส่งออก Excel/CSV
-                </a>
+            <div class="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+                @if (!empty($isTrashTab))
+                    <a href="{{ url('/admin/public_students.php') }}" class="bg-[#5A6B47] hover:bg-[#2C3E2D] text-white px-4 py-2.5 rounded-xl text-xs font-medium shadow-sm transition flex items-center gap-2">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i> กลับสู่ทะเบียนหลัก
+                    </a>
+                @else
+                    <a href="{{ url('/admin/public_students.php?tab=trash') }}" class="relative bg-white hover:bg-stone-50 text-[#8C8275] hover:text-[#C86D51] border border-[#D5CEBC] px-4 py-2.5 rounded-xl text-xs font-medium shadow-sm transition flex items-center gap-2">
+                        <i data-lucide="trash-2" class="w-4 h-4 text-[#C86D51]"></i> ถังขยะ
+                        @if (($trashCount ?? 0) > 0)
+                            <span class="inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold leading-none text-white bg-[#C86D51] rounded-full">
+                                {{ $trashCount }}
+                            </span>
+                        @endif
+                    </a>
+                    <a href="{{ url('/admin/public_students.php?' . http_build_query(array_merge(request()->query(), ['action' => 'export']))) }}" class="bg-[#FAF8F2] hover:bg-[#EAE5D9] text-[#2C3E2D] border border-[#D5CEBC] px-4 py-2.5 rounded-xl text-xs font-medium shadow-sm transition flex items-center gap-2">
+                        <i data-lucide="download" class="w-4 h-4 text-[#5A6B47]"></i> ส่งออก Excel/CSV
+                    </a>
+                @endif
             </div>
         </div>
 
@@ -187,19 +213,30 @@
                         <span>เลือกแล้ว <strong id="selected-count" class="text-[#5A6B47]">0</strong> รายการ</span>
                     </div>
                     <div class="flex flex-wrap items-center gap-2">
-                        <select name="bulk_action" id="bulk-action-select" class="px-3 py-1.5 text-xs bg-white border border-[#D5CEBC] rounded-lg text-[#2C3E2D] font-medium focus:ring-1 focus:ring-[#5A6B47]">
-                            <option value="">-- เลือกการจัดการจำนวนมาก (Bulk Action) --</option>
-                            <option value="CONFIRMED">อนุมัติสิทธิ์เข้าร่วม (Approve/Confirmed)</option>
-                            <option value="WAITING_LIST">จัดเป็นรายชื่อสำรอง (Waiting List)</option>
-                            <option value="REJECTED">ปฏิเสธคำขอ (Reject)</option>
-                            <option value="ATTENDED">บันทึกเข้าร่วมอบรมแล้ว (Attended)</option>
-                            <option value="PENDING">ปรับเป็นรอตรวจสอบ (Pending)</option>
-                            <option value="CANCELLED">ยกเลิกสิทธิ์ (Cancelled)</option>
-                            <option value="DELETE">ลบข้อมูลที่เลือก (Delete)</option>
-                        </select>
-                        <button type="button" onclick="submitBulkAction()" class="bg-[#2C3E2D] hover:bg-[#1E2B1F] text-white px-4 py-1.5 rounded-lg text-xs font-medium shadow-sm transition flex items-center gap-1.5">
-                            <i data-lucide="play" class="w-3.5 h-3.5"></i> นำไปใช้ (Apply)
-                        </button>
+                        @if (!empty($isTrashTab))
+                            <select name="bulk_action" id="bulk-action-select" class="px-3 py-1.5 text-xs bg-white border border-[#D5CEBC] rounded-lg text-[#2C3E2D] font-medium focus:ring-1 focus:ring-[#5A6B47]">
+                                <option value="">-- เลือกการจัดการถังขยะ (Trash Action) --</option>
+                                <option value="RESTORE">กู้คืนข้อมูลที่เลือก (Restore)</option>
+                                <option value="FORCE_DELETE">ลบถาวร (Delete Permanently)</option>
+                            </select>
+                            <button type="button" onclick="submitBulkAction()" class="bg-[#5A6B47] hover:bg-[#2C3E2D] text-white px-4 py-1.5 rounded-lg text-xs font-medium shadow-sm transition flex items-center gap-1.5">
+                                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> นำไปใช้ (Apply)
+                            </button>
+                        @else
+                            <select name="bulk_action" id="bulk-action-select" class="px-3 py-1.5 text-xs bg-white border border-[#D5CEBC] rounded-lg text-[#2C3E2D] font-medium focus:ring-1 focus:ring-[#5A6B47]">
+                                <option value="">-- เลือกการจัดการจำนวนมาก (Bulk Action) --</option>
+                                <option value="CONFIRMED">อนุมัติสิทธิ์เข้าร่วม (Approve/Confirmed)</option>
+                                <option value="WAITING_LIST">จัดเป็นรายชื่อสำรอง (Waiting List)</option>
+                                <option value="REJECTED">ปฏิเสธคำขอ (Reject)</option>
+                                <option value="ATTENDED">บันทึกเข้าร่วมอบรมแล้ว (Attended)</option>
+                                <option value="PENDING">ปรับเป็นรอตรวจสอบ (Pending)</option>
+                                <option value="CANCELLED">ยกเลิกสิทธิ์ (Cancelled)</option>
+                                <option value="DELETE">ย้ายไปถังขยะ (Move to Trash)</option>
+                            </select>
+                            <button type="button" onclick="submitBulkAction()" class="bg-[#2C3E2D] hover:bg-[#1E2B1F] text-white px-4 py-1.5 rounded-lg text-xs font-medium shadow-sm transition flex items-center gap-1.5">
+                                <i data-lucide="play" class="w-3.5 h-3.5"></i> นำไปใช้ (Apply)
+                            </button>
+                        @endif
                     </div>
                 </div>
 
@@ -309,7 +346,15 @@
                                         @endif
                                     </td>
                                     <td class="p-4 text-center">
-                                        @if ($r->status === 'PENDING')
+                                        @if (!empty($isTrashTab))
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-100 text-rose-800 border border-rose-300">
+                                                <i data-lucide="trash-2" class="w-3 h-3 text-rose-600"></i>
+                                                <span>อยู่ในถังขยะ</span>
+                                            </span>
+                                            <div class="text-[9px] text-[#8C8275] mt-1 font-mono">
+                                                ลบเมื่อ: {{ $r->deleted_at ? \Carbon\Carbon::parse($r->deleted_at)->format('d/m/Y H:i') : '-' }}
+                                            </div>
+                                        @elseif ($r->status === 'PENDING')
                                             <a href="{{ url('/admin/public_students.php?action=status&id=' . $r->id . '&status_val=CONFIRMED') }}"
                                                onclick="return confirm('ยืนยันอนุมัติสิทธิ์ (Confirmed) ของ {{ addslashes($r->full_name) }}?')"
                                                title="สถานะ: รอตรวจสอบ (คลิกเพื่ออนุมัติสิทธิ์)"
@@ -362,37 +407,56 @@
                                     </td>
                                     <td class="p-4 text-right">
                                         <div class="flex items-center justify-end gap-1.5">
-                                            <!-- ปุ่มแก้ไขข้อมูลผู้สมัคร (ทุกฟิลด์) -->
-                                            <button type="button" onclick="openEditApplicantModal({{ json_encode($r) }})" title="แก้ไขข้อมูลผู้สมัคร" class="p-1.5 text-[#5A6B47] hover:bg-[#5A6B47]/15 rounded-lg border border-[#5A6B47]/30 transition">
-                                                <i data-lucide="edit-3" class="w-4 h-4"></i>
-                                            </button>
+                                            @if (!empty($isTrashTab))
+                                                <!-- ปุ่มกู้คืนจากถังขยะ -->
+                                                <a href="{{ url('/admin/public_students.php?action=restore&id=' . $r->id) }}" onclick="return confirm('ยืนยันกู้คืนข้อมูลผู้สมัคร ({{ addslashes($r->full_name) }}) กลับสู่ระบบหรือไม่?')" title="กู้คืนข้อมูล (Restore)" class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium bg-[#5A6B47] hover:bg-[#2C3E2D] text-white rounded-lg shadow-sm transition">
+                                                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                                                    <span>กู้คืน</span>
+                                                </a>
 
-                                            <!-- ปุ่มอนุมัติสิทธิ์ -->
-                                            @if ($r->status !== 'CONFIRMED' && $r->status !== 'ATTENDED')
-                                                <a href="{{ url('/admin/public_students.php?action=approve&id=' . $r->id) }}" onclick="return confirm('ยืนยันอนุมัติสิทธิ์การเข้าร่วมอบรมของ {{ addslashes($r->full_name) }}?')" title="อนุมัติสิทธิ์เข้าร่วม (Approve)" class="p-1.5 text-[#5A6B47] hover:bg-[#5A6B47]/15 rounded-lg border border-[#5A6B47]/30 transition">
-                                                    <i data-lucide="check" class="w-4 h-4"></i>
+                                                <!-- ปุ่มลบถาวร -->
+                                                <a href="{{ url('/admin/public_students.php?action=force_delete&id=' . $r->id) }}" onclick="return confirm('คำเตือน: ยืนยันลบข้อมูลผู้สมัคร ({{ addslashes($r->full_name) }}) ออกจากระบบถาวรหรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้')" title="ลบถาวร (Delete Permanently)" class="p-1.5 text-red-600 hover:bg-red-100 rounded-lg border border-red-200 transition">
+                                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                                </a>
+                                            @else
+                                                <!-- ปุ่มแก้ไขข้อมูลผู้สมัคร (ทุกฟิลด์) -->
+                                                <button type="button" onclick="openEditApplicantModal({{ json_encode($r) }})" title="แก้ไขข้อมูลผู้สมัคร" class="p-1.5 text-[#5A6B47] hover:bg-[#5A6B47]/15 rounded-lg border border-[#5A6B47]/30 transition">
+                                                    <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                                </button>
+
+                                                <!-- ปุ่มอนุมัติสิทธิ์ -->
+                                                @if ($r->status !== 'CONFIRMED' && $r->status !== 'ATTENDED')
+                                                    <a href="{{ url('/admin/public_students.php?action=approve&id=' . $r->id) }}" onclick="return confirm('ยืนยันอนุมัติสิทธิ์การเข้าร่วมอบรมของ {{ addslashes($r->full_name) }}?')" title="อนุมัติสิทธิ์เข้าร่วม (Approve)" class="p-1.5 text-[#5A6B47] hover:bg-[#5A6B47]/15 rounded-lg border border-[#5A6B47]/30 transition">
+                                                        <i data-lucide="check" class="w-4 h-4"></i>
+                                                    </a>
+                                                @endif
+
+                                                <!-- ปุ่มปฏิเสธสิทธิ์ -->
+                                                @if ($r->status !== 'REJECTED')
+                                                    <button type="button" onclick="openRejectModal({{ $r->id }}, '{{ addslashes($r->full_name) }}')" title="ปฏิเสธ/ไม่อนุมัติ (Reject)" class="p-1.5 text-amber-700 hover:bg-amber-100 rounded-lg border border-amber-300 transition">
+                                                        <i data-lucide="x" class="w-4 h-4"></i>
+                                                    </button>
+                                                @endif
+
+                                                <!-- ปุ่มย้ายไปถังขยะ -->
+                                                <a href="{{ url('/admin/public_students.php?action=delete&id=' . $r->id) }}" onclick="return confirm('ยืนยันย้ายข้อมูลผู้สมัครท่านนี้ไปยังถังขยะหรือไม่? (สามารถกู้คืนได้ภายหลัง)')" title="ย้ายไปถังขยะ" class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition">
+                                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
                                                 </a>
                                             @endif
-
-                                            <!-- ปุ่มปฏิเสธสิทธิ์ -->
-                                            @if ($r->status !== 'REJECTED')
-                                                <button type="button" onclick="openRejectModal({{ $r->id }}, '{{ addslashes($r->full_name) }}')" title="ปฏิเสธ/ไม่อนุมัติ (Reject)" class="p-1.5 text-amber-700 hover:bg-amber-100 rounded-lg border border-amber-300 transition">
-                                                    <i data-lucide="x" class="w-4 h-4"></i>
-                                                </button>
-                                            @endif
-
-                                            <!-- ปุ่มลบข้อมูล -->
-                                            <a href="{{ url('/admin/public_students.php?action=delete&id=' . $r->id) }}" onclick="return confirm('ยืนยันลบข้อมูลผู้สมัครท่านนี้หรือไม่?')" title="ลบข้อมูล" class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition">
-                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                            </a>
                                         </div>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
                                     <td colspan="8" class="text-center py-10 text-[#8C8275]">
-                                        <i data-lucide="user-x" class="w-8 h-8 mx-auto mb-2 text-[#C86D51]"></i>
-                                        <div>ยังไม่มีข้อมูลผู้สมัครในเงื่อนไขนี้</div>
+                                        <i data-lucide="{{ !empty($isTrashTab) ? 'trash' : 'user-x' }}" class="w-8 h-8 mx-auto mb-2 text-[#C86D51]"></i>
+                                        <div>
+                                            @if (!empty($isTrashTab))
+                                                ไม่มีข้อมูลในถังขยะ
+                                            @else
+                                                ยังไม่มีข้อมูลผู้สมัครในเงื่อนไขนี้
+                                            @endif
+                                        </div>
                                     </td>
                                 </tr>
                             @endforelse
@@ -730,7 +794,15 @@
             }
 
             if (action === 'DELETE') {
-                if (!confirm(`ยืนยันการลบข้อมูลจำนวน ${checked} รายการ หรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้`)) {
+                if (!confirm(`ยืนยันการย้ายข้อมูลจำนวน ${checked} รายการ ไปยังถังขยะหรือไม่? (สามารถกู้คืนได้ภายหลัง)`)) {
+                    return;
+                }
+            } else if (action === 'RESTORE') {
+                if (!confirm(`ยืนยันการกู้คืนข้อมูลจำนวน ${checked} รายการ กลับสู่ระบบหรือไม่?`)) {
+                    return;
+                }
+            } else if (action === 'FORCE_DELETE') {
+                if (!confirm(`คำเตือน: ยืนยันการลบข้อมูลจำนวน ${checked} รายการ ออกจากระบบถาวรหรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้`)) {
                     return;
                 }
             } else {

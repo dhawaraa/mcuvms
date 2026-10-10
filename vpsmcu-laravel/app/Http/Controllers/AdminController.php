@@ -1973,7 +1973,37 @@ class AdminController extends Controller
                     $cnt = PublicRegistration::where('event_id', $evId)->where('status', 'CONFIRMED')->count();
                     PublicEvent::where('id', $evId)->update(['confirmed_count' => $cnt]);
                 }
-                return back()->with('success', "ลบข้อมูลผู้สมัครเข้าร่วมจำนวนมากสำเร็จ ({$count} รายการ)");
+                return back()->with('success', "ย้ายข้อมูลผู้สมัคร ({$count} รายการ) ไปยังถังขยะเรียบร้อยแล้ว (สามารถกู้คืนได้)");
+
+            case 'RESTORE':
+                $restoredCount = 0;
+                $affectedEvents = [];
+                $trashedItems = PublicRegistration::onlyTrashed()->whereIn('id', $ids)->get();
+                foreach ($trashedItems as $item) {
+                    if (!$isCentralOrSuper && !empty($admin['org_unit_id']) && $item->event->org_unit_id != $admin['org_unit_id']) {
+                        continue;
+                    }
+                    $affectedEvents[] = $item->event_id;
+                    $item->restore();
+                    $restoredCount++;
+                }
+                foreach (array_unique($affectedEvents) as $evId) {
+                    $cnt = PublicRegistration::where('event_id', $evId)->where('status', 'CONFIRMED')->count();
+                    PublicEvent::where('id', $evId)->update(['confirmed_count' => $cnt]);
+                }
+                return back()->with('success', "กู้คืนข้อมูลผู้สมัครจำนวน {$restoredCount} รายการกลับสู่ระบบเรียบร้อยแล้ว");
+
+            case 'FORCE_DELETE':
+                $deletedCount = 0;
+                $trashedItems = PublicRegistration::onlyTrashed()->whereIn('id', $ids)->get();
+                foreach ($trashedItems as $item) {
+                    if (!$isCentralOrSuper && !empty($admin['org_unit_id']) && $item->event->org_unit_id != $admin['org_unit_id']) {
+                        continue;
+                    }
+                    $item->forceDelete();
+                    $deletedCount++;
+                }
+                return back()->with('success', "ลบข้อมูลผู้สมัครออกจากระบบถาวรจำนวน {$deletedCount} รายการเรียบร้อยแล้ว");
 
             default:
                 return back()->with('error', 'การดำเนินการไม่ถูกต้อง');
@@ -2172,9 +2202,53 @@ class AdminController extends Controller
             return back()->with('error', 'ท่านไม่มีสิทธิ์ลบข้อมูลผู้เข้าร่วมของส่วนงานอื่น');
         }
 
+        $eventId = $reg->event_id;
         $reg->delete();
 
-        return back()->with('success', 'ลบข้อมูลผู้สมัครเข้าร่วมเรียบร้อยแล้ว');
+        // Recalculate event confirmed count
+        $cnt = PublicRegistration::where('event_id', $eventId)->where('status', 'CONFIRMED')->count();
+        PublicEvent::where('id', $eventId)->update(['confirmed_count' => $cnt]);
+
+        return back()->with('success', "ย้ายข้อมูลผู้สมัคร ({$reg->full_name}) ไปยังถังขยะเรียบร้อยแล้ว (สามารถกู้คืนได้)");
+    }
+
+    public function publicStudentRestore($id)
+    {
+        $this->checkAuth();
+        $admin = Session::get('admin_user');
+        $isCentralOrSuper = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
+
+        $reg = PublicRegistration::onlyTrashed()->with('event')->findOrFail($id);
+
+        if (!$isCentralOrSuper && !empty($admin['org_unit_id']) && $reg->event->org_unit_id != $admin['org_unit_id']) {
+            return back()->with('error', 'ท่านไม่มีสิทธิ์กู้คืนข้อมูลผู้สมัครของส่วนงานอื่น');
+        }
+
+        $reg->restore();
+
+        // Recalculate event confirmed count if restored record is CONFIRMED
+        $cnt = PublicRegistration::where('event_id', $reg->event_id)->where('status', 'CONFIRMED')->count();
+        PublicEvent::where('id', $reg->event_id)->update(['confirmed_count' => $cnt]);
+
+        return back()->with('success', "กู้คืนข้อมูลผู้สมัคร ({$reg->full_name}) กลับสู่ระบบเรียบร้อยแล้ว");
+    }
+
+    public function publicStudentForceDelete($id)
+    {
+        $this->checkAuth();
+        $admin = Session::get('admin_user');
+        $isCentralOrSuper = in_array($admin['role'], ['SUPER_ADMIN', 'CENTRAL_OFFICER']);
+
+        $reg = PublicRegistration::onlyTrashed()->with('event')->findOrFail($id);
+
+        if (!$isCentralOrSuper && !empty($admin['org_unit_id']) && $reg->event->org_unit_id != $admin['org_unit_id']) {
+            return back()->with('error', 'ท่านไม่มีสิทธิ์ลบถาวรข้อมูลผู้สมัครของส่วนงานอื่น');
+        }
+
+        $name = $reg->full_name;
+        $reg->forceDelete();
+
+        return back()->with('success', "ลบข้อมูลผู้สมัคร ({$name}) ออกจากระบบถาวรเรียบร้อยแล้ว");
     }
 
     public function publicEvents(Request $request)
@@ -2406,11 +2480,23 @@ class AdminController extends Controller
         if ($action === 'delete') {
             return $this->publicSarDelete($request->input('id'));
         }
+        if ($action === 'restore') {
+            return $this->publicStudentRestore($request->input('id'));
+        }
+        if ($action === 'force_delete') {
+            return $this->publicStudentForceDelete($request->input('id'));
+        }
         if ($action === 'bulk' || $request->has('bulk_action')) {
             return $this->publicSarBulkAction($request);
         }
 
+        $isTrashTab = ($request->input('tab') === 'trash' || $request->input('status') === 'TRASH');
+
         $query = PublicRegistration::with(['event.organizationUnit', 'organizationUnit'])->orderBy('registered_at', 'desc');
+
+        if ($isTrashTab) {
+            $query->onlyTrashed();
+        }
 
         if (!$isCentralOrSuper && !empty($admin['org_unit_id'])) {
             $query->whereHas('event', function ($q) use ($admin) {
@@ -2441,7 +2527,7 @@ class AdminController extends Controller
             $query->where('event_id', $request->input('event_id'));
         }
 
-        if ($request->filled('status')) {
+        if (!$isTrashTab && $request->filled('status')) {
             $query->where('status', $request->input('status'));
         }
 
@@ -2449,12 +2535,21 @@ class AdminController extends Controller
             $query->where('applicant_type', $request->input('applicant_type'));
         }
 
+        // Count trashed items for badge
+        $trashCountQuery = PublicRegistration::onlyTrashed();
+        if (!$isCentralOrSuper && !empty($admin['org_unit_id'])) {
+            $trashCountQuery->whereHas('event', function ($q) use ($admin) {
+                $q->where('org_unit_id', $admin['org_unit_id']);
+            });
+        }
+        $trashCount = $trashCountQuery->count();
+
         $perPage = $this->getPerPage($request);
         $registrations = $query->paginate($perPage)->withQueryString();
         $events = PublicEvent::orderBy('start_date', 'desc')->get();
         $orgUnits = OrganizationUnit::orderedForSelect()->get();
 
-        return view('admin.public_students', compact('registrations', 'events', 'orgUnits', 'isCentralOrSuper'));
+        return view('admin.public_students', compact('registrations', 'events', 'orgUnits', 'isCentralOrSuper', 'isTrashTab', 'trashCount'));
     }
 
     public function publicExport(Request $request)
